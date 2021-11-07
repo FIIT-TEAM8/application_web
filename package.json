@@ -1,15 +1,23 @@
 {
-  "name": "nodejs_server",
+  "name": "ams-web",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm start\" ",
+    "deploy": "concurrently \"cd backend && npm run deploy\" \"cd frontend && npm run build\" "
   },
-  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FIIT-TEAM8/node_server.git"
+  },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "express": "^4.17.1"
+  "bugs": {
+    "url": "https://github.com/FIIT-TEAM8/node_server/issues"
+  },
+  "homepage": "https://github.com/FIIT-TEAM8/node_server#readme",
+  "devDependencies": {
+    "concurrently": "^6.3.0"
   }
 }
