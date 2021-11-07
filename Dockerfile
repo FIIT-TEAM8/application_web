@@ -5,9 +5,11 @@ WORKDIR /myApp
 COPY package*.json ./
 
 RUN npm install
-
+`
 COPY . ./
 
-EXPOSE 3000
+EXPOSE 8080
 
-CMD ["node", "."]
+#CMD ["node", "."]
+
+RUN npm run deploy
