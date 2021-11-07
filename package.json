@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "concurrently \"cd frontend && npm start\" \"cd backend && npm run dev\" ",
-    "deploy": "concurrently \"cd frontend && npm install && npm run build\" \"cd backend && npm install && npm run deploy\"  "
+    "deploy": "concurrently \"cd frontend && npm install &&  npm run build\" \"cd backend && npm install && npm run deploy\"  "
   },
+  "homepage": "/ams",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/FIIT-TEAM8/node_server.git"
@@ -16,7 +17,6 @@
   "bugs": {
     "url": "https://github.com/FIIT-TEAM8/node_server/issues"
   },
-  "homepage": "https://github.com/FIIT-TEAM8/node_server#readme",
   "devDependencies": {
     "concurrently": "^6.3.0"
   }
