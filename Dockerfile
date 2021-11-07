@@ -1,17 +1,19 @@
-FROM node:alpine3.12
+FROM node:14-alpine3.12
 
 WORKDIR /myApp
 
 COPY package*.json ./
 
-RUN npm install
-
-COPY . ./
+COPY ./ ./
 
 EXPOSE 8080
 
-#CMD ["node", "."]
+RUN npm install
 
-#RUN npm run deploy
+RUN cd frontend && npm install
 
-CMD ['npm', 'run', 'deploy']
+RUN cd backend && npm install
+
+RUN cd frontend && npm run build
+
+CMD cd backend && npm run deploy
