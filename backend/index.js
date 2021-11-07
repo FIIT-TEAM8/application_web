@@ -3,6 +3,7 @@ require('dotenv').config()
 const express = require('express')
 const compression = require('compression')
 const cookieParser = require('cookie-parser')
+const path = require('path')
 
 
 APP_PORT = process.env.PORT || 8080
@@ -32,11 +33,11 @@ app.use(express.urlencoded({limit: '50mb', extended: true}));
 app.use(cookieParser())
 
 // React build is found here
-app.use(express.static(BUILD_PATH))
+app.use(express.static(path.resolve(BUILD_PATH)))
 
 // Setup for react router
 app.get('*', function (req, res) {
-    res.status(200).sendFile(`${BUILD_PATH}/index.html`, {root: __dirname})
+    res.status(200).sendFile(path.resolve(`${BUILD_PATH}/index.html`))
 })
 
 app.listen(APP_PORT, () => console.log(`Listening on port ${APP_PORT}`))
