@@ -1,6 +1,6 @@
 import {TextField, Typography} from "@material-ui/core";
 import {MdSearch} from "react-icons/md";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useWindowSize} from "../Utils/Screen";
 import {theme} from "../Style/Theme";
 
@@ -9,14 +9,16 @@ export default function TitleSearch({}) {
     const [searchTerm, setSearchTerm] = useState("")
 
     const {width, height} = useWindowSize()
-    const isMobile = width < 768
+    const shouldCollapse = width < 992
+
 
     const searchDivStyle = {
         margin: "auto",
-        padding: isMobile ? "20px" : "200px 400px"
+        padding: shouldCollapse ? "200px 7%" : "200px 20%"
     }
 
     function handleSearchChange(value) {
+        console.log(value)
         setSearchTerm(value.toLowerCase());
     }
 
@@ -35,5 +37,4 @@ export default function TitleSearch({}) {
             />
         </div>
     )
-
 }
