@@ -1,10 +1,17 @@
 // Example POST method implementation:
 import Cookies from 'js-cookie'
+const DEV = process.env.NODE_ENV !== 'production'
+
+let MODE = 'same-origin'
+
+if (DEV){
+    MODE = 'no-cors'
+}
 
 export async function apiCall(baseUrl = '', endpoint = '', method = 'GET', data = null, ) {
 
     // DEV ENVIRONMENT
-    if (process.env.NODE_ENV !== 'production' && !baseUrl) { baseUrl = 'http://localhost:8080' }
+    if (DEV && !baseUrl) { baseUrl = 'http://localhost:8080' }
     // const baseEndpoint = process.env.PUBLIC_URL
     const url = baseUrl + endpoint
     let response = {}
@@ -12,7 +19,7 @@ export async function apiCall(baseUrl = '', endpoint = '', method = 'GET', data 
 
     const init = {
         method: method, // *GET, POST, PUT, DELETE, etc.
-        mode: 'same-origin', // no-cors, *cors, same-origin
+        mode: MODE, // no-cors, *cors, same-origin
         cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
         credentials: 'same-origin', // include, *same-origin, omit
         headers: {
@@ -41,9 +48,10 @@ export async function apiCall(baseUrl = '', endpoint = '', method = 'GET', data 
             response = await fetch(url, init);
         }
     }
+    if (DEV) console.log(response)
     let result = {}
     try {
-        result = response.json()
+        result = response ? response.json() : {}
     } catch (e) {
         result = {ok: false, msg: "Invalid return value"}
     }
