@@ -9,5 +9,6 @@ router.get('/', function (req, res) {
 
 //Define base routes here
 router.use('/tests', testsRoutes)
+router.use('/users', testsRoutes)
 
 module.exports = router

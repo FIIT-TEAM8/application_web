@@ -4,7 +4,8 @@ const express = require('express')
 const compression = require('compression')
 const cookieParser = require('cookie-parser')
 const path = require('path')
-const v1Routes = require('./routes/routes')
+
+const routes = require('./routes/routes')
 
 
 APP_PORT = process.env.PORT || 8080
@@ -37,7 +38,7 @@ app.use(cookieParser())
 app.use(express.static(path.resolve(BUILD_PATH)))
 
 //Define version routes here
-app.use('/endpoints', v1Routes)
+app.use('/', routes)
 
 // Setup for react router
 app.get('*', function (req, res) {
