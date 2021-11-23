@@ -5,6 +5,8 @@ const compression = require('compression')
 const cookieParser = require('cookie-parser')
 const path = require('path')
 
+const routes = require('./routes/routes')
+
 
 APP_PORT = process.env.PORT || 8080
 IS_HTTPS = true
@@ -19,7 +21,7 @@ if (process.env.DEV) {
     IS_HTTPS = false
     app.use((req, res, next) => {
         res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
-        res.setHeader('Access-Control-Allow-Credentials', 1)
+        res.setHeader('Access-Control-Allow-Credentials', 'true')
         res.setHeader(
             'Access-Control-Allow-Headers',
             'Origin, X-Requested-Width, Content-Type, Accept, Authorization')
@@ -34,6 +36,9 @@ app.use(cookieParser())
 
 // React build is found here
 app.use(express.static(path.resolve(BUILD_PATH)))
+
+//Define version routes here
+app.use('/api/', routes)
 
 // Setup for react router
 app.get('*', function (req, res) {

@@ -1,23 +1,33 @@
-import {TextField, Typography} from "@material-ui/core";
+import {Button, TextField, Typography} from "@material-ui/core";
 import {MdSearch} from "react-icons/md";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useWindowSize} from "../Utils/Screen";
 import {theme} from "../Style/Theme";
+import {apiCall} from "../Utils/APIConnector";
 
 export default function TitleSearch({}) {
 
     const [searchTerm, setSearchTerm] = useState("")
+    const [result, setResult] = useState("")
 
     const {width, height} = useWindowSize()
-    const isMobile = width < 768
+    const shouldCollapse = width < 992
+
 
     const searchDivStyle = {
         margin: "auto",
-        padding: isMobile ? "20px" : "200px 400px"
+        padding: shouldCollapse ? "200px 7%" : "200px 20%"
     }
 
     function handleSearchChange(value) {
+        console.log(value)
         setSearchTerm(value.toLowerCase());
+    }
+
+    function onSubmit() {
+        apiCall('https://team08-21.studenti.fiit.stuba.sk', `/api/v1/search/?q=${searchTerm}`, 'GET').then(result => {
+            setResult(JSON.stringify(result))
+        })
     }
 
     return (
@@ -33,7 +43,12 @@ export default function TitleSearch({}) {
                 onChange={event => handleSearchChange(event.target.value)}
                 fullWidth
             />
+            <div style={{paddingTop: "20px"}}>
+                <Button variant={"contained"} color={"primary"} onClick={onSubmit}>Submit</Button>
+            </div>
+            <div style={{padding: "50px"}}>
+                {result}
+            </div>
         </div>
     )
-
 }
