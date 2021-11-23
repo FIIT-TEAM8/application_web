@@ -21,7 +21,7 @@ if (process.env.DEV) {
     IS_HTTPS = false
     app.use((req, res, next) => {
         res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
-        res.setHeader('Access-Control-Allow-Credentials', 1)
+        res.setHeader('Access-Control-Allow-Credentials', 'true')
         res.setHeader(
             'Access-Control-Allow-Headers',
             'Origin, X-Requested-Width, Content-Type, Accept, Authorization')
@@ -38,7 +38,7 @@ app.use(cookieParser())
 app.use(express.static(path.resolve(BUILD_PATH)))
 
 //Define version routes here
-app.use('/', routes)
+app.use('/api/', routes)
 
 // Setup for react router
 app.get('*', function (req, res) {

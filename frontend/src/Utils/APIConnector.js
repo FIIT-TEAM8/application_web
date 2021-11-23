@@ -3,9 +3,11 @@ import Cookies from 'js-cookie'
 const DEV = process.env.NODE_ENV !== 'production'
 
 let MODE = 'same-origin'
+let CREDENTIALS = 'same-origin'
 
 if (DEV){
-    MODE = 'no-cors'
+    MODE = 'cors'
+    CREDENTIALS = 'include'
 }
 
 export async function apiCall(baseUrl = '', endpoint = '', method = 'GET', data = null, ) {
@@ -21,7 +23,7 @@ export async function apiCall(baseUrl = '', endpoint = '', method = 'GET', data 
         method: method, // *GET, POST, PUT, DELETE, etc.
         mode: MODE, // no-cors, *cors, same-origin
         cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: 'same-origin', // include, *same-origin, omit
+        credentials: CREDENTIALS, // include, *same-origin, omit
         headers: {
             'Content-Type': 'application/json'
         },
