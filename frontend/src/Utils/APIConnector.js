@@ -10,15 +10,19 @@ if (DEV){
     CREDENTIALS = 'include'
 }
 
-export async function apiCall(baseUrl = '', endpoint = '', method = 'GET', data = null, ) {
-
+export async function apiCall(endpoint = '', method = 'GET', data = null, ) {
+    let baseUrl = ''
+    let baseEndpoint = process.env.PUBLIC_URL
     // DEV ENVIRONMENT
-    if (DEV && !baseUrl) { baseUrl = 'http://localhost:8080' }
-    // const baseEndpoint = process.env.PUBLIC_URL
-    const url = baseUrl + endpoint
-    let response = {}
-    // Default options are marked with *
+    if (DEV) {
+        baseUrl = 'http://localhost:8080'
+        baseEndpoint = ''
+    }
 
+    const url = baseUrl + baseEndpoint + endpoint
+    let response = {}
+
+    // Default options are marked with *
     const init = {
         method: method, // *GET, POST, PUT, DELETE, etc.
         mode: MODE, // no-cors, *cors, same-origin
@@ -63,9 +67,9 @@ export async function apiCall(baseUrl = '', endpoint = '', method = 'GET', data 
 export async function refreshToken() {
     const response = await fetch('/token', {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        mode: 'same-origin', // no-cors, *cors, same-origin
+        mode: MODE, // no-cors, *cors, same-origin
         cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: 'same-origin', // include, *same-origin, omit
+        credentials: CREDENTIALS, // include, *same-origin, omit
         headers: {
             'Content-Type': 'application/json'
             // 'Content-Type': 'application/x-www-form-urlencoded',
@@ -113,9 +117,9 @@ export function getSession() {
 export const logOut = async () => {
     await fetch('/logout', {
         method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
-        mode: 'same-origin', // no-cors, *cors, same-origin
+        mode: MODE, // no-cors, *cors, same-origin
         cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: 'same-origin', // include, *same-origin, omit
+        credentials: CREDENTIALS, // include, *same-origin, omit
         headers: {
             'Content-Type': 'application/json'
             // 'Content-Type': 'application/x-www-form-urlencoded',

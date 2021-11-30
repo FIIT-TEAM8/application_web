@@ -25,7 +25,7 @@ export default function TitleSearch({}) {
     }
 
     function onSubmit() {
-        apiCall('https://team08-21.studenti.fiit.stuba.sk', `/api/v1/search/?q=${searchTerm}`, 'GET').then(result => {
+        apiCall(`/api/data/search/?q=${searchTerm}`,  'GET').then(result => {
             setResult(JSON.stringify(result))
         })
     }
