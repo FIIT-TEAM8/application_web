@@ -1,14 +1,14 @@
 import {Button, TextField, Typography} from "@material-ui/core";
 import {MdSearch} from "react-icons/md";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useWindowSize} from "../Utils/Screen";
-import {theme} from "../Style/Theme";
 import {apiCall} from "../Utils/APIConnector";
 
 export default function TitleSearch({}) {
 
     const [searchTerm, setSearchTerm] = useState("")
-    const [result, setResult] = useState("")
+    const [result, setResult] = useState({results: []})
+    const [showingResults, setShowingResults] = useState(false)
 
     const {width, height} = useWindowSize()
     const shouldCollapse = width < 992
@@ -25,8 +25,11 @@ export default function TitleSearch({}) {
     }
 
     function onSubmit() {
-        apiCall(`/api/data/search/?q=${searchTerm}`,  'GET').then(result => {
-            setResult(JSON.stringify(result))
+        apiCall(`/api/data/search/?q=${searchTerm}`, 'GET').then(result => {
+            if (result.ok) {
+                setResult(result)
+                setShowingResults(true)
+            }
         })
     }
 
@@ -46,8 +49,9 @@ export default function TitleSearch({}) {
             <div style={{paddingTop: "20px"}}>
                 <Button variant={"contained"} color={"primary"} onClick={onSubmit}>Submit</Button>
             </div>
+
             <div style={{padding: "50px"}}>
-                {result}
+                {JSON.stringify(result)}
             </div>
         </div>
     )
