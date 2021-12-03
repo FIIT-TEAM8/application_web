@@ -24,9 +24,10 @@ async function apiFetch(endpoint, req) {
 
 router.get('/search/', async function (req, res){
     try {
-        const data = await apiFetch("/v1/search/", req)
+        const data = await apiFetch("/search/", req)
         res.status(200).json({ok: true, data: data})
     } catch (e) {
+        res.status(500).json({ok: false, })
         console.log('Exception happend while handling: /search')
     }
 })

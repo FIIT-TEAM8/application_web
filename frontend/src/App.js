@@ -4,7 +4,9 @@ import {theme} from "./Style/Theme";
 
 
 
+
 function App() {
+
     return (
         <div className="App" style={{maxWidth: "1920px", margin: "auto"}}>
             <ThemeProvider theme={theme}>
