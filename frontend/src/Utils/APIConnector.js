@@ -54,7 +54,7 @@ export async function apiCall(endpoint = '', method = 'GET', data = null, ) {
             response = await fetch(url, init);
         }
     }
-    if (DEV) console.log(response)
+    //if (DEV) console.log(response)
     let result = {}
     try {
         result = response ? response.json() : {}
