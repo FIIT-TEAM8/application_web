@@ -1,10 +1,9 @@
 import { Box, Divider, Typography, Link } from "@material-ui/core";
 import { Pagination, Stack } from "@mui/material";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 
-const PAGE_SIZE = 10;
-const crimes = ["murder", "kill", "bomb threat"]
+const PAGE_SIZE = 8;
 
 export default function SearchResults(props) {
 
@@ -44,14 +43,17 @@ export default function SearchResults(props) {
                                 }
                             spacing={2}
                         >
-                            <Typography style={{color: "grey"}}>{result.published}</Typography>
+                            <Box sx={{ width: 80 }}>
+                                <Typography noWrap style={{ color: "grey"}}>{result.published.slice(5, -13)}</Typography>
+                            </Box>
                             <Link
                                 href={result.link} 
                                 target="_blank" 
                                 rel="noopener" 
-                                underline="none"
+                                underline="none" 
+                                noWrap
                             >
-                                <Typography style={{color: "grey"}}>{result.link}</Typography>
+                                <Typography noWrap style={{color: "grey"}}>{result.link}</Typography>
                             </Link>
                         </Stack>
                         <Link
@@ -59,14 +61,14 @@ export default function SearchResults(props) {
                             target="_blank" 
                             rel="noopener" 
                         >
-                                <Typography variant="h2" color="primary">{result.title}</Typography>
+                                <Typography noWrap variant="h2" color="primary">{result.title}</Typography>
                         </Link>
                         <Stack
                             direction="row"
                             style={{color: "grey"}}
                             spacing={2}
                         >
-                            { crimes.map((crime) => (
+                            { result.keywords.map((crime) => (
                                 <Box
                                     sx={{ 
                                         pl: 0.7, 
