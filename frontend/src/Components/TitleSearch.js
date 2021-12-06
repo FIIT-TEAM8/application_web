@@ -15,7 +15,7 @@ export default function TitleSearch() {
     const {width, height} = useWindowSize()
     const shouldCollapse = width < 992
 
-    let searchDivStyle =  {
+    let searchDivStyle = {
         margin: "auto", 
         padding: shouldCollapse ? "200px 7%" : "200px 20%"
     };
@@ -25,7 +25,6 @@ export default function TitleSearch() {
     }
 
     function handleSearchChange(value) {
-        console.log(value)
         setSearchTerm(value.toLowerCase());
     }
 
@@ -42,6 +41,13 @@ export default function TitleSearch() {
         })
     }
 
+    function onKeyPress(e) {
+        if (e.keyCode === 13) {
+            onSubmit()
+        }
+
+    }
+
     return (
         <div style={searchDivStyle}>
             <Typography variant={"h1"} color={"primary"}>ams</Typography>
@@ -52,7 +58,8 @@ export default function TitleSearch() {
                 type="search"
                 variant="outlined"
                 onChange={event => handleSearchChange(event.target.value)}
-                fullWidth
+                fullWidth 
+                onKeyDown={onKeyPress}
             />
             <div style={{paddingTop: "20px"}}>
                 <Button variant={"contained"} color={"primary"} onClick={onSubmit}>Submit</Button>
