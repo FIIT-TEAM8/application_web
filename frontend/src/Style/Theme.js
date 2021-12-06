@@ -23,7 +23,7 @@ export const theme = createTheme({
     typography: {
         fontSize: 12,
         h2: {
-            fontSize: "2rem",
+            fontSize: "1.5rem",
         },
     }
 });
