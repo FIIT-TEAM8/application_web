@@ -21,10 +21,11 @@ async function apiFetch(endpoint, req) {
     const response = await fetch(url)
     return await response.json()
 }
-
+// node_host /ams/api/data/search/
 router.get('/search/', async function (req, res){
     try {
         const data = await apiFetch("/search/", req)
+
         res.status(200).json({ok: true, data: data})
     } catch (e) {
         res.status(500).json({ok: false, })
