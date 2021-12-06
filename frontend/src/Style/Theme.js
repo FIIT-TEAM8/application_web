@@ -16,5 +16,14 @@ export const theme = createTheme({
             dark: "#f68529",
             contrastText: '#fff',
         },
+        link: {
+            main: '#9d32a8'
+        },
     },
+    typography: {
+        fontSize: 12,
+        h2: {
+            fontSize: "1.5rem",
+        },
+    }
 });
