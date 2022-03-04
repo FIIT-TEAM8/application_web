@@ -1,5 +1,3 @@
-require('dotenv').config()
-
 const express = require('express')
 const compression = require('compression')
 const cookieParser = require('cookie-parser')
@@ -11,7 +9,7 @@ const {cfg} = require("./config");
 const app = express()
 app.use(compression())
 
-if (process.env.DEV) {
+if (process.env.NODE_ENV !== 'DEV') {
     console.log("Running a DEVELOPMENT server")
     app.use((req, res, next) => {
         res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
