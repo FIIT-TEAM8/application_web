@@ -9,7 +9,7 @@ const {cfg} = require("./config");
 const app = express()
 app.use(compression())
 
-if (process.env.NODE_ENV !== 'DEV') {
+if (process.env.NODE_ENV !== 'production') {
     console.log("Running a DEVELOPMENT server")
     app.use((req, res, next) => {
         res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
