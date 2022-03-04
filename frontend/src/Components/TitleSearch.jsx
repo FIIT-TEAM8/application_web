@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import {useWindowSize} from "../Utils/Screen";
 import {apiCall} from "../Utils/APIConnector";
 import SearchResults from "./SearchResults";
-import { useNavigate } from "react-router-dom";
+import { Outlet, Route, Routes, useNavigate } from "react-router-dom";
 
 
 
@@ -16,7 +16,7 @@ export default function TitleSearch() {
     const [resultsToShow, setResultsToShow] = useState({})
     const [showingResults, setShowingResults] = useState(false)
 
-    const {width, height} = useWindowSize()
+    const {width} = useWindowSize()
     const shouldCollapse = width < 992
 
     let searchDivStyle = {
@@ -38,7 +38,8 @@ export default function TitleSearch() {
 
     function onSubmit(event) {
         event.preventDefault()
-        navigate(`/search?q=${searchTerm}`)
+        setShowingResults(true)
+        navigate(`results?q=${searchTerm}`)
     }
 
     return (
@@ -58,8 +59,8 @@ export default function TitleSearch() {
                     <Button variant={"contained"} color={"primary"} type="submit">Submit</Button>
                 </div>
             </form>
-            {showingResults ? <SearchResults data={resultsToShow}></SearchResults> : ""}
+
+            <Outlet/>
         </div>
-        
     )
 }
