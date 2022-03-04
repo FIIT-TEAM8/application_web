@@ -5,22 +5,22 @@ import { useState, useEffect } from "react";
 
 const PAGE_SIZE = 8;
 
-export default function SearchResults(props) {
+export default function SearchResults({data}) {
 
     const [actResults, setActResults] = useState([])
     const [actPage, setActPage] = useState(1);
 
-    const totalPages = Math.ceil(props.data.result_count / PAGE_SIZE);
+    const totalPages = Math.ceil(data.result_count / PAGE_SIZE);
 
     useEffect(() => {
         setActPage(1);
-        setActResults(props.data.results.slice(0, PAGE_SIZE));
-    }, [props.data.results]);
+        setActResults(data.results.slice(0, PAGE_SIZE));
+    }, [data.results]);
 
     useEffect(() => {
         let firstPageResultIndex = (actPage - 1) * PAGE_SIZE;
         let lastPageResultIndex = firstPageResultIndex + PAGE_SIZE;
-        setActResults(props.data.results.slice(firstPageResultIndex, lastPageResultIndex));
+        setActResults(data.results.slice(firstPageResultIndex, lastPageResultIndex));
     }, [actPage]);
 
     const handlePageChange = (event, value) => {
@@ -29,7 +29,7 @@ export default function SearchResults(props) {
 
     return (
         <Stack sx={{ pt: 2 }}>
-            <Typography style={{ color: "grey" }}>{props.data.result_count} results found.</Typography>
+            <Typography style={{ color: "grey" }}>{data.result_count} results found.</Typography>
             <Stack spacing={6} sx={{ pt: 4 }}>
                 { actResults.map((result) => (
                     <Stack spacing={1}>

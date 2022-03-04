@@ -3,10 +3,14 @@ import {MdSearch} from "react-icons/md";
 import {useEffect, useState} from "react";
 import {useWindowSize} from "../Utils/Screen";
 import {apiCall} from "../Utils/APIConnector";
-import SearchResults from "../Components/SearchResults";
+import SearchResults from "./SearchResults";
+import { useNavigate } from "react-router-dom";
+
+
 
 export default function TitleSearch() {
-
+    const navigate = useNavigate()
+    
     const [searchTerm, setSearchTerm] = useState("")
     const [result, setResult] = useState({})
     const [resultsToShow, setResultsToShow] = useState({})
@@ -32,38 +36,28 @@ export default function TitleSearch() {
         setResultsToShow(result);
     }, [result]);
 
-    function onSubmit() {
-         apiCall(`/api/data/search/?q=${searchTerm}`, 'GET').then(result => {
-            if (result.ok) {
-                setResult(result.data);
-                setShowingResults(true);
-            }
-        })
-    }
-
-    function onKeyPress(e) {
-        if (e.keyCode === 13) {
-            onSubmit()
-        }
-
+    function onSubmit(event) {
+        event.preventDefault()
+        navigate(`/search?q=${searchTerm}`)
     }
 
     return (
         <div style={searchDivStyle}>
-            <Typography variant={"h1"} color={"primary"}>ams</Typography>
-            <TextField
-                id="outlined-search"
-                color={"secondary"}
-                label={<><MdSearch/> Search</>}
-                type="search"
-                variant="outlined"
-                onChange={event => handleSearchChange(event.target.value)}
-                fullWidth 
-                onKeyDown={onKeyPress}
-            />
-            <div style={{paddingTop: "20px"}}>
-                <Button variant={"contained"} color={"primary"} onClick={onSubmit}>Submit</Button>
-            </div>
+            <form onSubmit={onSubmit}>
+                <Typography variant={"h1"} color={"primary"}>ams</Typography>
+                <TextField
+                    id="outlined-search"
+                    color={"secondary"}
+                    label={<><MdSearch/> Search</>}
+                    type="search"
+                    variant="outlined"
+                    onChange={event => handleSearchChange(event.target.value)}
+                    fullWidth 
+                />
+                <div style={{paddingTop: "20px"}}>
+                    <Button variant={"contained"} color={"primary"} type="submit">Submit</Button>
+                </div>
+            </form>
             {showingResults ? <SearchResults data={resultsToShow}></SearchResults> : ""}
         </div>
         

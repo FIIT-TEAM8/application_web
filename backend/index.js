@@ -7,6 +7,7 @@ const routes = require('./routes/routes')
 const {cfg} = require("./config");
 
 const app = express()
+
 app.use(compression())
 
 console.log(process.env.NODE_ENV)
@@ -21,10 +22,15 @@ if (process.env.NODE_ENV !== 'production') {
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS, PUT')
         next()
     })
+
+    app.use(function(req, res, next) {
+        console.log(`New request: ${req.url}`)
+        next()
+    })
 }
 
-app.use(express.json({limit: '50mb'}));
-app.use(express.urlencoded({limit: '50mb', extended: true}));
+app.use(express.json({limit: '50mb'}))
+app.use(express.urlencoded({limit: '50mb', extended: true}))
 app.use(cookieParser())
 
 // React build is found here
