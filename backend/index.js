@@ -9,6 +9,7 @@ const {cfg} = require("./config");
 const app = express()
 app.use(compression())
 
+console.log(process.env.NODE_ENV)
 if (process.env.NODE_ENV !== 'production') {
     console.log("Running a DEVELOPMENT server")
     app.use((req, res, next) => {
@@ -27,13 +28,13 @@ app.use(express.urlencoded({limit: '50mb', extended: true}));
 app.use(cookieParser())
 
 // React build is found here
-app.use(express.static(path.resolve(cfg.BUILD_PATH)))
+app.use(`${cfg.PUBLIC_URL}/`, express.static(path.resolve(cfg.BUILD_PATH) ))
 
 //Define version routes here
-app.use('/api/', routes)
+app.use(`${cfg.PUBLIC_URL}/api/`, routes)
 
 // Setup for react router
-app.get('*', function (req, res) {
+app.get(`${cfg.PUBLIC_URL}*`, function (req, res) {
     res.status(200).sendFile(path.resolve(`${cfg.BUILD_PATH}/index.html`))
 })
 
