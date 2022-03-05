@@ -1,5 +1,3 @@
-require('dotenv').config()
-
 const express = require('express')
 const compression = require('compression')
 const cookieParser = require('cookie-parser')
@@ -9,9 +7,11 @@ const routes = require('./routes/routes')
 const {cfg} = require("./config");
 
 const app = express()
+
 app.use(compression())
 
-if (process.env.DEV) {
+console.log(process.env.NODE_ENV)
+if (process.env.NODE_ENV !== 'production') {
     console.log("Running a DEVELOPMENT server")
     app.use((req, res, next) => {
         res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
@@ -22,20 +22,25 @@ if (process.env.DEV) {
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS, PUT')
         next()
     })
+
+    app.use(function(req, res, next) {
+        console.log(`New request: ${req.url}`)
+        next()
+    })
 }
 
-app.use(express.json({limit: '50mb'}));
-app.use(express.urlencoded({limit: '50mb', extended: true}));
+app.use(express.json({limit: '50mb'}))
+app.use(express.urlencoded({limit: '50mb', extended: true}))
 app.use(cookieParser())
 
 // React build is found here
-app.use(express.static(path.resolve(cfg.BUILD_PATH)))
+app.use(`${cfg.PUBLIC_URL}/`, express.static(path.resolve(cfg.BUILD_PATH) ))
 
 //Define version routes here
-app.use('/api/', routes)
+app.use(`${cfg.PUBLIC_URL}/api/`, routes)
 
 // Setup for react router
-app.get('*', function (req, res) {
+app.get(`${cfg.PUBLIC_URL}*`, function (req, res) {
     res.status(200).sendFile(path.resolve(`${cfg.BUILD_PATH}/index.html`))
 })
 

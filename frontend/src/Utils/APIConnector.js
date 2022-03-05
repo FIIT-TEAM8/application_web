@@ -15,7 +15,7 @@ export async function apiCall(endpoint = '', method = 'GET', data = null, ) {
     let baseEndpoint = process.env.PUBLIC_URL
     // DEV ENVIRONMENT
     if (DEV) {
-        baseUrl = 'http://localhost:8080'
+        baseUrl = `http://localhost:${process.env.REACT_APP_PORT}`
         baseEndpoint = ''
     }
 
