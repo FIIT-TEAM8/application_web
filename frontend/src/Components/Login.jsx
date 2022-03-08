@@ -1,33 +1,29 @@
-import { Dialog, DialogActions, DialogContent, Button, Typography, TextField } from "@material-ui/core";
+import { Dialog, DialogContent, Button, Typography, TextField } from "@material-ui/core";
 import { Stack, IconButton } from "@mui/material";
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import { useState, useEffect } from "react";
 import { useFormik } from 'formik';
-
 import { initialLoginValues, loginValidationSchema } from '../Utils/AccountSchemas';
 
 
-export default function Login(props) {
+export default function Login({isOpen, onClose}) {
 
     const [shownPassword, setShownPassword] = useState(false);
     const [passwordType, setPasswordType] = useState("password");
-    const [openDialog, setOpenDialog] = useState(props.open);
+    const [isOpenDialog, setisOpenDialog] = useState(false);
 
     
     const formikLogin = useFormik({
         initialValues: initialLoginValues,
         validationSchema: loginValidationSchema,
         onSubmit: (values) => {
-            // TODO apiCall
-            setOpenDialog(false);
+            // TODO api call
+            setisOpenDialog(false);
             console.log(values);
         },
     });
 
-    const handleClickAway = () => {
-        setOpenDialog(false);
-    };
 
     const onVisibilityClick = () => {
         if (shownPassword){
@@ -40,17 +36,27 @@ export default function Login(props) {
         }
     };
 
+
     useEffect(() => {
         shownPassword ? setPasswordType("text") : setPasswordType("password");
     }, [shownPassword]);
 
+
+    useEffect(() => {
+        setisOpenDialog(isOpen);
+    }, [isOpen]);
+
+
     return (
-        <Dialog open={openDialog} onClose={handleClickAway}>
-            <DialogContent sx={{ m: 'auto', width: 250 }}>
+        <Dialog
+            open={isOpenDialog} 
+            onClose={onClose}
+            >
+            <DialogContent sx={{ m: 'auto' }}>
                 <form onSubmit={formikLogin.handleSubmit}>
                     <Stack sx={{ mb: 1}} spacing={1}>
                         <Typography color="primary">ams</Typography>
-                        <Typography variant="h2">Login</Typography>
+                        <Typography variant="h2">Log in</Typography>
                     </Stack>
                     <Stack spacing={3} sx={{ mb: 2 }}>
                         <TextField
@@ -74,14 +80,14 @@ export default function Login(props) {
                                 onChange={formikLogin.handleChange}
                                 error={formikLogin.touched.password && Boolean(formikLogin.errors.password)}
                                 helperText={formikLogin.touched.password && formikLogin.errors.password}
-                            />
+                                />
                             <IconButton size="small" sx={{ width: 35, height: 35, mt: 1.5}} onClick={onVisibilityClick}>
                                 {shownPassword ? <VisibilityOffOutlinedIcon fontSize="inherit" /> : <VisibilityOutlinedIcon fontSize="inherit" />}
                             </IconButton>
                         </Stack>
                         <Stack spacing={2}>
                             <Button color="primary" variant="contained" fullWidth type="submit">Log in</Button>
-                            <Typography align="center">or</Typography>
+                            <Typography variant="caption" align="center" style={{ color: "grey" }}>OR</Typography>
                             <Button color="primary" variant="outlined" fullWidth type="submit">Sign up</Button>
                         </Stack>
                     </Stack>
