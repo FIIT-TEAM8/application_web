@@ -1,5 +1,5 @@
-import { Button, TextField, Typography } from "@material-ui/core";
-import { MdSearch } from "react-icons/md";
+import { IconButton, TextField, Typography, Stack, InputAdornment } from "@mui/material";
+import { Search } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate, useSearchParams } from "react-router-dom";
 import { useWindowSize } from "../Utils/Screen";
@@ -50,20 +50,22 @@ export default function TitleSearch() {
     return (
         <div style={searchDivStyle}>
             <form onSubmit={onSubmit}>
-                <Typography variant={"h1"} color={"primary"}>ams</Typography>
+                <Typography variant="h1" color="primary">ams</Typography>
                 <TextField
                     id="outlined-search"
                     color={"secondary"}
                     value={searchTerm}
-                    label={<><MdSearch/> Search</>}
-                    type="search"
+                    label={"Search"}
+                    autoComplete="off"
                     variant="outlined"
                     onChange={event => handleSearchChange(event.target.value)}
                     fullWidth 
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">{<IconButton ><Search /></IconButton>}</InputAdornment>
+                        ) 
+                    }}
                     />
-                <div style={{paddingTop: "20px"}}>
-                    <Button variant={"contained"} color={"primary"} type="submit">Submit</Button>
-                </div>
             </form>
 
             <Outlet/>
