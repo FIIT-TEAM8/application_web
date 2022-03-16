@@ -10,7 +10,6 @@ const app = express()
 
 app.use(compression())
 
-console.log(process.env.NODE_ENV)
 if (process.env.NODE_ENV !== 'production') {
     console.log("Running a DEVELOPMENT server")
     app.use((req, res, next) => {

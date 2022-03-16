@@ -1,6 +1,17 @@
 // ENV variables can be loaded by creating a local .env file
 // The variables are loaded automatically using the following command
-require('dotenv').config()
+dotenv = require('dotenv')
+if (process.env.NODE_ENV !== "production") {
+    dotenv.config() // load from ./.env
+    dotenv.config({path: `../dev/env/postgres_db.env`}) // load from ./postgres_db.env
+}
+
+// This needs to be either loaded in the docker or from a copied postgres_db.env file
+const db_cfg = {
+    POSTGRES_USER: process.env.POSTGRES_USER || "postgres",
+    POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD || "postgres",
+    POSTGRES_DB: process.env.POSTGRES_DB || "ams",
+}
 
 // Basic config (all variables are recommended to be left at default)
 const cfg = {
@@ -9,6 +20,7 @@ const cfg = {
     COOKIE_AGE: process.env.COOKIE_AGE || 1000 * 60 * 60 * 24 * 30, // 30 days,
     BUILD_PATH: process.env.BUILD_PATH || '../frontend/build',
     DATA_API_HOST: process.env.DATA_API_HOST || 'http://flask_server:5000',
+    POSTGRES_HOST: process.env.POSTGRES_HOST || "http://postgres_db:5432",
     DATA_API_VERSION: process.env.DATA_API_VERSION || 'v3',
     USE_SERVER_PUBLIC_URL: process.env.USE_SERVER_PUBLIC_URL || false,
 }
@@ -25,6 +37,7 @@ if (process.env.NODE_ENV !== "production") {
     cfg.IS_HTTPS = process.env.IS_HTTPS || false
 }
 
+console.log('Using config:');
 console.log(cfg)
 
 module.exports = {
