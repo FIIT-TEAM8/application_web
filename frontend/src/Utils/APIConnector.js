@@ -16,7 +16,7 @@ export async function apiCall(endpoint = '', method = 'GET', data = null, ) {
     // DEV ENVIRONMENT
     if (DEV) {
         baseUrl = `http://localhost:${process.env.REACT_APP_PORT}`
-        baseEndpoint = ''
+        // baseEndpoint = ''
     }
 
     const url = baseUrl + baseEndpoint + endpoint
