@@ -26,8 +26,9 @@ export default function ResultItem ({item, index}){
                 </Typography>
             </Link>
             <Stack direction="row" color="secondary" spacing={2}>
-                {item.keywords.map((crime) => (
+                {item.keywords.map((crime, index) => (
                     <Box
+                        key={index}
                         sx={{
                             pl: 0.7,
                             pr: 0.7,

@@ -7,36 +7,29 @@ export default function UserProvider({children}) {
     const [user, setUser] = useState({});
 
 
-    const getCurrentUser = (accessToken) => {
-        // get user from server
-        if (accessToken  === "awesomeAccessToken123456789") {
-            return {
-                name: "Táňa",
-            };
-        }
+    const login = (loginData) => {
+        // get user data and access token from server
+        // let result = clientLogin(loginData)
+        // if result.ok ... return true
+        // else return false
+        console.log(loginData.username);
+        console.log(loginData.password);
+        const token = "awesomeAccessToken123456789";
+        const user = {"username": "xpolakovat", "name": "Táňa", "surname": "Poláková"};
+        setAccessToken(token);
+        setUser(user);
+        return true
     }
-   
+    
 
-    const handleAccessTokenChange = () => {
-        if (!user.name && accessToken) {
-            // localStorage.setItem("access_token", accessToken);
-            const user = getCurrentUser(accessToken);
-            setUser(user);
-        } else if (!accessToken) {
-            // Log Out
-            // localStorage.removeItem("access_token");
-            setUser({});
-        }
+    const logout = () => {
+        setAccessToken(null);
+        setUser({});
     }
-
-   
-    useEffect(() => {
-        handleAccessTokenChange();
-    }, [accessToken]);
-   
+    
 
     return (
-        <UserContext.Provider value={{ user, accessToken, setAccessToken }}>
+        <UserContext.Provider value={{ user, accessToken, login, logout }}>
             {children}
         </UserContext.Provider>
     );

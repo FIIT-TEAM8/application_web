@@ -7,21 +7,21 @@ import { useUser } from "../Utils/UserContext";
 export default function MainBar({}) {
 
     const [isOpenLogin, setIsOpenLogin] = useState(false);
-    const { user, setAccessToken } = useUser();
+    const { user, logout } = useUser();
 
 
-    const onLogin = () => {
+    const onLoginOpen = () => {
         setIsOpenLogin(true);
-    };
-
-
-    const onLogout = () => {
-        setAccessToken(null);
     };
 
 
     const onLoginClose = () => {
         setIsOpenLogin(false);
+    };
+
+
+    const onLogout = () => {
+        logout();
     };
 
 
@@ -37,7 +37,7 @@ export default function MainBar({}) {
                 <Typography>
                     {user.name ? user.name : ""}
                 </Typography>
-                {user.name ? <Button color="primary" variant="outlined" onClick={onLogout}>Log out</Button> : <Button color="primary" variant="outlined" onClick={onLogin}>Log in</Button>}
+                {user.name ? <Button color="primary" variant="outlined" onClick={onLogout}>Log out</Button> : <Button color="primary" variant="outlined" onClick={onLoginOpen}>Log in</Button>}
             </Stack>
 
             <Login isOpen={isOpenLogin} onClose={onLoginClose} />

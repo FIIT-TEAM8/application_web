@@ -1,4 +1,4 @@
-import { IconButton, TextField, Typography, Stack, InputAdornment } from "@mui/material";
+import { IconButton, TextField, Typography, InputAdornment } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate, useSearchParams } from "react-router-dom";

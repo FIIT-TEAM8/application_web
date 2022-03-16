@@ -87,7 +87,7 @@ export async function refreshToken() {
 
 export async function clientLogin(loginData) {
     let result = {}
-    await apiCall('/login', {name: loginData.name, password: loginData.password}).then(
+    await apiCall('/login', {name: loginData.username, password: loginData.password}).then(
         (res) => {
             result = res
         },
