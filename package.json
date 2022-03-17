@@ -19,5 +19,9 @@
   },
   "devDependencies": {
     "concurrently": "^6.3.0"
+  },
+  "dependencies": {
+    "moment": "^2.29.1",
+    "pg": "^8.7.3"
   }
 }
