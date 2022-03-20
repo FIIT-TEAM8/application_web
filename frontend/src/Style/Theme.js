@@ -1,5 +1,5 @@
 import { createTheme } from "@mui/material/styles";
-import { teal, grey, brown } from "@mui/material/colors";
+import { teal, grey } from "@mui/material/colors";
 
 
 export const theme = createTheme({
@@ -8,7 +8,6 @@ export const theme = createTheme({
             main: teal[500],
             light: teal[100],
             dark: teal[900],
-            brown: brown[600],
         },
         secondary: {
             main: grey[600],

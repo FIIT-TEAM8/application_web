@@ -27,7 +27,7 @@ export default function TitleSearch() {
 
 
     const handleSearchChange = (value) => {
-        setSearchTerm(value.toLowerCase());
+        setSearchTerm(value);
     };
 
 
@@ -62,7 +62,7 @@ export default function TitleSearch() {
                     fullWidth 
                     InputProps={{
                         endAdornment: (
-                            <InputAdornment position="end">{<IconButton ><Search /></IconButton>}</InputAdornment>
+                            <InputAdornment position="end">{<IconButton type="submit"><Search /></IconButton>}</InputAdornment>
                         ) 
                     }}
                     />
