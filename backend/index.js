@@ -5,12 +5,12 @@ const path = require('path')
 
 const routes = require('./routes/routes')
 const {cfg} = require("./config");
+const db = require('./db/postgres')
 
 const app = express()
 
 app.use(compression())
 
-console.log(process.env.NODE_ENV)
 if (process.env.NODE_ENV !== 'production') {
     console.log("Running a DEVELOPMENT server")
     app.use((req, res, next) => {
@@ -23,8 +23,15 @@ if (process.env.NODE_ENV !== 'production') {
         next()
     })
 
-    app.use(function(req, res, next) {
-        console.log(`New request: ${req.url}`)
+    app.use(async function(req, res, next) {
+        // Database demo
+        const query = {
+            text: `SELECT NOW() AS now`,
+            values: []
+        }
+        const result = await db.query(query)
+        
+        console.log(`${result.rows[0].now} New request: ${req.url}`)
         next()
     })
 }

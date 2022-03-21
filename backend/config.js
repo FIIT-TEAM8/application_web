@@ -1,6 +1,19 @@
 // ENV variables can be loaded by creating a local .env file
 // The variables are loaded automatically using the following command
-require('dotenv').config()
+dotenv = require('dotenv')
+if (process.env.NODE_ENV !== "production") {
+    dotenv.config({path: `../dev/env/postgres_db.env`}) // load from ./postgres_db.env
+    dotenv.config() // load and override from ./.env
+}
+
+// These need to be either loaded in the docker or from a copied postgres_db.env file
+const db_cfg = {
+    POSTGRES_USER: process.env.POSTGRES_USER || "postgres",
+    POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD || "postgres",
+    POSTGRES_DB: process.env.POSTGRES_DB || "ams",
+    POSTGRES_HOST: process.env.POSTGRES_HOST || "postgres_db",
+    POSTGRES_PORT: process.env.POSTGRES_PORT || 5432,
+}
 
 // Basic config (all variables are recommended to be left at default)
 const cfg = {
@@ -25,8 +38,13 @@ if (process.env.NODE_ENV !== "production") {
     cfg.IS_HTTPS = process.env.IS_HTTPS || false
 }
 
+console.log('Using config:');
 console.log(cfg)
+if (process.env.NODE_ENV !== "production") {
+    console.log(db_cfg);
+}
 
 module.exports = {
     cfg,
+    db_cfg,
 }
