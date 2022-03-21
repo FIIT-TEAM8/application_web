@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt')
 const {cfg} = require("../../config")
 const {debug, infoLog, errLog} = require("../../utils/logging")
 const userdb = require("../../db/userdb")
+const tokendb = require("../../db/tokendb")
 const { config } = require('dotenv')
 
 const router = express.Router()
@@ -62,7 +63,7 @@ router.post('/login', async function(req, res) {
         if (await bcrypt.compare(req.body.password, user.password)) {
             const accessToken = generateAccessToken(user.username)
             const refreshToken = jwt.sign({username: user.username}, process.env.REFRESH_TOKEN_SECRET)
-            userdb.insertRefreshToken(refreshToken, cookieAge)
+            tokendb.insertRefreshToken(refreshToken, cookieAge)
 
             res.cookie('__authToken', accessToken, {maxAge: config.AUTH_COOKIE_AGE, httpOnly: true, secure: config.IS_HTTPS})
             res.cookie('__refToken', refreshToken, {maxAge: cookieAge, httpOnly: false, secure: config.IS_HTTPS})
@@ -82,14 +83,14 @@ router.post('/login', async function(req, res) {
     }
 })
 
-router.post('/token', async function(req, res) {
+router.get('/token', async function(req, res) {
     const refreshToken = req.cookies.__refToken
 
     if (! refreshToken) {
         return res.sendStatus(401)
     }
     
-    const refreshTokenMaxAge = await userdb.checkRefreshToken(refreshToken)
+    const refreshTokenMaxAge = await tokendb.checkRefreshToken(refreshToken)
     if (! refreshTokenMaxAge) {
         return res.sendStatus(403)
     }
@@ -106,7 +107,7 @@ router.post('/token', async function(req, res) {
 
 router.post('/logout', async function(req, res) {
     try {
-        await userdb.deleteRefreshToken(req.cookies.__refToken)
+        await tokendb.deleteRefreshToken(req.cookies.__refToken)
         return res.status(204).json({ok: true, msg: "Log out successful."})
     } catch (e) {
         errLog(e.stack)

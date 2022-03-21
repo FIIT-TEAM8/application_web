@@ -12,4 +12,5 @@ router.get('/', function (req, res) {
 router.use('/data', dataRoute)
 router.use('/user', userRoute)
 
+
 module.exports = router
