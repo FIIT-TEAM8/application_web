@@ -1,5 +1,4 @@
-import { Box, Typography } from "@material-ui/core";
-import { Pagination, Stack } from "@mui/material";
+import { Pagination, Stack, Box, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { apiCall } from "../Utils/APIConnector";
@@ -35,10 +34,10 @@ export default function SearchResults({}) {
 
 	return (
 		<Stack sx={{ pt: 2 }}>
-			<Typography style={{ color: "grey" }}>{totalResults} results found.</Typography>
+			<Typography color="secondary">{totalResults} results found.</Typography>
 			<Stack spacing={6} sx={{ pt: 4 }}>
 				{actResults.map((result, index) => (
-					<ResultItem item={result} index={index} /> ))}
+					<ResultItem item={result} key={index} /> ))}
 			</Stack>
 			<Box my={2} display="flex" justifyContent="center">
 				{totalPages <= 1 ? <div></div>: <Pagination count={totalPages} page={parseInt(searchParams.get("page"))} onChange={handlePageChange} />}
