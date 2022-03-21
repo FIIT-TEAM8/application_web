@@ -29,15 +29,15 @@ async function insertUser(user) {
 
 async function checkRefreshToken(token) {
     const query = {
-        text: `UPDATE refresh_token SET last_access = now() WHERE token = $1 RETURNING token`, 
+        text: `UPDATE refresh_token SET last_access = now() WHERE token = $1 RETURNING max_age_seconds as maxage`, 
         values: [token]
     }
     const result = await db.query(query)
 
-    if (result.rows.length === 1 && result.rows[0]["token"] === token) {
-        return true
+    if (result.rows.length === 1) {
+        return result.rows[0]["maxage"]
     } else {
-        return false
+        return null
     }
 }
 

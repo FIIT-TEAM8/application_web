@@ -60,7 +60,7 @@ router.post('/login', async function(req, res) {
 
     try {
         if (await bcrypt.compare(req.body.password, user.password)) {
-            const accessToken = generateAccessToken(user)
+            const accessToken = generateAccessToken(user.username)
             const refreshToken = jwt.sign({username: user.username}, process.env.REFRESH_TOKEN_SECRET)
             userdb.insertRefreshToken(refreshToken, cookieAge)
 
@@ -69,7 +69,7 @@ router.post('/login', async function(req, res) {
             res.status(200).json({
                 ok: true, 
                 auth: true, 
-                msg: "Logged In.", 
+                msg: "Logged in.", 
                 accessToken: accessToken, 
                 refreshToken: refreshToken
             })
@@ -80,6 +80,28 @@ router.post('/login', async function(req, res) {
         errLog(e.stack)
         res.status(500).json({ok: false, msg: "Internal server error."})
     }
+})
+
+router.post('/token', async function(req, res) {
+    const refreshToken = req.cookies.__refToken
+
+    if (! refreshToken) {
+        return res.sendStatus(401)
+    }
+    
+    const refreshTokenMaxAge = await userdb.checkRefreshToken(refreshToken)
+    if (! refreshTokenMaxAge) {
+        return res.sendStatus(403)
+    }
+
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403)
+
+        const accessToken = generateAccessToken(user.username)
+        res.cookie('__authToken', accessToken, {maxAge: config.AUTH_COOKIE_AGE, httpOnly: true, secure: config.IS_HTTPS})
+        res.cookie('__refToken', refreshToken, {maxAge: refreshTokenMaxAge, httpOnly: false, secure: config.IS_HTTPS})
+        res.status(200).json({ok: true, accessToken: accessToken})
+    })
 })
 
 router.post('/logout', async function(req, res) {
