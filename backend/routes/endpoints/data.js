@@ -1,4 +1,4 @@
-// '/tests/*' endpoint
+// '/data/*' endpoint
 
 const express = require('express')
 const fetch = require('node-fetch')
