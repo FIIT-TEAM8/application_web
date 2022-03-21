@@ -28,7 +28,13 @@ const db = require(db/postgres)
 }
 */
 
-/* Use for simple queroes
+/* Use for simple queries
+
+const query = {
+    text: `SELECT * FROM user WHERE username = $1`,
+    values: ["tester"]
+}
+await db.query(query)
 
 */
 
