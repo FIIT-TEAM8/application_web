@@ -76,3 +76,4 @@ backend/.env
 .fusebox/
 
 dev
+backend/.secret.env
