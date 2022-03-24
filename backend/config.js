@@ -3,7 +3,7 @@
 dotenv = require('dotenv')
 if (process.env.NODE_ENV !== "production") {
     dotenv.config({path: `../dev/env/postgres_db.env`}) // load from ./postgres_db.env
-    dotenv.config({path: `../dev/env/node.env`})
+    // dotenv.config({path: `../dev/env/node.env`})
     dotenv.config() // load and override from ./.env
 }
 

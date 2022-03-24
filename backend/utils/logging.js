@@ -1,7 +1,7 @@
 const format = require('date-fns').format
 
 function debug(output) {
-    const DEBUG = false
+    const DEBUG = process.env.NODE_ENV !== 'production'
     const time = getCurrentDateTimeString();
     if (DEBUG) {
         console.log(time + ' DEBUG: ' + output);

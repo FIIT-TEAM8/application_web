@@ -65,41 +65,17 @@ export async function apiCall(endpoint = '', method = 'GET', data = null, ) {
 }
 
 export async function refreshToken() {
-    const response = await fetch('/token', {
-        method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        mode: MODE, // no-cors, *cors, same-origin
-        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: CREDENTIALS, // include, *same-origin, omit
-        headers: {
-            'Content-Type': 'application/json'
-            // 'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        redirect: 'follow', // manual, *follow, error
-        referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-    });
+    const response = await apiCall('/api/user/token')
     if (response.status === 403 || response.status === 401) {
-        window.location.replace(`/login`);
+        // window.location.replace(`/login`);
         return false
     } else {
         return true
     }
 }
 
-export async function clientLogin(loginData) {
-    let result = {}
-    await apiCall('/login', {name: loginData.username, password: loginData.password}).then(
-        (res) => {
-            result = res
-        },
-        (err) => {
-            console.log(err)
-        }
-    )
-    return result
-}
-
 //https://medium.com/@SilentHackz/simple-way-to-secure-react-apps-using-jwt-and-react-router-2b4a05d780a3
-export function getSession() {
+export function getCookieRefToken() {
     const jwt = Cookies.get('__refToken')
     let session
     try {
@@ -114,20 +90,20 @@ export function getSession() {
     return session
 }
 
-export const logOut = async () => {
-    await fetch('/logout', {
-        method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
-        mode: MODE, // no-cors, *cors, same-origin
-        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: CREDENTIALS, // include, *same-origin, omit
-        headers: {
-            'Content-Type': 'application/json'
-            // 'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        redirect: 'follow', // manual, *follow, error
-        referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-    });
-    Cookies.remove('__authToken')
-    Cookies.remove('__refToken')
-    window.location.replace(`/login`);
-}
+// export const logOut = async () => {
+//     await fetch('/logout', {
+//         method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
+//         mode: MODE, // no-cors, *cors, same-origin
+//         cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+//         credentials: CREDENTIALS, // include, *same-origin, omit
+//         headers: {
+//             'Content-Type': 'application/json'
+//             // 'Content-Type': 'application/x-www-form-urlencoded',
+//         },
+//         redirect: 'follow', // manual, *follow, error
+//         referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+//     });
+//     Cookies.remove('__authToken')
+//     Cookies.remove('__refToken')
+//     window.location.replace(`/login`);
+// }
