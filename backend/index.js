@@ -6,6 +6,10 @@ const path = require('path')
 const routes = require('./routes/routes')
 const {cfg} = require("./config");
 const db = require('./db/postgres')
+const cron = require('./cron')
+const { checkRefreshToken } = require('./db/tokendb')
+
+cron.setup()
 
 const app = express()
 
@@ -50,5 +54,6 @@ app.use(`${cfg.PUBLIC_URL}/api/`, routes)
 app.get(`${cfg.PUBLIC_URL}*`, function (req, res) {
     res.status(200).sendFile(path.resolve(`${cfg.BUILD_PATH}/index.html`))
 })
+
 
 app.listen(cfg.APP_PORT, () => console.log(`Listening on port ${cfg.APP_PORT}`))
