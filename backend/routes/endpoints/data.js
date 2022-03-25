@@ -11,9 +11,9 @@ router.get('/', function (req, res) {
 
 function extractQueryString(req) {
     const query = req.query
-    return  Object.keys(query)
-        .map(key => `?${key}=${query[key]}`)
-        .join('')
+    return  '?' + Object.keys(query)
+        .map(key => `${key}=${query[key]}`)
+        .join('&')
 }
 
 async function apiFetch(endpoint, req) {
