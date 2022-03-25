@@ -62,7 +62,7 @@ export default function TitleSearch() {
                     fullWidth 
                     InputProps={{
                         endAdornment: (
-                            <InputAdornment position="end">{<IconButton type="submit"><Search /></IconButton>}</InputAdornment>
+                            <InputAdornment position="end">{<IconButton color="primary" type="submit"><Search /></IconButton>}</InputAdornment>
                         ) 
                     }}
                     />
