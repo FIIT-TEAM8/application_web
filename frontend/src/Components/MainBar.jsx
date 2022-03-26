@@ -1,21 +1,27 @@
-import { Button } from "@material-ui/core";
-import { Stack } from "@mui/material";
+import { Stack, Button, Typography } from "@mui/material";
 import { useState } from "react";
-import Login from '../Components/Login';
+import Login from "../Components/Login";
+import { useUser } from "../Utils/UserContext";
 
 
-export default function MainBar() {
+export default function MainBar({}) {
 
     const [isOpenLogin, setIsOpenLogin] = useState(false);
+    const { user, logout } = useUser();
 
 
-    const onSubmit = () => {
+    const onLoginOpen = () => {
         setIsOpenLogin(true);
     };
 
 
     const onLoginClose = () => {
-        setIsOpenLogin(false)
+        setIsOpenLogin(false);
+    };
+
+
+    const onLogout = () => {
+        logout();
     };
 
 
@@ -28,8 +34,10 @@ export default function MainBar() {
                 spacing={0.5}
                 m={2} 
                 >
-                <Button color="primary" variant="outlined" onClick={onSubmit}>Log in</Button>
-                <Button color="primary" variant="outlined">Test Button</Button>
+                <Typography>
+                    {user.name ? user.name : ""}
+                </Typography>
+                {user.name ? <Button color="primary" variant="outlined" onClick={onLogout}>Log out</Button> : <Button color="primary" variant="outlined" onClick={onLoginOpen}>Log in</Button>}
             </Stack>
 
             <Login isOpen={isOpenLogin} onClose={onLoginClose} />

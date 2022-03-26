@@ -1,0 +1,21 @@
+const { debug } = require("../utils/logging")
+
+function authenticateToken(req, res, next) {
+    // const authHeader = req.headers['authorization']
+    // const token = authHeader && authHeader.split(' ')[1]
+    const token = req.cookies.__authToken
+    if (! token) {
+        return res.sendStatus(401)
+    }
+    
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403)
+        debug(`Authenticated: ${user.username}`)
+        req.user = user
+        next()
+    })
+}
+
+module.exports = {
+    authenticateToken
+}

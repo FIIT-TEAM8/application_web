@@ -1,23 +1,18 @@
-import {createTheme} from "@material-ui/core";
+import { createTheme } from "@mui/material/styles";
+import { teal, grey } from "@mui/material/colors";
 
 
 export const theme = createTheme({
     palette: {
-        divider: '#31b69c',
         primary: {
-            light: '#6de9cd',
-            main: '#31b69c',
-            dark: '#00856e',
-            contrastText: '#fff',
+            main: teal[500],
+            light: teal[100],
+            dark: teal[900],
         },
         secondary: {
-            light: "#fbac2e",
-            main: "#f68529",
-            dark: "#f68529",
-            contrastText: '#fff',
-        },
-        link: {
-            main: '#9d32a8'
+            main: grey[600],
+            light: grey[100],
+            dark: grey[900],
         },
     },
     typography: {
@@ -28,5 +23,5 @@ export const theme = createTheme({
         h3: {
             fontSize: "1.2rem",
         },
-    }
+    },
 });

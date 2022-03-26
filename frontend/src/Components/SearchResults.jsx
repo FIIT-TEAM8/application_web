@@ -1,5 +1,4 @@
-import { Box, Typography } from "@material-ui/core";
-import { Pagination, Stack } from "@mui/material";
+import { Pagination, Stack, Box, Typography, CircularProgress } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { apiCall } from "../Utils/APIConnector";
@@ -12,6 +11,7 @@ export default function SearchResults({}) {
 	const [actResults, setActResults] = useState([]);
 	const [totalPages, setTotalPages] = useState(0);
 	const [totalResults, setTotalResults] = useState(0);
+	const [isLoaded, setIsLoaded] = useState(false);
 
 
 	useEffect(() => {
@@ -20,6 +20,7 @@ export default function SearchResults({}) {
 				setActResults(result.data.results);
 				setTotalPages(result.data.total_pages);
 				setTotalResults(result.data.total_results);
+				setIsLoaded(true);
 			}
 		});
 	}, [searchParams]);
@@ -33,16 +34,25 @@ export default function SearchResults({}) {
 	};
 
 
-	return (
-		<Stack sx={{ pt: 2 }}>
-			<Typography style={{ color: "grey" }}>{totalResults} results found.</Typography>
-			<Stack spacing={6} sx={{ pt: 4 }}>
-				{actResults.map((result, index) => (
-					<ResultItem item={result} index={index} /> ))}
+	if (isLoaded) {
+		return (
+			<Stack sx={{ pt: 2 }}>
+				<Typography color="secondary">{totalResults} results found.</Typography>
+				<Stack spacing={6} sx={{ pt: 4 }}>
+					{actResults.map((result, index) => (
+						<ResultItem item={result} key={index} /> ))}
+				</Stack>
+				<Box my={2} display="flex" justifyContent="center">
+					{totalPages <= 1 ? <div></div>: <Pagination count={totalPages} page={parseInt(searchParams.get("page"))} onChange={handlePageChange} />}
+				</Box>
 			</Stack>
-			<Box my={2} display="flex" justifyContent="center">
-				{totalPages <= 1 ? <div></div>: <Pagination count={totalPages} page={parseInt(searchParams.get("page"))} onChange={handlePageChange} />}
-			</Box>
-		</Stack>
-	);
+		);
+	} else {
+		return (
+			<Stack spacing={1} sx={{ pt: 2 }} alignItems="center" direction="row" >
+				<CircularProgress size={10} color="secondary" />
+				<Typography color="secondary">Loading results.</Typography>
+			</Stack>
+		);
+	}
 }

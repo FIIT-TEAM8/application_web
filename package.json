@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev_env": "sh copy_dev_env_vars.sh && npm run dev",
     "dev": "export NODE_ENV=development || set NODE_ENV=development&& concurrently \"cd frontend && npm install && npm start\" \"cd backend && npm install && npm run dev\" ",
-    "deploy": "export NODE_ENV=production || set NODE_ENV=production&& concurrently \"cd frontend && npm install && npm run build\" \"cd backend && npm install && npm run deploy\"  "
+    "deploy": "export NODE_ENV=production || set NODE_ENV=production&& concurrently \"cd frontend && npm install && npm run build\" \"cd backend && npm install && npm run deploy\" "
   },
   "repository": {
     "type": "git",

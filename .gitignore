@@ -74,3 +74,6 @@ backend/.env
 
 # FuseBox cache
 .fusebox/
+
+dev
+backend/.secret.env
