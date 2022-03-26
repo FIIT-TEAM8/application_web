@@ -1,6 +1,8 @@
 const pg = require('pg')
 const { db_cfg } = require('../config')
 const Moment = require('moment')
+const { request } = require('express')
+const { errLog, infoLog } = require('../utils/logging')
 
 /*  Use for transactions:
 
@@ -9,7 +11,6 @@ const db = require(db/postgres)
 ;(async () => {
     const client = await db.connect()
     try {
-        const client = await db.connect()
         await client.query('BEGIN')
         const query = {
             text: `SELECT * FROM user WHERE username = $1`,
@@ -42,7 +43,7 @@ await db.query(query)
 // ================== Node postgres date fix - start
 // https://github.com/brianc/node-postgres/issues/818
 
-const { request } = require('express')
+
 const parseDate = function (value) {
     return value === null ? null : Moment(value)
 }
@@ -55,14 +56,57 @@ types.setTypeParser(DATATYPE_DATE, function (value) {
 
 // ================== Node postgres date fix - end
 
-const Pool = pg.Pool
+let pool = null
 
-const pool = new Pool({
-    user: db_cfg.POSTGRES_USER,
-    host: db_cfg.POSTGRES_HOST,
-    database: db_cfg.POSTGRES_DB,
-    password: db_cfg.POSTGRES_PASSWORD,
-    port: db_cfg.POSTGRES_PORT,
-})
+createPool = async () => {
+    infoLog("Connecting to a PostgreSQL database.")
+    let connectionTries = 30
+    while (connectionTries) {
+        infoLog(`Tries left: ${connectionTries}`)
+        try {
+            pool = new pg.Pool({
+                user: db_cfg.POSTGRES_USER,
+                host: db_cfg.POSTGRES_HOST,
+                database: db_cfg.POSTGRES_DB,
+                password: db_cfg.POSTGRES_PASSWORD,
+                port: db_cfg.POSTGRES_PORT,
+            })
+        } catch (err) {
+            // errLog(err)
+            errLog(err)
+        }
+        if (pool) {
+            break
+        } else {
+            // wait 5 seconds
+            await new Promise(res => setTimeout(res, 5000)).catch(e => {})
+            connectionTries -= 1
+        }
+        
+    }
+    infoLog("Moving on.")
+}
 
-module.exports = pool
+const getPool = async () => {
+    if (pool) {
+        return pool
+    } else {
+        await createPool()
+        return pool
+    }
+}
+
+module.exports = {
+
+    getPool: getPool,
+
+    query: async (args) => {
+        const connection = await getPool()
+        return await connection.query(args)
+    },
+
+    connect: async () => {
+        const connection = await getPool()
+        return await connection.connect()
+    },
+}
