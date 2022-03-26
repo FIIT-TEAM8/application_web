@@ -1,0 +1,14 @@
+version: '3'
+services:
+  postgres_db:
+    image: fiitteam8/postgres_db
+    container_name: postgres_db
+    env_file:
+      - ../backend/.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+volumes:
+  postgres_data:
