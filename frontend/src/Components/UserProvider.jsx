@@ -5,6 +5,7 @@ import { UserContext } from "../Utils/UserContext";
 export default function UserProvider({children}) {
     const [accessToken, setAccessToken] = useState(localStorage.getItem("access_token"));
     const [user, setUser] = useState({});
+    const [articlesInPDFReport, setArticlesInPDFReport] = useState([])
 
 
     const login = (loginData) => {
@@ -26,10 +27,20 @@ export default function UserProvider({children}) {
         setAccessToken(null);
         setUser({});
     }
+
+    const addArticleToPDFReport = (articleLink) => {
+        // add new item to articlesInPDFReport array
+        setArticlesInPDFReport((prevState) => {
+            prevState.push(articleLink);
+            return prevState;
+        });
+        console.log("Article added array of articles with to report.");
+        console.log(articlesInPDFReport);
+    };
     
 
     return (
-        <UserContext.Provider value={{ user, accessToken, login, logout }}>
+        <UserContext.Provider value={{ user, accessToken, articlesInPDFReport, login, logout, addArticleToPDFReport }}>
             {children}
         </UserContext.Provider>
     );
