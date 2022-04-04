@@ -28,19 +28,33 @@ export default function UserProvider({children}) {
         setUser({});
     }
 
-    const addArticleToPDFReport = (articleLink) => {
+    const addArticlePDFReport = (articleId) => {
         // add new item to articlesInPDFReport array
         setArticlesInPDFReport((prevState) => {
-            prevState.push(articleLink);
+            prevState.push(articleId);
+            console.log(prevState);
             return prevState;
         });
-        console.log("Article added array of articles with to report.");
-        console.log(articlesInPDFReport);
     };
+
+    const removeArcticlePDFReport = (articleId) => {
+        // remove item from articlesInPDFReport array
+        setArticlesInPDFReport((prevState) => {
+            let articleIndex = prevState.indexOf(articleId);
+            
+            // make sure array contains articleId
+            if (articleIndex !== -1) {
+                prevState.splice(articleIndex, 1);
+            }
+
+            console.log(prevState);
+            return prevState;
+        });
+    }
     
 
     return (
-        <UserContext.Provider value={{ user, accessToken, articlesInPDFReport, login, logout, addArticleToPDFReport }}>
+        <UserContext.Provider value={{ user, accessToken, articlesInPDFReport, login, logout, addArticlePDFReport, removeArcticlePDFReport }}>
             {children}
         </UserContext.Provider>
     );
