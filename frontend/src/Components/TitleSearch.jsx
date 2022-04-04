@@ -1,7 +1,7 @@
-import { IconButton, TextField, Typography, InputAdornment } from "@mui/material";
+import { IconButton, TextField, Typography, InputAdornment, Stack, Button } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import { useEffect, useState } from "react";
-import { Outlet, useNavigate, useSearchParams } from "react-router-dom";
+import { Outlet, useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useWindowSize } from "../Utils/Screen";
 
 
@@ -31,13 +31,24 @@ export default function TitleSearch() {
     };
 
 
+    // during render, check search params and fill appropriate fields/components
     useEffect(() => {
         const q = searchParams.get("q");
-        if (q){
+        if (q) {
             setShowingResults(true);
             setSearchTerm(q);
         }
     }, []);
+
+
+    // check if we should change actual state to main page state
+    useEffect(() => {
+        const q = searchParams.get("q");
+        if (!q) {
+            setShowingResults(false);
+            setSearchTerm("");
+        }
+    }, [searchParams]);
     
 
     const onSubmit = (event) => {
@@ -50,7 +61,9 @@ export default function TitleSearch() {
     return (
         <div style={searchDivStyle}>
             <form onSubmit={onSubmit}>
-                <Typography variant="h1" color="primary">ams</Typography>
+                <Link to="/search" style={{ textDecoration: 'none' }} >
+                    <Typography variant="h1" color="primary">ams</Typography>
+                </Link>
                 <TextField
                     id="outlined-search"
                     color={"secondary"}
@@ -67,6 +80,12 @@ export default function TitleSearch() {
                     }}
                     />
             </form>
+            <Stack 
+                alignItems={"flex-end"}
+                justifyContent={"flex-end"}
+                >
+                <Button color="secondary" variant="text" size="small" style={{textDecoration: "underline"}}>Advanced search</Button>
+            </Stack>
 
             <Outlet/>
         </div>
