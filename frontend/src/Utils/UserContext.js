@@ -2,8 +2,7 @@ import { createContext, useContext } from 'react';
 
 
 const initialState = {
-    user: {},
-    accessToken: undefined,
+    username: {}
 };
 
 export const UserContext = createContext(initialState);

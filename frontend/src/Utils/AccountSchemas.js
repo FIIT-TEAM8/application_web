@@ -22,11 +22,10 @@ export const loginValidationSchema = yup.object({
 });
 
 export const signupValidationSchema = yup.object({
-    email: yup
-      .string('Enter your email')
-      .email('Enter a valid email')
-      .required('Email is required'),
-    password: yup
+  username: yup
+    .string('Enter your username')
+    .required('Username is required'),
+  password: yup
       .string('Enter your password')
       .min(8, 'Password is too short')
        // .matches(/[a-z][A-Z][0-9]/, 'Password has to contain lower and upper case and number.')
