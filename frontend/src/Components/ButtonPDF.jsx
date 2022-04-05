@@ -4,17 +4,19 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Tooltip } from '@mui/material';
 import { useUser } from "../Utils/UserContext";
 import { useState } from 'react';
+import { useSearchParams } from "react-router-dom";
 
-export default function ButtonPDF ({ articleId, searchTerm }) {
+export default function ButtonPDF ({ articleId }) {
     const { articlesInReport, addArticleReport, removeArcticleReport } = useUser();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [isInReport, setIsInReport] = useState(articlesInReport.some(article => article.id === articleId));
     const buttonSize = "small";
     const iconSize = "medium";
 
-    const handleAddArticle = (articleId, searchTerm) => {
+    const handleAddArticle = (articleId) => {
         addArticleReport({
             "id": articleId,
-            "searchTerm": searchTerm,
+            "searchTerm": searchParams.get("q"),
             "timeAdded": new Date().toLocaleString() // example: Tue, 05 Apr 2022 06:30:57 GMT
         });
         setIsInReport(true);
@@ -39,7 +41,7 @@ export default function ButtonPDF ({ articleId, searchTerm }) {
                     <IconButton 
                         size={buttonSize}
                         aria-label="Add to PDF report"
-                        onClick={() => handleAddArticle(articleId, searchTerm)}
+                        onClick={() => handleAddArticle(articleId)}
                         sx={{
                             padding: 0
                         }}

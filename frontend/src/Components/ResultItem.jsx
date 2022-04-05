@@ -1,7 +1,10 @@
 import { Box, Divider, Typography, Link, Stack, Alert, AlertTitle } from "@mui/material";
 import ButtonPDF from "./ButtonPDF";
+import { useUser } from "../Utils/UserContext";
 
-export default function ResultItem ({item, index, searchTerm}){
+export default function ResultItem ({item, index}){
+    const { user } = useUser();
+
     return (
         <Stack direction="row" justifyContent="space-between">
             {/* <Alert severity="success"> 
@@ -46,9 +49,7 @@ export default function ResultItem ({item, index, searchTerm}){
                     ))}
                 </Stack>
             </Stack>
-            <Stack>
-                <ButtonPDF articleId={item._id} searchTerm={searchTerm} />
-            </Stack>
+            {user.name ? <Stack> <ButtonPDF articleId={item._id} /> </Stack> : <></>}
         </Stack>
         )
 }

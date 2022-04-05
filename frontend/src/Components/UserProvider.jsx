@@ -29,6 +29,8 @@ export default function UserProvider({children}) {
     }
     
     // TODO: make request to backend for adding article to PDF report
+    // make alerts for adding article
+    // make page for pdf report
     const addArticleReport = (article) => {
         // add article to array of all articles in PDF report
         setArticlesInReport((prevState) => {
@@ -37,6 +39,14 @@ export default function UserProvider({children}) {
         });
 
         console.log(articlesInReport); // remove
+        apiCall(`/api/data/search/?q=${searchParams.get("q")}&page=${searchParams.get("page")}`, "GET").then((result) => {
+			if (result.ok) {
+				setActResults(result.data.results);
+				setTotalPages(result.data.total_pages);
+				setTotalResults(result.data.total_results);
+				setIsLoaded(true);
+			}
+		});
     };
 
     // TODO: make request to backend for removing article from PDF report
