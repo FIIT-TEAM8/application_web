@@ -1,11 +1,13 @@
 import { useState } from "react";
+import { apiCall } from "../Utils/APIConnector";
 import { UserContext } from "../Utils/UserContext";
 
 
 export default function UserProvider({children}) {
     const [accessToken, setAccessToken] = useState(localStorage.getItem("access_token"));
     const [user, setUser] = useState({});
-    const [articlesInReport, setArticlesInReport] = useState([])
+    const [articlesInReport, setArticlesInReport] = useState([]);
+    const [reportId, setReportId] = useState(0);
 
 
     const login = (loginData) => {
@@ -27,8 +29,18 @@ export default function UserProvider({children}) {
         setAccessToken(null);
         setUser({});
     }
+
+    const updateReportAPI = () => {
+        apiCall(`/api/pdf_report/update/${reportId}`, 'POST', { "articlesInReport": articlesInReport }).then((result) => {
+            if (result.ok) {
+                console.log('Updated articles in PDF report');
+            } else {
+                console.log('Unable to update PDF report.');
+            }
+        }).catch(err => console.log(err));
+    }
     
-    // TODO: make request to backend for adding article to PDF report
+    // TODO: after user login or sign up load his in progress report
     // make alerts for adding article
     // make page for pdf report
     const addArticleReport = (article) => {
@@ -39,17 +51,20 @@ export default function UserProvider({children}) {
         });
 
         console.log(articlesInReport); // remove
-        apiCall(`/api/data/search/?q=${searchParams.get("q")}&page=${searchParams.get("page")}`, "GET").then((result) => {
-			if (result.ok) {
-				setActResults(result.data.results);
-				setTotalPages(result.data.total_pages);
-				setTotalResults(result.data.total_results);
-				setIsLoaded(true);
-			}
-		});
+        
+        // TODO: remove this and on user login/singup load automatically 
+        if (reportId !== 0) {
+            updateReportAPI();
+        } else {
+            apiCall(`/api/pdf_report/create`, 'POST', { "userId": 1, "articlesInReport": articlesInReport }) // switch 1 to user_id
+                .then(result => {
+                    if (result.ok) {
+                        setReportId(result.reportId);
+                    }
+                });
+        }
     };
 
-    // TODO: make request to backend for removing article from PDF report
     const removeArcticleReport = (articleId) => {
         // remove article by id from articles in PDF report
         setArticlesInReport((prevState) => {
@@ -66,6 +81,10 @@ export default function UserProvider({children}) {
         });
 
         console.log(articlesInReport); // remove
+
+        if (reportId !== 0) {
+            updateReportAPI();
+        }
     }
     
 

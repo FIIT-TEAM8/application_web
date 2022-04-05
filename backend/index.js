@@ -7,7 +7,6 @@ const routes = require('./routes/routes')
 const {cfg} = require("./config");
 const db = require('./db/postgres')
 const cron = require('./cron')
-const { checkRefreshToken } = require('./db/tokendb')
 
 cron.setup()
 

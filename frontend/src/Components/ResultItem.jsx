@@ -49,7 +49,7 @@ export default function ResultItem ({item, index}){
                     ))}
                 </Stack>
             </Stack>
-            {user.name ? <Stack> <ButtonPDF articleId={item._id} /> </Stack> : <></>}
+            {user.name ? <Stack> <ButtonPDF articleId={item._id} articleTitle={item.title} /> </Stack> : <></>}
         </Stack>
         )
 }

@@ -5,8 +5,8 @@ const fetch = require('node-fetch')
 const bcrypt = require('bcrypt')
 const {cfg} = require("../../config")
 const {debug, infoLog, errLog} = require("../../utils/logging")
-const userdb = require("../../db/userdb")
-const tokendb = require("../../db/tokendb")
+const userdb = require("../../db/user_db")
+const tokendb = require("../../db/token_db")
 
 
 const router = express.Router()
