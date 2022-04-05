@@ -1,6 +1,6 @@
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Tooltip } from '@mui/material';
 import { useUser } from "../Utils/UserContext";
 import { useState } from 'react';
@@ -8,6 +8,8 @@ import { useState } from 'react';
 export default function ButtonPDF ({ articleId, searchTerm }) {
     const { articlesInReport, addArticleReport, removeArcticleReport } = useUser();
     const [isInReport, setIsInReport] = useState(articlesInReport.some(article => article.id === articleId));
+    const buttonSize = "small";
+    const iconSize = "medium";
 
     const handleAddArticle = (articleId, searchTerm) => {
         addArticleReport({
@@ -35,21 +37,27 @@ export default function ButtonPDF ({ articleId, searchTerm }) {
                     arrow
                 >
                     <IconButton 
+                        size={buttonSize}
                         aria-label="Add to PDF report"
-                        size="small"
                         onClick={() => handleAddArticle(articleId, searchTerm)}
+                        sx={{
+                            padding: 0
+                        }}
                     >
-                        <AddCircleOutlineIcon fontSize="inherit" />
+                        <AddCircleOutlineIcon fontSize={iconSize} />
                     </IconButton>
                 </Tooltip>
                 :
                 <Tooltip title="Remove from PDF report" placement="top" TransitionProps={{ timeout: 500 }} arrow>
                     <IconButton 
+                        size={buttonSize}
                         aria-label="Remove from PDF report"
-                        size="small"
                         onClick={() => handleRemoveArticle(articleId)}
+                        sx={{
+                            padding: 0
+                        }}
                     >
-                        <RemoveCircleOutlineIcon fontSize="inherit" />
+                        <CheckCircleIcon fontSize={iconSize} />
                     </IconButton>
                 </Tooltip>
             }

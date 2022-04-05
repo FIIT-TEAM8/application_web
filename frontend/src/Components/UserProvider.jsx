@@ -33,9 +33,10 @@ export default function UserProvider({children}) {
         // add article to array of all articles in PDF report
         setArticlesInReport((prevState) => {
             prevState.push(article);
-            console.log(prevState); // remove
             return prevState;
         });
+
+        console.log(articlesInReport); // remove
     };
 
     // TODO: make request to backend for removing article from PDF report
@@ -45,17 +46,16 @@ export default function UserProvider({children}) {
             const articleIndex = prevState.findIndex(article => {
                 return article.id === articleId;
             });
-
-            console.log(articleIndex)
             
             // make sure array contains articleId
             if (articleIndex !== -1) {
                 prevState.splice(articleIndex, 1);
             }
 
-            console.log(prevState); // remove
             return prevState;
         });
+
+        console.log(articlesInReport); // remove
     }
     
 
