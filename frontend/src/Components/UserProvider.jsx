@@ -5,7 +5,7 @@ import { UserContext } from "../Utils/UserContext";
 export default function UserProvider({children}) {
     const [accessToken, setAccessToken] = useState(localStorage.getItem("access_token"));
     const [user, setUser] = useState({});
-    const [articlesInPDFReport, setArticlesInPDFReport] = useState([])
+    const [articlesInReport, setArticlesInReport] = useState([])
 
 
     const login = (loginData) => {
@@ -27,34 +27,40 @@ export default function UserProvider({children}) {
         setAccessToken(null);
         setUser({});
     }
-
-    const addArticlePDFReport = (articleId) => {
-        // add new item to articlesInPDFReport array
-        setArticlesInPDFReport((prevState) => {
-            prevState.push(articleId);
-            console.log(prevState);
+    
+    // TODO: make request to backend for adding article to PDF report
+    const addArticleReport = (article) => {
+        // add article to array of all articles in PDF report
+        setArticlesInReport((prevState) => {
+            prevState.push(article);
+            console.log(prevState); // remove
             return prevState;
         });
     };
 
-    const removeArcticlePDFReport = (articleId) => {
-        // remove item from articlesInPDFReport array
-        setArticlesInPDFReport((prevState) => {
-            let articleIndex = prevState.indexOf(articleId);
+    // TODO: make request to backend for removing article from PDF report
+    const removeArcticleReport = (articleId) => {
+        // remove article by id from articles in PDF report
+        setArticlesInReport((prevState) => {
+            const articleIndex = prevState.findIndex(article => {
+                return article.id === articleId;
+            });
+
+            console.log(articleIndex)
             
             // make sure array contains articleId
             if (articleIndex !== -1) {
                 prevState.splice(articleIndex, 1);
             }
 
-            console.log(prevState);
+            console.log(prevState); // remove
             return prevState;
         });
     }
     
 
     return (
-        <UserContext.Provider value={{ user, accessToken, articlesInPDFReport, login, logout, addArticlePDFReport, removeArcticlePDFReport }}>
+        <UserContext.Provider value={{ user, accessToken, articlesInReport, login, logout, addArticleReport, removeArcticleReport }}>
             {children}
         </UserContext.Provider>
     );

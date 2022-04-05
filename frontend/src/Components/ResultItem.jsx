@@ -1,9 +1,13 @@
-import { Box, Divider, Typography, Link, Stack } from "@mui/material";
+import { Box, Divider, Typography, Link, Stack, Alert, AlertTitle } from "@mui/material";
 import ButtonPDF from "./ButtonPDF";
 
-export default function ResultItem ({item, index}){
+export default function ResultItem ({item, index, searchTerm}){
     return (
         <Stack spacing={1}>
+            {/* <Alert severity="success"> 
+                <AlertTitle>Success</AlertTitle>
+                Article was added to PDF report!
+            </Alert> */}
             <Stack
                 direction="row"
                 justifyContent={"space-between"}
@@ -12,7 +16,8 @@ export default function ResultItem ({item, index}){
                 <Stack
                     direction="row"
                     divider={<Divider sx={{ borderRightWidth: 0.5 }} style={{ background: "#757575" }} orientation="vertical" flexItem />}
-                    spacing={2}>
+                    spacing={2}
+                >
                     <Box sx={{ width: 80 }}>
                         <Typography noWrap color="secondary">
                             {item.published.slice(5, -13)}
@@ -24,7 +29,9 @@ export default function ResultItem ({item, index}){
                         </Typography>
                     </Link>
                 </Stack>
-                <ButtonPDF articleId={item._id} />
+                <Stack>
+                    <ButtonPDF articleId={item._id} searchTerm={searchTerm} />
+                </Stack>
             </Stack>
             <Link href={item.link} target="_blank" rel="noopener" underline="hover">
                 <Typography noWrap variant="h2" color="primary">

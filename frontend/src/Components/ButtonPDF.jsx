@@ -5,43 +5,49 @@ import { Tooltip } from '@mui/material';
 import { useUser } from "../Utils/UserContext";
 import { useState } from 'react';
 
-export default function ButtonPDF ({ articleId }) {
-    // load array of all articles ids with function for adding and removing articles from PDF report
-    const { articlesInPDFReport, addArticlePDFReport, removeArcticlePDFReport } = useUser();
-    const [isInPDFReport, setIsInPDFReport] = useState(articlesInPDFReport.includes(articleId));
+export default function ButtonPDF ({ articleId, searchTerm }) {
+    const { articlesInReport, addArticleReport, removeArcticleReport } = useUser();
+    const [isInReport, setIsInReport] = useState(articlesInReport.some(article => article.id === articleId));
 
-    const addedToReport = (articleId) => {
-        // add article to PDF report and change state
-        addArticlePDFReport(articleId);
-        setIsInPDFReport(true);
+    const handleAddArticle = (articleId, searchTerm) => {
+        addArticleReport({
+            "id": articleId,
+            "searchTerm": searchTerm,
+            "timeAdded": new Date().toLocaleString() // example: Tue, 05 Apr 2022 06:30:57 GMT
+        });
+        setIsInReport(true);
     }
 
-    const removedFromReport = (articleId) => {
-        // remove article from PDF report and change state
-        removeArcticlePDFReport(articleId);
-        setIsInPDFReport(false);
+    const handleRemoveArticle = (articleId) => {
+        removeArcticleReport(articleId);
+        setIsInReport(false);
     }
 
-    // if user doesn't have this article in PDF report allow him to add it in report
-    // otherwise allow him to remove it from report
+    // if user doesn't have this article in PDF report, allow him to add it
+    // otherwise allow him to remove article from report
     return (
         <>
-            {isInPDFReport === false ? 
-                <Tooltip title="Add to PDF report" placement="top" arrow>
+            {isInReport === false ? 
+                <Tooltip 
+                    title="Add to PDF report"
+                    placement="top"
+                    TransitionProps={{ timeout: 500 }}
+                    arrow
+                >
                     <IconButton 
                         aria-label="Add to PDF report"
                         size="small"
-                        onClick={() => addedToReport(articleId)}
+                        onClick={() => handleAddArticle(articleId, searchTerm)}
                     >
                         <AddCircleOutlineIcon fontSize="inherit" />
                     </IconButton>
                 </Tooltip>
                 :
-                <Tooltip title="Remove from PDF report" placement="top" arrow>
+                <Tooltip title="Remove from PDF report" placement="top" TransitionProps={{ timeout: 500 }} arrow>
                     <IconButton 
                         aria-label="Remove from PDF report"
                         size="small"
-                        onClick={() => removedFromReport(articleId)}
+                        onClick={() => handleRemoveArticle(articleId)}
                     >
                         <RemoveCircleOutlineIcon fontSize="inherit" />
                     </IconButton>

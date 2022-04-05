@@ -40,7 +40,7 @@ export default function SearchResults({}) {
 				<Typography color="secondary">{totalResults} results found.</Typography>
 				<Stack spacing={6} sx={{ pt: 4 }}>
 					{actResults.map((result, index) => (
-						<ResultItem item={result} key={index} /> ))}
+						<ResultItem item={result} key={index} searchTerm={searchParams.get("q")} /> ))}
 				</Stack>
 				<Box my={2} display="flex" justifyContent="center">
 					{totalPages <= 1 ? <div></div>: <Pagination count={totalPages} page={parseInt(searchParams.get("page"))} onChange={handlePageChange} />}
