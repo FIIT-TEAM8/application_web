@@ -14,6 +14,9 @@ export const theme = createTheme({
             light: grey[100],
             dark: grey[900],
         },
+        neutral: {
+            main: "#fff",
+        }
     },
     typography: {
         fontSize: 12,
