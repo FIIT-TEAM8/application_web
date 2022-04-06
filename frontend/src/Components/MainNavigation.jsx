@@ -25,23 +25,26 @@ import HomeLink from "./HomeLink";
 import { useWindowSize } from "../Utils/Screen";
 import SearchIcon from "@mui/icons-material/Search";
 import { Link } from "react-router-dom";
-import { Drawer } from "@mui/material";
+import { Drawer, SwipeableDrawer } from "@mui/material";
 
 // SOURCE (MUI DOCS):
 // https://mui.com/components/drawers/#MiniDrawer.js
 
-export function Topbar({ open, handleDrawerOpen }) {
+export function Topbar({ open, handleDrawerOpen, handleDrawerToggle }) {
+    const { width, height } = useWindowSize();
+    const isMobile = width && width < 768;
+
     return (
-        <AppBar position="fixed" open={open} color="neutral">
+        <AppBar position="fixed" open={!isMobile && open} color="neutral">
             <Toolbar>
                 <IconButton
                     color="inherit"
-                    aria-label="open drawer"
-                    onClick={handleDrawerOpen}
+                    aria-label="toggle drawer"
+                    onClick={handleDrawerToggle}
                     edge="start"
                     sx={{
                         marginRight: 5,
-                        ...(open && { display: "none" }),
+                        ...(!isMobile && open && { display: "none" }),
                     }}>
                     <MenuIcon />
                 </IconButton>
@@ -53,24 +56,37 @@ export function Topbar({ open, handleDrawerOpen }) {
     );
 }
 
-export function Sidebar({ children, open, handleDrawerClose }) {
+export function Sidebar({
+    children,
+    open,
+    handleDrawerClose,
+    handleDrawerOpen,
+    handleDrawerToggle,
+}) {
     const theme = useTheme();
     const { width, height } = useWindowSize();
-    const isMobile = width < 768;
-
+    const isMobile = width && width < 768;
 
     let DrawerComponent = CustomDrawer;
-    let drawerVariant =  "permanent";
-    let onClickAway = () => {}
+    let drawerVariant = "permanent";
+    let onClickAway = () => {};
     if (isMobile) {
-        DrawerComponent = Drawer
-        drawerVariant = "temporary"
-        onClickAway = handleDrawerClose
-    } 
-    
+        DrawerComponent = SwipeableDrawer;
+        drawerVariant = "temporary";
+        onClickAway = handleDrawerClose;
+    }
 
     return (
-        <DrawerComponent variant={drawerVariant} open={open} onClose={onClickAway}>
+        <DrawerComponent
+            variant={drawerVariant}
+            open={open}
+            onOpen={handleDrawerOpen}
+            onClose={onClickAway}
+            hysterisis={0.25}
+            swipeAreaWidth={40}
+            ModalProps={{
+                keepMounted: true,
+            }}>
             <DrawerHeader>
                 <HomeLink variant="h4" />
 
@@ -78,7 +94,7 @@ export function Sidebar({ children, open, handleDrawerClose }) {
                     {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
                 </IconButton>
             </DrawerHeader>
-            <Divider/>
+            <Divider />
             {children}
         </DrawerComponent>
     );
@@ -87,14 +103,14 @@ export function Sidebar({ children, open, handleDrawerClose }) {
 export function SidebarItems({ open }) {
     return (
         <List>
-            <SidebarItem open={open} text="Search" icon={<SearchIcon />} href="/search"/>
+            <SidebarItem open={open} text="Search" icon={<SearchIcon />} href="/search" />
         </List>
     );
 }
 
 export function SidebarItem({ open, text, icon, href = "/" }) {
     return (
-        <Link to={href} style={{textDecoration: "none"}}>
+        <Link to={href} style={{ textDecoration: "none" }}>
             <ListItemButton
                 color="primary"
                 sx={{
@@ -123,10 +139,10 @@ export default function MainNavigation() {
     const isMobile = width < 768;
 
     useEffect(() => {
-        if (height && ! isMobile) {
-            setIsOpen(true)
+        if (height && !isMobile) {
+            setIsOpen(true);
         }
-    }, [width])
+    }, [width]);
 
     const handleDrawerOpen = () => {
         setIsOpen(true);
@@ -136,10 +152,22 @@ export default function MainNavigation() {
         setIsOpen(false);
     };
 
+    const handleDrawerToggle = () => {
+        setIsOpen(!isOpen);
+    };
+
     return (
         <>
-            <Topbar open={isOpen} handleDrawerOpen={handleDrawerOpen} />
-            <Sidebar open={isOpen} handleDrawerClose={handleDrawerClose}>
+            <Topbar
+                open={isOpen}
+                handleDrawerOpen={handleDrawerOpen}
+                handleDrawerToggle={handleDrawerToggle}
+            />
+            <Sidebar
+                open={isOpen}
+                handleDrawerClose={handleDrawerClose}
+                handleDrawerOpen={handleDrawerOpen}
+                handleDrawerToggle={handleDrawerToggle}>
                 <SidebarItems open={isOpen} />
             </Sidebar>
         </>
