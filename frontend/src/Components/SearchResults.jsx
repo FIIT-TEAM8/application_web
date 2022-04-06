@@ -12,9 +12,18 @@ export default function SearchResults({}) {
 	const [totalPages, setTotalPages] = useState(0);
 	const [totalResults, setTotalResults] = useState(0);
 	const [isLoaded, setIsLoaded] = useState(false);
+	const [lastSearched, setLastSearched] = useState('');
 
 
 	useEffect(() => {
+		setIsLoaded(false);
+
+		let q = searchParams.get('q');
+		if (q != lastSearched) {
+			setTotalResults(0);
+			setLastSearched(q);
+		}
+
 		apiCall(`/api/data/search/?q=${searchParams.get("q")}&page=${searchParams.get("page")}`, "GET").then((result) => {
 			if (result.ok) {
 				setActResults(result.data.results);
@@ -30,14 +39,15 @@ export default function SearchResults({}) {
 		searchParams.delete("page");
 		searchParams.append("page", value);
 		setSearchParams(searchParams);
-		window.scrollTo(0, 0);
 	};
+
+	// TODO - vypisy pri "results found"
 
 
 	if (isLoaded) {
 		return (
 			<Stack sx={{ pt: 2 }}>
-				<Typography color="secondary">{totalResults} results found.</Typography>
+				{totalResults == 1 ? <Typography color="secondary">{totalResults} result found.</Typography> : <Typography color="secondary">{totalResults} results found.</Typography>}
 				<Stack spacing={6} sx={{ pt: 4 }}>
 					{actResults.map((result, index) => (
 						<ResultItem item={result} key={index} /> ))}
@@ -49,10 +59,12 @@ export default function SearchResults({}) {
 		);
 	} else {
 		return (
-			<Stack spacing={1} sx={{ pt: 2 }} alignItems="center" direction="row" >
-				<CircularProgress size={10} color="secondary" />
-				<Typography color="secondary">Loading results.</Typography>
-			</Stack>
+			<div>
+				{totalResults == 0 ? <div style={{paddingTop: "2"}}></div> : <Typography pt={2} color="secondary">{totalResults} results found.</Typography>}
+				<Stack spacing={1} sx={{ pt: 2 }} alignItems="center">
+					<CircularProgress size={50} thickness={2} color="secondary" />
+				</Stack>
+			</div>
 		);
 	}
 }
