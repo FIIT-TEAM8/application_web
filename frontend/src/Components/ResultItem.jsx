@@ -61,5 +61,5 @@ export default function ResultItem ({item, index}){
                 </Grid>
             : <></>}
         </Grid>
-        );
+    );
 }

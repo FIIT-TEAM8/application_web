@@ -42,7 +42,6 @@ export default function UserProvider({children}) {
     
     // TODO: after user login or sign up load his in progress report
     // make alerts for adding article
-    // make page for pdf report
     const addArticleReport = (article) => {
         // add article to array of all articles in PDF report
         setArticlesInReport((prevState) => {

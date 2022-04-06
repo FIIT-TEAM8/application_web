@@ -2,12 +2,14 @@ import { Stack, Button, Typography } from "@mui/material";
 import { useState } from "react";
 import Login from "../Components/Login";
 import { useUser } from "../Utils/UserContext";
+import { useNavigate } from "react-router-dom";
 
 
 export default function MainBar({}) {
 
     const [isOpenLogin, setIsOpenLogin] = useState(false);
     const { user, logout } = useUser();
+    const navigate = useNavigate();
 
 
     const onLoginOpen = () => {
@@ -37,6 +39,9 @@ export default function MainBar({}) {
                 <Typography>
                     {user.name ? user.name : ""}
                 </Typography>
+                <Button color="primary" variant="outlined" onClick={() => navigate('/pdf_report')}>
+                    PDF REPORT
+                </Button>
                 {user.name ? <Button color="primary" variant="outlined" onClick={onLogout}>Log out</Button> : <Button color="primary" variant="outlined" onClick={onLoginOpen}>Log in</Button>}
             </Stack>
 

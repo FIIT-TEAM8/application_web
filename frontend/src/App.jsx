@@ -6,6 +6,7 @@ import TitleSearch from "./Components/TitleSearch";
 import MainBar from "./Components/MainBar";
 import Login from "./Components/Login";
 import UserProvider from "./Components/UserProvider";
+import ReportPDF from "./Components/ReportPDF";
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
 						</Route>
 						<Route path="login" element={<Login open={true} />} />
 						<Route path="example" element={<div>This is an example</div>} />
+						<Route path="pdf_report" element={<ReportPDF />} />
 					</Routes>
 				</ThemeProvider>
 			</UserProvider>
