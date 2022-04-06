@@ -15,17 +15,22 @@ import List from "@mui/material/List";
 import { styled, useTheme } from "@mui/material/styles";
 import MainBar from "./MainBar";
 import {
-    CustomDrawer,
+    DesktopDrawer,
     AppBar,
     DrawerHeader,
     closedMixin,
     openedMixin,
+    MobileDrawer,
+    drawerWidth,
 } from "../Style/NavStyledComponents";
 import HomeLink from "./HomeLink";
 import { useWindowSize } from "../Utils/Screen";
 import SearchIcon from "@mui/icons-material/Search";
 import { Link } from "react-router-dom";
 import { Drawer, SwipeableDrawer } from "@mui/material";
+import HomeIcon from '@mui/icons-material/Home';
+import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
+import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 
 // SOURCE (MUI DOCS):
 // https://mui.com/components/drawers/#MiniDrawer.js
@@ -67,7 +72,7 @@ export function Sidebar({
     const { width, height } = useWindowSize();
     const isMobile = width && width < 768;
 
-    let DrawerComponent = CustomDrawer;
+    let DrawerComponent = DesktopDrawer;
     let drawerVariant = "permanent";
     let onClickAway = () => {};
     if (isMobile) {
@@ -87,10 +92,10 @@ export function Sidebar({
             ModalProps={{
                 keepMounted: true,
             }}>
-            <DrawerHeader>
+            <DrawerHeader style={{minWidth: `${drawerWidth}px`}}>
                 <HomeLink variant="h4" />
 
-                <IconButton onClick={handleDrawerClose} style={{ marginLeft: "auto" }}>
+                <IconButton onClick={handleDrawerClose} style={{ marginLeft: "auto"}}>
                     {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
                 </IconButton>
             </DrawerHeader>
@@ -103,7 +108,8 @@ export function Sidebar({
 export function SidebarItems({ open }) {
     return (
         <List>
-            <SidebarItem open={open} text="Search" icon={<SearchIcon />} href="/search" />
+            <SidebarItem open={open} text="Home" icon={<HomeIcon />} href="/search" />
+            <SidebarItem open={open} text="Archive" icon={<HistoryEduIcon />} href="/archive" />
         </List>
     );
 }

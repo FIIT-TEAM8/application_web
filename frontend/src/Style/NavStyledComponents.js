@@ -1,10 +1,10 @@
 import { styled, useTheme } from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
-const drawerWidth = 240;
-
 // SOURCE (MUI DOCS):
 // https://mui.com/components/drawers/#MiniDrawer.js
+
+export const drawerWidth = 240;
 
 export const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -54,7 +54,7 @@ export const AppBar = styled(MuiAppBar, {
     }),
 }));
 
-export const CustomDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== "open" })(
+export const DesktopDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== "open" })(
     ({ theme, open }) => ({
         width: drawerWidth,
         flexShrink: 0,
