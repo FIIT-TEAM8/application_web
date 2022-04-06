@@ -25,7 +25,7 @@ export default function ReportPDF() {
             <Grid item xs={12}>
                 <Stack spacing={6} sx={{ pt: 4}}>
                     {articlesInReport.map((article, index) => 
-                    <Grid container index={index}>
+                    <Grid container key={index}>
                         <Grid item xs={11.5} md={11.6} lg={11.7}>
                             <Stack spacing={1}>
                                 <Typography noWrap variant="h6" color="secondary">

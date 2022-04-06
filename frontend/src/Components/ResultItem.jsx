@@ -1,4 +1,4 @@
-import { Box, Divider, Typography, Link, Stack, Alert, AlertTitle, Grid } from "@mui/material";
+import { Box, Divider, Typography, Link, Stack, Grid, } from "@mui/material";
 import ButtonPDF from "./ButtonPDF";
 import { useUser } from "../Utils/UserContext";
 
@@ -7,12 +7,6 @@ export default function ResultItem ({item, index}){
 
     return (
         <Grid container justifyContent="space-between" alignItems="flex-start">
-            {/* <Grid item xs={12}>
-                <Alert severity="success"> 
-                    <AlertTitle>Success</AlertTitle>
-                    Article was added to PDF report!
-                </Alert>
-            </Grid> */}
             <Grid item xs={user.name ? 11.5 : 12} md={user.name ? 11.6 : 12} lg={user.name ? 11.7 : 12}>
                 <Stack spacing={1}>
                     <Stack
