@@ -36,6 +36,7 @@ export default function SearchResults() {
 
 
 	const handlePageChange = (event, value) => {
+		window.scroll({top: 0, left: 0, behavior: 'smooth' });
 		searchParams.delete("page");
 		searchParams.append("page", value);
 		setSearchParams(searchParams);
@@ -51,7 +52,7 @@ export default function SearchResults() {
 						<ResultItem item={result} key={index} /> ))}
 				</Stack>
 				<Box my={2} display="flex" justifyContent="center">
-					{totalPages <= 1 ? <div></div>: <Pagination count={totalPages} page={parseInt(searchParams.get("page"))} onChange={handlePageChange} />}
+					{totalPages <= 1 ? <></>: <Pagination count={totalPages} page={parseInt(searchParams.get("page"))} onChange={handlePageChange} />}
 				</Box>
 			</Stack>
 		);

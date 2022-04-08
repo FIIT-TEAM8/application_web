@@ -1,4 +1,4 @@
-import { Button, Stack, Grid, Typography, FormControl, InputLabel, Select, MenuItem, Item, ToggleButtonGroup } from "@mui/material";
+import { Button, Grid, Typography, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useState } from "react";
 import { useSearchParams, createSearchParams } from "react-router-dom";
@@ -48,9 +48,10 @@ export default function AdvancedSearch({onHide}) {
 	const onApply = () => {
 		let areSelectedRegions = selectedRegions.length;
 		let areSelectedKeywords = selectedKeywords.length;
+		var filterParams = 'undefined';
 
 		if (areSelectedRegions && areSelectedKeywords) {
-			var filterParams = createSearchParams({
+			filterParams = createSearchParams({
 				q: searchParams.get("q"),
 				page: searchParams.get("page"),
 				from: selectedYearFrom + '-01-01',
@@ -60,7 +61,7 @@ export default function AdvancedSearch({onHide}) {
 			});
 		} else {
 			if (!areSelectedRegions && areSelectedKeywords) {
-				var filterParams = createSearchParams({
+				filterParams = createSearchParams({
 					q: searchParams.get("q"),
 					page: searchParams.get("page"),
 					from: selectedYearFrom + '-01-01',
@@ -68,7 +69,7 @@ export default function AdvancedSearch({onHide}) {
 					keywords: '[' + selectedKeywords.join() + ']',
 				});
 			} else if (areSelectedRegions && !areSelectedKeywords) {
-				var filterParams = createSearchParams({
+				filterParams = createSearchParams({
 					q: searchParams.get("q"),
 					page: searchParams.get("page"),
 					from: selectedYearFrom + '-01-01',
@@ -76,7 +77,7 @@ export default function AdvancedSearch({onHide}) {
 					regions: '[' + selectedRegions.join(',') + ']',
 				});
 			} else {
-				var filterParams = createSearchParams({
+				filterParams = createSearchParams({
 					q: searchParams.get("q"),
 					page: searchParams.get("page"),
 					from: selectedYearFrom + '-01-01',

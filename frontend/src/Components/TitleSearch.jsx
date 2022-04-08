@@ -12,7 +12,7 @@ export default function TitleSearch() {
     const width = useWindowSize();
     const shouldCollapse = width < 992
 
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [searchTerm, setSearchTerm] = useState("");
     const [showingResults, setShowingResults] = useState(false);
     const [advancedSearchSelected, setAdvancedSearchSelected] = useState(false);
@@ -67,7 +67,12 @@ export default function TitleSearch() {
     const onSubmit = (event) => {
         event.preventDefault();
         setShowingResults(true);
-        navigate(`results?q=${searchTerm}&page=${1}`);
+        searchParams.delete("q");
+		searchParams.append("q", searchTerm);
+        searchParams.delete("page");
+		searchParams.append("page", 1);
+        setSearchParams(searchParams);
+        navigate(`results?${searchParams.toString()}`);
     };
 
 
@@ -112,7 +117,7 @@ export default function TitleSearch() {
                 </Button>
             </Stack>}
 
-            <Outlet/>
+            <Outlet />
         </div>
     )
 }
