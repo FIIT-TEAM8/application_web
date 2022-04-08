@@ -10,19 +10,13 @@ export const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ originTheme 
 	},
 	'& .MuiToggleButtonGroup-grouped': {
 		'&:not(:first-of-type)': {
-			borderTopRightRadius: '5px',
-			borderBottomRightRadius: '5px',
-			borderTopLeftRadius: '5px',
-			borderBottomLeftRadius: '5px',
+			borderRadius: '5px',
 			border: '1px solid #e0e0e0',
 			marginLeft: '16px',
 			marginTop: '16px',
 		},
 		'&:not(:last-of-type)': {
-			borderTopRightRadius: '5px',
-			borderBottomRightRadius: '5px',
-			borderTopLeftRadius: '5px',
-			borderBottomLeftRadius: '5px',
+			borderRadius: '5px',
 			border: '1px solid #e0e0e0',
 			marginLeft: '16px',
 			marginTop: '16px',
@@ -33,11 +27,12 @@ export const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ originTheme 
 			border: '1px solid #e0e0e0',
 			backgroundColor: theme.palette.primary.light,
 			'&:hover': {
-				backgroundColor: theme.palette.secondary.light,
-			}
+				backgroundColor: theme.palette.primary.mediumLight,
+				'@media (hover: none)': {
+					backgroundColor: theme.palette.primary.light,
+				},
+			},
 		},
-
-	
 	},
 }));
 
@@ -48,10 +43,12 @@ export const StyledToggleButton = styled(ToggleButton)(({originTheme}) => ({
             color: theme.palette.primary.main,
             backgroundColor: theme.palette.primary.light,
 			'&:hover': {
-				backgroundColor: theme.palette.secondary.light,
+				backgroundColor: theme.palette.primary.mediumLight,
+				'@media (hover: none)': {
+					backgroundColor: theme.palette.primary.light,
+				},
 			},
+			
         },
-		
-		
     },
 }));

@@ -96,7 +96,7 @@ export default function AdvancedSearch({onHide}) {
 			sx={{ pt: 2 }}
 		>
 			<Grid item>
-				<Typography color="primary">Year of publication</Typography>
+				<Typography color="secondary">Year of publication</Typography>
 			</Grid>
 			
 			
@@ -141,7 +141,7 @@ export default function AdvancedSearch({onHide}) {
 			</Grid>
 
 			<Grid item>
-				<Typography color="primary">Region</Typography>
+				<Typography color="secondary">Region</Typography>
 			</Grid>
 
 			<StyledToggleButtonGroup
@@ -161,7 +161,7 @@ export default function AdvancedSearch({onHide}) {
 			</StyledToggleButtonGroup>
 			
 			<Grid item>
-				<Typography color="primary">Included keywords</Typography>
+				<Typography color="secondary">Included keywords</Typography>
 			</Grid>
 			
 			<StyledToggleButtonGroup
