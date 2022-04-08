@@ -46,47 +46,22 @@ export default function AdvancedSearch({onHide}) {
 
 
 	const onApply = () => {
-		let areSelectedRegions = selectedRegions.length;
-		let areSelectedKeywords = selectedKeywords.length;
-		var filterParams = 'undefined';
+		searchParams.delete("from");
+		searchParams.append("from", selectedYearFrom + '-01-01');
+		searchParams.delete("to");
+		searchParams.append("to", selectedYearTo + '-31-12');
+		searchParams.delete("regions");
+		searchParams.delete("keywords");
 
-		if (areSelectedRegions && areSelectedKeywords) {
-			filterParams = createSearchParams({
-				q: searchParams.get("q"),
-				page: searchParams.get("page"),
-				from: selectedYearFrom + '-01-01',
-				to: selectedYearTo + '-31-12',
-				regions: '[' + selectedRegions.join(',') + ']',
-				keywords: '[' + selectedKeywords.join() + ']',
-			});
-		} else {
-			if (!areSelectedRegions && areSelectedKeywords) {
-				filterParams = createSearchParams({
-					q: searchParams.get("q"),
-					page: searchParams.get("page"),
-					from: selectedYearFrom + '-01-01',
-					to: selectedYearTo + '-31-12',
-					keywords: '[' + selectedKeywords.join() + ']',
-				});
-			} else if (areSelectedRegions && !areSelectedKeywords) {
-				filterParams = createSearchParams({
-					q: searchParams.get("q"),
-					page: searchParams.get("page"),
-					from: selectedYearFrom + '-01-01',
-					to: selectedYearTo + '-31-12',
-					regions: '[' + selectedRegions.join(',') + ']',
-				});
-			} else {
-				filterParams = createSearchParams({
-					q: searchParams.get("q"),
-					page: searchParams.get("page"),
-					from: selectedYearFrom + '-01-01',
-					to: selectedYearTo + '-31-12',
-				});
-			}
+		if (selectedRegions.length) {
+			searchParams.append("regions", '[' + selectedRegions.join(',') + ']');
 		}
 
-		setSearchParams(filterParams);
+		if (selectedKeywords.length) {
+			searchParams.append("keywords", '[' + selectedKeywords.join(',') + ']');
+		}
+
+		setSearchParams(searchParams);
 		onHide();
 	}
 
