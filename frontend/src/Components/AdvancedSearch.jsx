@@ -1,13 +1,14 @@
 import { Button, Grid, Typography, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { useState } from "react";
-import { useSearchParams, createSearchParams } from "react-router-dom";
+import ClearIcon from '@mui/icons-material/Clear';
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { YEARS, REGIONS, KEYWORDS } from "../Utils/AdvancedSearchItems";
 import { StyledToggleButton, StyledToggleButtonGroup } from "../Style/StyledToggleButton";
 
 
 
-export default function AdvancedSearch({onHide}) {
+export default function AdvancedSearch({parentOnHide, parentOnApply, parentFilterClick}) {
 
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [allYearsTo, setAllYearsTo] = useState(YEARS);
@@ -15,6 +16,27 @@ export default function AdvancedSearch({onHide}) {
 	const [selectedKeywords, setSelectedKeywords] = useState([]);
 	const [selectedYearFrom, setSelectedYearFrom] = useState(YEARS[0]);
 	const [selectedYearTo, setSelectedYearTo] = useState(YEARS[YEARS.length - 1]);
+	const [appliedYearFrom, setAppliedYearFrom] = useState(false);
+	const [appliedYearTo, setAppliedYearTo] = useState(false);
+
+
+	const getNoOfSelectedFiltes = () => {
+		var sum = 0;
+		var appliedRegions = selectedRegions.length;
+		var appliedKeywords = selectedKeywords.length;
+
+		if (appliedYearFrom) {
+			sum += 1;
+		}
+		if (appliedYearTo) {
+			sum += 1;
+		}
+		
+		sum += appliedRegions;
+		sum += appliedKeywords;
+
+		return sum;
+	}
 	
 
   	const handleChangeYearFrom = (e) => {
@@ -30,28 +52,54 @@ export default function AdvancedSearch({onHide}) {
 
 	const handleRegionClick = (e, newRegion) => {
 		setSelectedRegions(newRegion);
+		parentFilterClick(getNoOfSelectedFiltes());
 	}
 
 
 	const handleKeywordClick = (e, newKeyword) => {
 		setSelectedKeywords(newKeyword);
+		parentFilterClick(getNoOfSelectedFiltes());
+	}
+
+
+	const onHide = () => {
+		parentOnHide();
 	}
 
 	
 	const onCancel = () => {
+		setSelectedYearFrom(YEARS[0]);
+		setSelectedYearTo(YEARS[YEARS.length - 1]);
 		setSelectedRegions([]);
 		setSelectedKeywords([]);
-		onHide();
+		parentFilterClick(0);
+		parentOnHide();
+	}
+
+
+	const onClear = () => {
+		//window.scroll({top: 0, left: 0, behavior: 'smooth' });
+		setSelectedYearFrom(YEARS[0]);
+		setSelectedYearTo(YEARS[YEARS.length - 1]);
+		setSelectedRegions([]);
+		setSelectedKeywords([]);
+		parentFilterClick(0);
 	}
 
 
 	const onApply = () => {
 		searchParams.delete("from");
-		searchParams.append("from", selectedYearFrom + '-01-01');
 		searchParams.delete("to");
-		searchParams.append("to", selectedYearTo + '-31-12');
 		searchParams.delete("regions");
 		searchParams.delete("keywords");
+
+		if (appliedYearFrom) {
+			searchParams.append("from", selectedYearFrom + '-01-01');
+		}
+
+		if (appliedYearFrom) {
+			searchParams.append("to", selectedYearTo + '-31-12');
+		}
 
 		if (selectedRegions.length) {
 			searchParams.append("regions", '[' + selectedRegions.join(',') + ']');
@@ -62,8 +110,31 @@ export default function AdvancedSearch({onHide}) {
 		}
 
 		setSearchParams(searchParams);
-		onHide();
+		parentOnApply();
 	}
+
+
+	useEffect(() => {
+		if (selectedYearFrom !== YEARS[0]) {
+			setAppliedYearFrom(true);
+		} else {
+			setAppliedYearFrom(false);
+		}
+	}, [selectedYearFrom]);
+
+
+	useEffect(() => {
+		if (selectedYearTo !== YEARS[YEARS.length - 1]) {
+			setAppliedYearTo(true);
+		} else {
+			setAppliedYearTo(false);
+		}
+	}, [selectedYearTo]);
+
+
+	useEffect(() => {
+		parentFilterClick(getNoOfSelectedFiltes());
+	}, [appliedYearFrom, appliedYearTo, selectedKeywords, selectedRegions]);
 
  
 	return (
@@ -72,7 +143,7 @@ export default function AdvancedSearch({onHide}) {
 			sx={{ pt: 2 }}
 		>
 			<Grid item>
-				<Typography color="secondary">Year of publication</Typography>
+				{appliedYearFrom | appliedYearTo ? <Typography color="primary">Year of publication</Typography> : <Typography color="secondary">Year of publication</Typography>}
 			</Grid>
 			
 			
@@ -117,7 +188,7 @@ export default function AdvancedSearch({onHide}) {
 			</Grid>
 
 			<Grid item>
-				<Typography color="secondary">Region</Typography>
+				{selectedRegions.length ? <Typography color="primary">Region</Typography> : <Typography color="secondary">Region</Typography>}
 			</Grid>
 
 			<StyledToggleButtonGroup
@@ -137,7 +208,7 @@ export default function AdvancedSearch({onHide}) {
 			</StyledToggleButtonGroup>
 			
 			<Grid item>
-				<Typography color="secondary">Included keywords</Typography>
+				{selectedKeywords.length ? <Typography color="primary">Included keywords</Typography> : <Typography color="secondary">Included keywords</Typography>}
 			</Grid>
 			
 			<StyledToggleButtonGroup
@@ -161,7 +232,8 @@ export default function AdvancedSearch({onHide}) {
 				spacing={1}
 			>
 				<Grid item><Button color="secondary" variant="text" size="small" style={{textDecoration: "underline"}} onClick={onHide}><KeyboardArrowUpIcon />Hide</Button></Grid>
-				<Grid item><Button size="small" variant="contained" onClick={onApply}>Apply</Button></Grid>
+				<Grid item><Button color="secondary" variant="text" size="small" style={{textDecoration: "underline"}} onClick={onClear}><ClearIcon />Clear</Button></Grid>
+				<Grid item><Button size="small" variant="contained" onClick={onApply}>Apply & Search</Button></Grid>
 				<Grid item><Button color="secondary" variant="contained" size="small" onClick={onCancel}>Cancel</Button></Grid>
 			</Grid>
 		</Grid>

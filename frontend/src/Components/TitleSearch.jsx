@@ -1,4 +1,4 @@
-import { Collapse, IconButton, TextField, Typography, InputAdornment, Stack, Button } from "@mui/material";
+import { Collapse, IconButton, TextField, Typography, InputAdornment, Stack, Button, Box } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate, useSearchParams, Link } from "react-router-dom";
@@ -16,6 +16,8 @@ export default function TitleSearch() {
     const [searchTerm, setSearchTerm] = useState("");
     const [showingResults, setShowingResults] = useState(false);
     const [advancedSearchSelected, setAdvancedSearchSelected] = useState(false);
+    const [noOfSelectedAdvFilters, setNoOfSelectedAdvFilters] = useState(0);
+    const [appliedAdvancedSearch, setAppliedAdvancedSearch] = useState(false);
     
     let searchDivStyle = {
         margin: "auto", 
@@ -44,13 +46,26 @@ export default function TitleSearch() {
 
 
     const onAdvancedSearchClick = () => {
-        setAdvancedSearchSelected(!advancedSearchSelected);
+        setAdvancedSearchSelected(true);
     };
 
 
-    const advancedSearchHide = () => {
-        setAdvancedSearchSelected(!advancedSearchSelected);
+    const onAdvancedSearchHide = () => {
+        setAdvancedSearchSelected(false);
+        //setNoOfSelectedAdvFilters(noOfFiltes);
         window.scroll({top: 0, left: 0, behavior: 'smooth' });
+    }
+
+
+    const onAdvancedSearchApply = () => {
+        setAppliedAdvancedSearch(true);
+        onAdvancedSearchHide();
+    }
+
+
+    const onAdvancedSearchFilterClick = (noOfFiltes) => {
+        setAppliedAdvancedSearch(false);
+        setNoOfSelectedAdvFilters(noOfFiltes);
     }
 
 
@@ -65,6 +80,8 @@ export default function TitleSearch() {
     
 
     const onSubmit = (event) => {
+        setAppliedAdvancedSearch(false);
+        setAdvancedSearchSelected(false);
         event.preventDefault();
         setShowingResults(true);
         searchParams.delete("q");
@@ -79,7 +96,7 @@ export default function TitleSearch() {
     return (
         <div style={searchDivStyle}>
             <form onSubmit={onSubmit}>
-                <Link to="/search" style={{ textDecoration: 'none' }} >
+                <Link to="/search" onClick={onAdvancedSearchHide} style={{ textDecoration: 'none' }} >
                     <Typography variant="h1" color="primary">ams</Typography>
                 </Link>
                 <TextField
@@ -99,23 +116,52 @@ export default function TitleSearch() {
                     />
             </form>
             
-            <Collapse timeout={1200} in={advancedSearchSelected}><AdvancedSearch onHide={advancedSearchHide}></AdvancedSearch></Collapse>
+            <Collapse timeout={1200} in={advancedSearchSelected}>
+                <AdvancedSearch parentOnHide={onAdvancedSearchHide} parentOnApply={onAdvancedSearchApply} parentFilterClick={onAdvancedSearchFilterClick} />
+            </Collapse>
             
             {(!advancedSearchSelected) && 
-            <Stack 
-                alignItems={"flex-end"}
-                justifyContent={"flex-end"}
-                >
-                <Button 
-                    color="secondary" 
-                    variant="text" 
-                    size="small" 
-                    style={{textDecoration: "underline"}}
-                    onClick={onAdvancedSearchClick}
+                <Stack 
+                    alignItems={"center"}
+                    justifyContent={"flex-end"}
+                    direction={"row"}
+                    spacing={2}
                     >
-                    Advanced search
-                </Button>
-            </Stack>}
+                    {noOfSelectedAdvFilters ? 
+                        appliedAdvancedSearch ? 
+                            <Stack
+                                direction={"row"}
+                                spacing={0.3}
+                            >
+                                <Box sx={{ textAlign: 'center', borderRadius: "50%", width: "0.9rem", height: "0.9rem", backgroundColor: 'primary.main' }}>
+                                    <Typography fontSize={11}  color="white">{noOfSelectedAdvFilters}</Typography>
+                                </Box>
+                                <Typography color="primary" fontSize={11}>applied filters</Typography>
+                            </Stack> 
+                            : 
+                            <Stack
+                                direction={"row"}
+                                spacing={0.3}
+                            >
+                                <Box sx={{ textAlign: 'center', borderRadius: "50%", width: "0.9rem", height: "0.9rem", backgroundColor: 'error.main' }}>
+                                    <Typography fontSize={11}  color="white">{noOfSelectedAdvFilters}</Typography>
+                                </Box>
+                                <Typography color="error" fontSize={11}>filters waiting to be applied</Typography>
+                            </Stack> 
+                        : 
+                        <></> 
+                    }
+                    <Button 
+                        color="secondary" 
+                        variant="text" 
+                        size="small" 
+                        style={{textDecoration: "underline"}}
+                        onClick={onAdvancedSearchClick}
+                        >
+                        Advanced search
+                    </Button>
+                </Stack>
+            }
 
             <Outlet />
         </div>
