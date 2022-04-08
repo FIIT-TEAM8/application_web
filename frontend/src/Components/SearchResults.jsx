@@ -24,7 +24,7 @@ export default function SearchResults() {
 			setLastSearched(q);
 		}
 
-		apiCall(`/api/data/search/?q=${searchParams.get("q")}&page=${searchParams.get("page")}`, "GET").then((result) => {
+		apiCall(`/api/data/search/?${searchParams.toString()}`, "GET").then((result) => {
 			if (result.ok) {
 				setActResults(result.data.results);
 				setTotalPages(result.data.total_pages);

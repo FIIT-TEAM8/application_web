@@ -1,7 +1,7 @@
 import { Button, Stack, Grid, Typography, FormControl, InputLabel, Select, MenuItem, Item, ToggleButtonGroup } from "@mui/material";
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, createSearchParams } from "react-router-dom";
 import { YEARS, REGIONS, KEYWORDS } from "../Utils/AdvancedSearchItems";
 import { StyledToggleButton, StyledToggleButtonGroup } from "../Style/StyledToggleButton";
 
@@ -9,6 +9,7 @@ import { StyledToggleButton, StyledToggleButtonGroup } from "../Style/StyledTogg
 
 export default function AdvancedSearch({onHide}) {
 
+	const [searchParams, setSearchParams] = useSearchParams();
 	const [allYearsTo, setAllYearsTo] = useState(YEARS);
 	const [selectedRegions, setSelectedRegions] = useState([]);
 	const [selectedKeywords, setSelectedKeywords] = useState([]);
@@ -45,10 +46,43 @@ export default function AdvancedSearch({onHide}) {
 
 
 	const onApply = () => {
-		console.log(selectedRegions);
-		console.log(selectedKeywords);
-		console.log(selectedYearFrom);
-		console.log(selectedYearTo);
+		if (selectedRegions && selectedKeywords) {
+			var filterParams = createSearchParams({
+				q: searchParams.get("q"),
+				page: searchParams.get("page"),
+				from: selectedYearFrom + '-01-01',
+				to: selectedYearTo + '-31-12',
+				regions: '[' + selectedRegions.join(',') + ']',
+				keywords: '[' + selectedKeywords.join() + ']',
+			});
+		} else {
+			if (!selectedRegions) {
+				var filterParams = createSearchParams({
+					q: searchParams.get("q"),
+					page: searchParams.get("page"),
+					from: selectedYearFrom + '-01-01',
+					to: selectedYearTo + '-31-12',
+					keywords: '[' + selectedKeywords.join() + ']',
+				});
+			} else if (!selectedKeywords) {
+				var filterParams = createSearchParams({
+					q: searchParams.get("q"),
+					page: searchParams.get("page"),
+					from: selectedYearFrom + '-01-01',
+					to: selectedYearTo + '-31-12',
+					regions: '[' + selectedRegions.join(',') + ']',
+				});
+			} else {
+				var filterParams = createSearchParams({
+					q: searchParams.get("q"),
+					page: searchParams.get("page"),
+					from: selectedYearFrom + '-01-01',
+					to: selectedYearTo + '-31-12',
+				});
+			}
+		}
+
+		setSearchParams(filterParams);
 		onHide();
 	}
 
