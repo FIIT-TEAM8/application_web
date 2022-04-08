@@ -46,7 +46,10 @@ export default function AdvancedSearch({onHide}) {
 
 
 	const onApply = () => {
-		if (selectedRegions && selectedKeywords) {
+		let areSelectedRegions = selectedRegions.length;
+		let areSelectedKeywords = selectedKeywords.length;
+
+		if (areSelectedRegions && areSelectedKeywords) {
 			var filterParams = createSearchParams({
 				q: searchParams.get("q"),
 				page: searchParams.get("page"),
@@ -56,7 +59,7 @@ export default function AdvancedSearch({onHide}) {
 				keywords: '[' + selectedKeywords.join() + ']',
 			});
 		} else {
-			if (!selectedRegions) {
+			if (!areSelectedRegions && areSelectedKeywords) {
 				var filterParams = createSearchParams({
 					q: searchParams.get("q"),
 					page: searchParams.get("page"),
@@ -64,7 +67,7 @@ export default function AdvancedSearch({onHide}) {
 					to: selectedYearTo + '-31-12',
 					keywords: '[' + selectedKeywords.join() + ']',
 				});
-			} else if (!selectedKeywords) {
+			} else if (areSelectedRegions && !areSelectedKeywords) {
 				var filterParams = createSearchParams({
 					q: searchParams.get("q"),
 					page: searchParams.get("page"),
