@@ -1,16 +1,14 @@
-import { Button, Stack, Grid, Typography, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Button, Stack, Grid, Typography, FormControl, InputLabel, Select, MenuItem, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { YEARS, REGIONS, KEYWORDS } from "../Utils/AdvancedSearchItems";
-import CustomToggleButton from "../Components/CustomToggleButton";
+import { StyledToggleButton, StyledToggleButtonGroup } from "../Style/StyledToggleButton";
 
 
-export default function AdvancedSearch({show, onHide}) {
 
-	const [allRegions, setAllRegions] = useState(REGIONS);
-	const [allKeywords, setAllKeywords] = useState(KEYWORDS);
-	const [allYearsFrom, setAllYearsFrom] = useState(YEARS); 
+export default function AdvancedSearch({onHide}) {
+
 	const [allYearsTo, setAllYearsTo] = useState(YEARS);
 	const [selectedRegions, setSelectedRegions] = useState([]);
 	const [selectedKeywords, setSelectedKeywords] = useState([]);
@@ -28,42 +26,18 @@ export default function AdvancedSearch({show, onHide}) {
 		setSelectedYearTo(e.target.value);
   	};
 
-	
-	const handleRegionClick = (region, selected) => {
-		if (selected) {
-			setSelectedRegions([...selectedRegions, region]);
-		} else {
-			setSelectedRegions(
-				selectedRegions.filter((selectedRegion) => {
-					return selectedRegion !== region;
-				})
-			);
-		}
+
+	const handleRegionClick = (e, newRegion) => {
+		setSelectedRegions(newRegion);
 	}
 
 
-	const handleKeywordClick = (keyword, selected) => {
-		if (selected) {
-			setSelectedKeywords([...selectedKeywords, keyword]);
-		} else {
-			setSelectedKeywords(
-				selectedKeywords.filter((selectedKeyword) => {
-					return selectedKeyword !== keyword;
-				})
-			);
-		}
+	const handleKeywordClick = (e, newKeyword) => {
+		setSelectedKeywords(newKeyword);
 	}
 
 	
 	const onCancel = () => {
-		// due to rerender toggle elements with init state - not selected
-		setAllYearsFrom(YEARS);
-		setAllYearsTo(YEARS);
-		setAllRegions(REGIONS);
-		setAllKeywords(KEYWORDS);
-
-		setSelectedYearFrom(YEARS[0]);
-		setSelectedYearTo(YEARS[YEARS.length - 1]);
 		setSelectedRegions([]);
 		setSelectedKeywords([]);
 		onHide();
@@ -99,7 +73,7 @@ export default function AdvancedSearch({show, onHide}) {
 						value={selectedYearFrom}
 						onChange={handleChangeYearFrom}
 						>
-						{allYearsFrom.map(year => (
+						{YEARS.map(year => (
 							<MenuItem key={year} value={year}>{year}</MenuItem>
 						))}
 					</Select>
@@ -122,31 +96,27 @@ export default function AdvancedSearch({show, onHide}) {
 				</FormControl>
 			</Stack>
 			<Typography color="primary">Region</Typography>
-			<Grid 
-				container 
-				direction="row"
-				spacing={2}
-				justifyContent="center"
+			
+			<StyledToggleButtonGroup
+				value={selectedRegions}
+				onChange={handleRegionClick}
 				>
-				{allRegions.map((region) => (
-					<Grid item key={region}>
-						<CustomToggleButton buttonValue={region} onSelect={handleRegionClick} />
-					</Grid>
+				{REGIONS.map((region) => (
+					<StyledToggleButton sx={{ whiteSpace: 'nowrap' }} size="small" key={region} value={region}>{region}</StyledToggleButton>	
 				))}
-			</Grid>
+			</StyledToggleButtonGroup>
+
 			<Typography color="primary">Included keywords</Typography>
-			<Grid 
-				container 
-				direction="row"
-				spacing={2}
-				justifyContent="center"
+			
+			<StyledToggleButtonGroup
+				value={selectedKeywords}
+				onChange={handleKeywordClick}
 				>
-				{allKeywords.map((keyword) => (
-					<Grid key={keyword} item>
-						<CustomToggleButton buttonValue={keyword} onSelect={handleKeywordClick} />
-					</Grid>
+				{KEYWORDS.map((keywords) => (
+					<StyledToggleButton sx={{ whiteSpace: 'nowrap' }} size="small" key={keywords} value={keywords}>{keywords}</StyledToggleButton>	
 				))}
-			</Grid>
+			</StyledToggleButtonGroup>
+
 			<Grid
 				container
 				justifyContent="flex-end"

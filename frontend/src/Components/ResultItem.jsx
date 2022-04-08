@@ -9,7 +9,7 @@ export default function ResultItem ({item, index}){
                 direction="row"
                 divider={<Divider sx={{ borderRightWidth: 0.5 }} style={{ background: "#757575" }} orientation="vertical" flexItem />}
                 spacing={2}>
-                <Box sx={{ minWidth: 81 }}>
+                <Box sx={{ minWidth: 'max-content' }}>
                     <Typography noWrap color="secondary">
                         {item.published.slice(5, -13)}
                     </Typography>

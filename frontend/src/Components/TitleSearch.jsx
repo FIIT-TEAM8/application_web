@@ -12,7 +12,7 @@ export default function TitleSearch() {
     const width = useWindowSize();
     const shouldCollapse = width < 992
 
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
     const [searchTerm, setSearchTerm] = useState("");
     const [showingResults, setShowingResults] = useState(false);
     const [advancedSearchSelected, setAdvancedSearchSelected] = useState(false);
