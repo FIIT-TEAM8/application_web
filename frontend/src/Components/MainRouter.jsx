@@ -5,8 +5,11 @@ import TitleSearch from "./TitleSearch";
 import Login from "./Login";
 import Archive from "./Archive";
 import ReportPDF from "./ReportPDF";
+import { useUser } from "../Utils/UserContext";
 
 export default function MainRouter() {
+    const { user } = useUser();
+
     return (
         <Routes>
             <Route path="" element={<Navigate to="search" />} />
@@ -16,7 +19,7 @@ export default function MainRouter() {
             <Route path="archive" element={<Archive />} />
             {/* TODO: ADD PROPER ON CLOSE */}
             <Route path="login" element={<Login isOpen={true}/>} />
-            <Route path="pdf_report" element={<ReportPDF/>} />
+            {user ? <Route path="pdf_report" element={<ReportPDF/>} /> : <Route path="login" element={<Login isOpen={true}/>} /> }
         </Routes>
     );
 }

@@ -14,9 +14,15 @@ export default function UserProvider({ children }) {
         refresh();
     }, []);
 
-    useEffect(async () => {
-        if (user !== undefined) {
-            await apiCall(`/api/pdf_report/${user.id}?status=In Progress`, "GET")
+    const refresh = async () => {
+        const loginRefToken = getCookieToken("__refToken");
+        if (!loginRefToken) {
+            setUser(undefined);
+            return;
+        }
+
+        // use user id from loginRefToken
+        await apiCall(`/api/pdf_report/${loginRefToken.id}?status=In Progress`, "GET")
                 .then((result) => {
                     // TODO: info user, that PDF report wasn't loaded
                     if (result.ok) {
@@ -25,35 +31,6 @@ export default function UserProvider({ children }) {
                         setArticlesInReport(result.articlesInReport);
                     }
                 });
-        }
-    }, [user]);
-
-    // update or create user's 'In Progress' report, when articlesInReport array is updated
-    // useEffect(() => {
-    //     if (reportId !== 0) {
-    //         // update user's in progress report
-    //         updateReportAPI();
-    //     } else if (user && typeof(user.id) === "number") {
-    //         // create new user's 'In progress' report
-    //         apiCall(`/api/pdf_report/create`, "POST", {
-    //             userId: user.id,
-    //             articlesInReport: articlesInReport,
-    //         }).then((result) => {
-    //             // TODO: info user, that PDF wasn't created
-    //             if (result.ok) {
-    //                 setReportId(result.reportId);
-    //                 console.log("PDF successfully created");
-    //             }
-    //         });
-    //     }
-    // }, [articlesInReport]);
-
-    const refresh = async () => {
-        const loginRefToken = getCookieToken("__refToken");
-        if (!loginRefToken) {
-            setUser(undefined);
-            return;
-        }
 
         setUser({
             username: loginRefToken.username,
@@ -62,6 +39,8 @@ export default function UserProvider({ children }) {
 
         await refreshToken().then((ok) => {
             if (!ok) {
+                setArticlesInReport([]);
+                setReportId([]);
                 setUser(undefined);
             }
         });
