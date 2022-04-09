@@ -2,63 +2,81 @@ import { Button, Grid, Typography, FormControl, InputLabel, Select, MenuItem } f
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
 import { YEARS, REGIONS, KEYWORDS } from "../Utils/AdvancedSearchItems";
 import { StyledToggleButton, StyledToggleButtonGroup } from "../Style/StyledToggleButton";
 
 
 
-export default function AdvancedSearch({parentOnHide, parentOnApply, parentFilterClick}) {
+export default function AdvancedSearch({onSelectAdvancedSearchFilter, parentOnHide, parentOnApply, parentOnCancel}) {
 
-	const [searchParams, setSearchParams] = useSearchParams();
-	const [allYearsTo, setAllYearsTo] = useState(YEARS);
-	const [selectedRegions, setSelectedRegions] = useState([]);
-	const [selectedKeywords, setSelectedKeywords] = useState([]);
-	const [selectedYearFrom, setSelectedYearFrom] = useState(YEARS[0]);
-	const [selectedYearTo, setSelectedYearTo] = useState(YEARS[YEARS.length - 1]);
+	const [allYearsFrom, setAllYearsFrom] = useState([]);
+	const [allYearsTo, setAllYearsTo] = useState([]);
+	const [allRegions, setAllRegions] = useState([]);
+	const [allKeywords, setAllKeywords] = useState([]);
+	const [selectedFilters, setSelectedFilters] = useState({'from': '', 'to': '', 'regions': [], 'keywords': []});
 	const [appliedYearFrom, setAppliedYearFrom] = useState(false);
 	const [appliedYearTo, setAppliedYearTo] = useState(false);
 
 
-	const getNoOfSelectedFiltes = () => {
-		var sum = 0;
-		var appliedRegions = selectedRegions.length;
-		var appliedKeywords = selectedKeywords.length;
-
-		if (appliedYearFrom) {
-			sum += 1;
-		}
-		if (appliedYearTo) {
-			sum += 1;
-		}
+	useEffect(() => {
+		// api call get regions and keywords
+		setAllYearsFrom(YEARS);
+		setAllYearsTo(YEARS);
+		setAllRegions(REGIONS);
+		setAllKeywords(KEYWORDS);
 		
-		sum += appliedRegions;
-		sum += appliedKeywords;
+		// define first and last year
+		let copySelectedFilters = selectedFilters;
+		copySelectedFilters['from'] = YEARS[0];
+		copySelectedFilters['to'] = YEARS[YEARS.length - 1];
+		setSelectedFilters(copySelectedFilters);
+	}, []);
 
-		return sum;
-	}
-	
+
+	useEffect(() => {
+		let numOfSelFilters = 0
+
+		// is filter for year range applied?
+		if (selectedFilters['from'] !== allYearsFrom[0]) {
+			numOfSelFilters += 1;
+			setAppliedYearFrom(true);
+		} else {
+			setAppliedYearFrom(false);
+		}
+
+		if (selectedFilters['to'] !== allYearsFrom[allYearsFrom.length - 1]) {
+			numOfSelFilters += 1;
+			setAppliedYearTo(true);
+		} else {
+			setAppliedYearTo(false);
+		}
+
+		numOfSelFilters += selectedFilters['regions'].length + selectedFilters['keywords'].length;
+		
+		// always sent to parent after change of selected filters
+		onSelectAdvancedSearchFilter(numOfSelFilters, selectedFilters, appliedYearFrom, appliedYearTo);
+
+	}, [selectedFilters, onSelectAdvancedSearchFilter, allYearsFrom, allYearsTo]);
+
 
   	const handleChangeYearFrom = (e) => {
-		setAllYearsTo(YEARS.slice(YEARS.indexOf(e.target.value))); // changing based on selected lower limit year range - years from
-		setSelectedYearFrom(e.target.value);
+		setAllYearsTo(allYearsFrom.slice(allYearsFrom.indexOf(e.target.value)));
+		setSelectedFilters({ ...selectedFilters, 'from': e.target.value })
   	};
 
 
 	const handleChangeYearTo = (e) => {
-		setSelectedYearTo(e.target.value);
+		setSelectedFilters({ ...selectedFilters, 'to': e.target.value })
   	};
 
 
-	const handleRegionClick = (e, newRegion) => {
-		setSelectedRegions(newRegion);
-		parentFilterClick(getNoOfSelectedFiltes());
+	const handleRegionClick = (e, allSelectedRegions) => {
+		setSelectedFilters({ ...selectedFilters, 'regions': allSelectedRegions })
 	}
 
 
-	const handleKeywordClick = (e, newKeyword) => {
-		setSelectedKeywords(newKeyword);
-		parentFilterClick(getNoOfSelectedFiltes());
+	const handleKeywordClick = (e, allSelectedKeywords) => {
+		setSelectedFilters({ ...selectedFilters, 'keywords': allSelectedKeywords })
 	}
 
 
@@ -68,73 +86,19 @@ export default function AdvancedSearch({parentOnHide, parentOnApply, parentFilte
 
 	
 	const onCancel = () => {
-		setSelectedYearFrom(YEARS[0]);
-		setSelectedYearTo(YEARS[YEARS.length - 1]);
-		setSelectedRegions([]);
-		setSelectedKeywords([]);
-		parentFilterClick(0);
-		parentOnHide();
+		setSelectedFilters({'from': 2016, 'to': 2022, 'regions': [], 'keywords': []});
+		parentOnCancel();
 	}
 
 
 	const onClear = () => {
-		//window.scroll({top: 0, left: 0, behavior: 'smooth' });
-		setSelectedYearFrom(YEARS[0]);
-		setSelectedYearTo(YEARS[YEARS.length - 1]);
-		setSelectedRegions([]);
-		setSelectedKeywords([]);
-		parentFilterClick(0);
+		setSelectedFilters({'from': 2016, 'to': 2022, 'regions': [], 'keywords': []});
 	}
 
 
 	const onApply = () => {
-		searchParams.delete("from");
-		searchParams.delete("to");
-		searchParams.delete("regions");
-		searchParams.delete("keywords");
-
-		if (appliedYearFrom) {
-			searchParams.append("from", selectedYearFrom + '-01-01');
-		}
-
-		if (appliedYearFrom) {
-			searchParams.append("to", selectedYearTo + '-31-12');
-		}
-
-		if (selectedRegions.length) {
-			searchParams.append("regions", '[' + selectedRegions.join(',') + ']');
-		}
-
-		if (selectedKeywords.length) {
-			searchParams.append("keywords", '[' + selectedKeywords.join(',') + ']');
-		}
-
-		setSearchParams(searchParams);
 		parentOnApply();
 	}
-
-
-	useEffect(() => {
-		if (selectedYearFrom !== YEARS[0]) {
-			setAppliedYearFrom(true);
-		} else {
-			setAppliedYearFrom(false);
-		}
-	}, [selectedYearFrom]);
-
-
-	useEffect(() => {
-		if (selectedYearTo !== YEARS[YEARS.length - 1]) {
-			setAppliedYearTo(true);
-		} else {
-			setAppliedYearTo(false);
-		}
-	}, [selectedYearTo]);
-
-
-	useEffect(() => {
-		parentFilterClick(getNoOfSelectedFiltes());
-	}, [appliedYearFrom, appliedYearTo, selectedKeywords, selectedRegions]);
 
  
 	return (
@@ -143,7 +107,7 @@ export default function AdvancedSearch({parentOnHide, parentOnApply, parentFilte
 			sx={{ pt: 2 }}
 		>
 			<Grid item>
-				{appliedYearFrom | appliedYearTo ? <Typography color="primary">Year of publication</Typography> : <Typography color="secondary">Year of publication</Typography>}
+				{appliedYearFrom || appliedYearTo ? <Typography color="primary">Year of publication</Typography> : <Typography color="secondary">Year of publication</Typography>}
 			</Grid>
 			
 			
@@ -158,10 +122,10 @@ export default function AdvancedSearch({parentOnHide, parentOnApply, parentFilte
 						<InputLabel>From</InputLabel>
 						<Select
 							label="From"
-							value={selectedYearFrom}
+							value={selectedFilters['from']}
 							onChange={handleChangeYearFrom}
 						>
-							{YEARS.map(year => (<MenuItem key={year} value={year}>{year}</MenuItem>))}
+							{allYearsFrom.map(year => (<MenuItem key={year} value={year}>{year}</MenuItem>))}
 						</Select>
 					</FormControl>
 	
@@ -178,7 +142,7 @@ export default function AdvancedSearch({parentOnHide, parentOnApply, parentFilte
 						<InputLabel>To</InputLabel>
 						<Select
 							label="To"
-							value={selectedYearTo}
+							value={selectedFilters['to']}
 							onChange={handleChangeYearTo}
 						>
 							{allYearsTo.map(year => (<MenuItem key={year} value={year}>{year}</MenuItem>))}
@@ -188,14 +152,14 @@ export default function AdvancedSearch({parentOnHide, parentOnApply, parentFilte
 			</Grid>
 
 			<Grid item>
-				{selectedRegions.length ? <Typography color="primary">Region</Typography> : <Typography color="secondary">Region</Typography>}
+				{selectedFilters['regions'].length ? <Typography color="primary">Region</Typography> : <Typography color="secondary">Region</Typography>}
 			</Grid>
 
 			<StyledToggleButtonGroup
-				value={selectedRegions}
+				value={selectedFilters['regions']}
 				onChange={handleRegionClick}
 			>
-				{REGIONS.map((region) => (
+				{allRegions.map((region) => (
 					<StyledToggleButton 
 						key={region}
 						sx={{ whiteSpace: 'nowrap' }} 
@@ -208,14 +172,14 @@ export default function AdvancedSearch({parentOnHide, parentOnApply, parentFilte
 			</StyledToggleButtonGroup>
 			
 			<Grid item>
-				{selectedKeywords.length ? <Typography color="primary">Included keywords</Typography> : <Typography color="secondary">Included keywords</Typography>}
+				{selectedFilters['keywords'].length ? <Typography color="primary">Included keywords</Typography> : <Typography color="secondary">Included keywords</Typography>}
 			</Grid>
 			
 			<StyledToggleButtonGroup
-				value={selectedKeywords}
+				value={selectedFilters['keywords']}
 				onChange={handleKeywordClick}
 			>
-				{KEYWORDS.map((keyword) => (
+				{allKeywords.map((keyword) => (
 					<StyledToggleButton 
 						key={keyword}
 						sx={{ whiteSpace: 'nowrap' }} 

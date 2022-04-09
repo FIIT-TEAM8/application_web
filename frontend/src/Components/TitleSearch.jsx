@@ -1,6 +1,6 @@
-import { Collapse, IconButton, TextField, Typography, InputAdornment, Stack, Button, Box } from "@mui/material";
+import { Collapse, IconButton, TextField, Typography, InputAdornment, Stack, Button, Box, ButtonBase } from "@mui/material";
 import { Search } from "@mui/icons-material";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Outlet, useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useWindowSize } from "../Utils/Screen";
 import AdvancedSearch from "../Components/AdvancedSearch";
@@ -15,10 +15,12 @@ export default function TitleSearch() {
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchTerm, setSearchTerm] = useState("");
     const [showingResults, setShowingResults] = useState(false);
-    const [advancedSearchSelected, setAdvancedSearchSelected] = useState(false);
-    const [noOfSelectedAdvFilters, setNoOfSelectedAdvFilters] = useState(0);
-    const [appliedAdvancedSearch, setAppliedAdvancedSearch] = useState(false);
-    
+    const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false);
+    const [selectedAdvancedSearchFilters, setSelectedAdvancedSearchFilters] = useState(undefined);
+    const [numOfSelectedAdvancedSearchFilters, setNumOfSelectedAdvancedSearchFilters] = useState(0);
+    const [isSelectedAdvSearchYearFrom, setIsSelectedAdvSearchYearFrom] = useState(false);
+    const [isSelectedAdvSearchYearTo, setIsSelectedAdvSearchYearTo] = useState(false);
+
     let searchDivStyle = {
         margin: "auto", 
         padding: shouldCollapse ? "200px 7%" : "200px 20%"
@@ -28,11 +30,6 @@ export default function TitleSearch() {
     if (showingResults) {
         searchDivStyle.padding = shouldCollapse ? "20px 7%" : "20px 20%";
     }
-
-
-    const handleSearchChange = (value) => {
-        setSearchTerm(value);
-    };
 
 
     // during render, check search params and fill appropriate fields/components
@@ -45,30 +42,6 @@ export default function TitleSearch() {
     }, []);
 
 
-    const onAdvancedSearchClick = () => {
-        setAdvancedSearchSelected(true);
-    };
-
-
-    const onAdvancedSearchHide = () => {
-        setAdvancedSearchSelected(false);
-        //setNoOfSelectedAdvFilters(noOfFiltes);
-        window.scroll({top: 0, left: 0, behavior: 'smooth' });
-    }
-
-
-    const onAdvancedSearchApply = () => {
-        setAppliedAdvancedSearch(true);
-        onAdvancedSearchHide();
-    }
-
-
-    const onAdvancedSearchFilterClick = (noOfFiltes) => {
-        setAppliedAdvancedSearch(false);
-        setNoOfSelectedAdvFilters(noOfFiltes);
-    }
-
-
     // check if we should change actual state to main page state
     useEffect(() => {
         const q = searchParams.get("q");
@@ -77,19 +50,79 @@ export default function TitleSearch() {
             setSearchTerm("");
         }
     }, [searchParams]);
+
+
+    const handleSearchChange = (value) => {
+        setSearchTerm(value);
+    };
+
+
+    const onAdvancedSearchHide = () => {
+        setAdvancedSearchOpen(false);
+        window.scroll({top: 0, left: 0, behavior: 'smooth' });
+    }
+
+
+    const onAdvancedSearchApply = () => {
+        onAdvancedSearchHide();
+        submitSearchParams();
+    }
+
+
+    const onAdvancedSearchCancel = () => {
+        onAdvancedSearchHide();
+    }
+
+
+    const onSelectAdvancedSearchFilter = useCallback((numOfSelectedFilters, selectedFilter, isSelectedYearFrom, isSelectedYearTo) => {
+        setNumOfSelectedAdvancedSearchFilters(numOfSelectedFilters);
+        setSelectedAdvancedSearchFilters(selectedFilter);
+        setIsSelectedAdvSearchYearFrom(isSelectedYearFrom);
+        setIsSelectedAdvSearchYearTo(isSelectedYearTo);
+    }, [])
+
+
+    const submitSearchParams = () => {
+        searchParams.delete("q");
+        searchParams.delete("page");
+        searchParams.delete("from");
+		searchParams.delete("to");
+		searchParams.delete("regions");
+		searchParams.delete("keywords");
+
+        searchParams.append("q", searchTerm);
+		searchParams.append("page", 1);
+
+        if (selectedAdvancedSearchFilters) {
+            if (isSelectedAdvSearchYearFrom) {
+                searchParams.append("from", selectedAdvancedSearchFilters['from'] + '-01-01');
+            }
+
+            if (isSelectedAdvSearchYearTo) {
+                searchParams.append("to", selectedAdvancedSearchFilters['to'] + '-31-12');
+            }
+            
+            if (selectedAdvancedSearchFilters['regions'].length) {
+                searchParams.append("regions", '[' + selectedAdvancedSearchFilters['regions'].join(',') + ']');
+            }
+
+            if (selectedAdvancedSearchFilters['keywords'].length) {
+                searchParams.append("keywords", '[' + selectedAdvancedSearchFilters['keywords'].join(',') + ']');
+            }
+            
+        }
+
+        setShowingResults(true);
+        setSearchParams(searchParams);
+        navigate(`results?${searchParams.toString()}`);
+    }
     
 
     const onSubmit = (event) => {
-        setAppliedAdvancedSearch(false);
-        setAdvancedSearchSelected(false);
         event.preventDefault();
-        setShowingResults(true);
-        searchParams.delete("q");
-		searchParams.append("q", searchTerm);
-        searchParams.delete("page");
-		searchParams.append("page", 1);
-        setSearchParams(searchParams);
-        navigate(`results?${searchParams.toString()}`);
+
+        onAdvancedSearchHide();
+        submitSearchParams();
     };
 
 
@@ -116,47 +149,42 @@ export default function TitleSearch() {
                     />
             </form>
             
-            <Collapse timeout={1200} in={advancedSearchSelected}>
-                <AdvancedSearch parentOnHide={onAdvancedSearchHide} parentOnApply={onAdvancedSearchApply} parentFilterClick={onAdvancedSearchFilterClick} />
+            <Collapse timeout={1200} in={advancedSearchOpen}>
+                <AdvancedSearch selectedAdvancedSearchFilters={selectedAdvancedSearchFilters} onSelectAdvancedSearchFilter={onSelectAdvancedSearchFilter} parentOnHide={onAdvancedSearchHide} parentOnApply={onAdvancedSearchApply} parentOnCancel={onAdvancedSearchCancel} />
             </Collapse>
             
-            {(!advancedSearchSelected) && 
+            {(!advancedSearchOpen) && 
                 <Stack 
                     alignItems={"center"}
                     justifyContent={"flex-end"}
                     direction={"row"}
-                    spacing={2}
+                    spacing={1}
                     >
-                    {noOfSelectedAdvFilters ? 
-                        appliedAdvancedSearch ? 
+                    {numOfSelectedAdvancedSearchFilters ? 
+                        <ButtonBase onClick={() => setAdvancedSearchOpen(true)}>
                             <Stack
                                 direction={"row"}
                                 spacing={0.3}
                             >
                                 <Box sx={{ textAlign: 'center', borderRadius: "50%", width: "0.9rem", height: "0.9rem", backgroundColor: 'primary.main' }}>
-                                    <Typography fontSize={11}  color="white">{noOfSelectedAdvFilters}</Typography>
+                                    <Typography fontSize={11}  color="white">{numOfSelectedAdvancedSearchFilters}</Typography>
                                 </Box>
-                                <Typography color="primary" fontSize={11}>applied filters</Typography>
+                                {numOfSelectedAdvancedSearchFilters === 1 ? 
+                                    <Typography color="primary" fontSize={11}>applied filter</Typography>
+                                    : 
+                                    <Typography color="primary" fontSize={11}>applied filters</Typography>
+                                }
                             </Stack> 
-                            : 
-                            <Stack
-                                direction={"row"}
-                                spacing={0.3}
-                            >
-                                <Box sx={{ textAlign: 'center', borderRadius: "50%", width: "0.9rem", height: "0.9rem", backgroundColor: 'error.main' }}>
-                                    <Typography fontSize={11}  color="white">{noOfSelectedAdvFilters}</Typography>
-                                </Box>
-                                <Typography color="error" fontSize={11}>filters waiting to be applied</Typography>
-                            </Stack> 
+                        </ButtonBase>
                         : 
-                        <></> 
+                        <></>
                     }
                     <Button 
                         color="secondary" 
                         variant="text" 
                         size="small" 
                         style={{textDecoration: "underline"}}
-                        onClick={onAdvancedSearchClick}
+                        onClick={() => setAdvancedSearchOpen(true)}
                         >
                         Advanced search
                     </Button>
