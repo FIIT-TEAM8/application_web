@@ -82,7 +82,8 @@ export default function ReportPDF() {
                                 <DeleteIcon fontSize="medium"/>
                             </IconButton>
                         </Grid>
-                    ))}
+                    </Grid>
+                    )}
                 </Stack>
             </Grid>
         </Grid>
