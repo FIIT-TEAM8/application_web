@@ -76,3 +76,5 @@ backend/.env
 .fusebox/
 
 backend/.secret.env
+
+/dev/add_table.txt
