@@ -48,9 +48,6 @@ export default function MainBar() {
                 spacing={0.5}
                 m={2} 
                 >
-                <Typography>
-                    {user.username ? user.username : ""}
-                </Typography>
                 {user.username ? <Button color="primary" variant="outlined" onClick={onLogout}>Log out</Button> : 
                 <>
                     <Button color="primary" variant="contained" onClick={onLoginOpen}>Log in</Button>
