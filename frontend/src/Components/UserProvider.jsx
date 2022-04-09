@@ -9,36 +9,37 @@ export default function UserProvider({children}) {
 
 
     const login = async (loginData) => {
-        apiCall(`/api/user/login`, "POST", loginData).then((result) => {
-			console.log(result);
+        let isLogged = await apiCall(`/api/user/login`, "POST", loginData).then((result) => {
             if (result.ok) {
-                const user = {"username": loginData.username};
-                setUser(user);
                 return true
 			} else {
                 return false
             }
 		});
+
+        if (isLogged){
+            setUser({"username": loginData.username});
+            return true;
+        } else {
+            return false;
+        }
     }
     
 
-    const logout = async () => {
+    const logout = () => {
         apiCall(`/api/user/logout`, "POST").then((result) => {
-			console.log(result);
             if (result.ok) {
 				setUser({});
 			}
-		});
-        setUser({});
+		}).catch(err => console.log(err));
     }
     
 
-    const signup = async (signupData) => {
+    const signup = (signupData) => {
+        let username = signupData.username;
         apiCall(`/api/user/signup`, "POST", signupData).then((result) => {
 			if (result.ok) {
-				console.log(result);
-                const user = {"username": signupData.username};
-                setUser(user);
+                setUser({"username": username});
                 return true
 			} else {
                 return false
