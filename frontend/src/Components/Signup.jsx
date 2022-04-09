@@ -2,32 +2,31 @@ import { Dialog, DialogContent, Button, Typography, TextField, Stack, IconButton
 import { VisibilityOutlined, VisibilityOffOutlined } from "@mui/icons-material";
 import { useState, useEffect } from "react";
 import { useFormik } from "formik";
-import { initialLoginValues, loginValidationSchema } from "../Utils/AccountSchemas";
+import { initialSignupValues, signupValidationSchema } from "../Utils/AccountSchemas";
 import { useUser } from "../Utils/UserContext";
 
 
-export default function Login({isOpen, onClose, onSignupOpen}) {
+export default function Signup({isOpen, onClose, onLoginOpen}) {
 
     const [displayedPassword, setDisplayedPassword] = useState(false);  // diplayed password means showing the plain text of entered string
     const [passwordType, setPasswordType] = useState("password");  // set to hide the plain text of entered password
-    const [isOpenDialog, setIsOpenDialog] = useState(false);  // handling visibility of the login dialog
-    const [incorrectCredentials, setIncorrectCredentials] = useState(false);  // show/hide incorrect credentials error message
-    const {login} = useUser();
+    const [isOpenDialog, setIsOpenDialog] = useState(false);  // handling visibility of the signup dialog
+    const [takenUsername, setTakenUsername] = useState(false);  // show/hide "taken username" error message
+    const {signup} = useUser();
     
     const formikLogin = useFormik({
-        initialValues: initialLoginValues,
-        validationSchema: loginValidationSchema,
+        initialValues: initialSignupValues,
+        validationSchema: signupValidationSchema,
 
-        // method to handle login form submit
-        onSubmit: async (loginData) => {
+        // method to handle signup form submit
+        onSubmit: (signupData) => {
             // give values to UserProvider, if the values are correct,
-            // call the parent method to close login dialog
-            let isLogged = await login(loginData);
-            if (isLogged){
+            // call the parent method to close signup dialog
+            if (signup(signupData)){
                 onClose();
             }
             else{
-                setIncorrectCredentials(true);
+                setTakenUsername(true);
             }
         },
     });
@@ -40,7 +39,6 @@ export default function Login({isOpen, onClose, onSignupOpen}) {
             setDisplayedPassword(false);
             setPasswordType("password");
         }
-        // the opposite case
         else{
             setDisplayedPassword(true);
             setPasswordType("text");
@@ -54,15 +52,15 @@ export default function Login({isOpen, onClose, onSignupOpen}) {
 
         // set initial values before next open of the dialog
         if (!isOpen) {
-            formikLogin.values.username = initialLoginValues.username;
-            formikLogin.values.password = initialLoginValues.password;
+            formikLogin.values.username = initialSignupValues.username;
+            formikLogin.values.password = initialSignupValues.password;
         }
     }, [isOpen]);
 
 
     // if the content of textfield changes, error message is hidden and formik handles validation
     const onFieldChange = (e) => {
-        setIncorrectCredentials(false);
+        setTakenUsername(false);
         formikLogin.handleChange(e);
     };
 
@@ -76,7 +74,7 @@ export default function Login({isOpen, onClose, onSignupOpen}) {
                 <form onSubmit={formikLogin.handleSubmit}>
                     <Stack sx={{ mb: 1}} spacing={1}>
                         <Typography color="primary">ams</Typography>
-                        <Typography variant="h2">Log in</Typography>
+                        <Typography variant="h2">Sign up</Typography>
                     </Stack>
                     <Stack spacing={3} sx={{ mb: 2 }}>
                         <TextField
@@ -116,14 +114,14 @@ export default function Login({isOpen, onClose, onSignupOpen}) {
                             }}
                             />
                             
-                        {incorrectCredentials && (
-                            <Typography color="error">The username or password is incorrect.</Typography>
+                        {takenUsername && (
+                            <Typography color="error">The username already exists.</Typography>
                         )}
 
                         <Stack spacing={2}>
-                            <Button color="primary" variant="contained" fullWidth type="submit">Log in</Button>
+                            <Button color="primary" variant="contained" fullWidth type="submit">Sign up</Button>
                             <Typography variant="caption" align="center" color="secondary">OR</Typography>
-                            <Button color="primary" variant="outlined" fullWidth onClick={onSignupOpen}>Sign up</Button>
+                            <Button color="primary" variant="outlined" fullWidth onClick={onLoginOpen}>Log in</Button>
                         </Stack>
                     </Stack>
                 </form>

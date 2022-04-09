@@ -8,7 +8,6 @@ const {cfg} = require("./config");
 const db = require('./db/postgres')
 
 const cron = require('./cron')
-const { checkRefreshToken } = require('./db/tokendb')
 
 // Start up connection to DB
 db.getPool()

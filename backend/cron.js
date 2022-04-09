@@ -1,5 +1,5 @@
 const cron = require('node-cron')
-const { clearOldRefreshTokens } = require('./db/tokendb')
+const { clearOldRefreshTokens } = require('./db/token_db')
 
 const setup = () => {
     // Runs every minute
