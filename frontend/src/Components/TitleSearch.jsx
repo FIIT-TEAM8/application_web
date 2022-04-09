@@ -44,7 +44,6 @@ export default function TitleSearch() {
         }
     }, []);
 
-
     const onAdvancedSearchClick = () => {
         setAdvancedSearchSelected(true);
     };
@@ -77,7 +76,6 @@ export default function TitleSearch() {
             setSearchTerm("");
         }
     }, [searchParams]);
-    
 
     const onSubmit = (event) => {
         setAppliedAdvancedSearch(false);
