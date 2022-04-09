@@ -143,7 +143,7 @@ export default function AdvancedSearch({parentOnHide, parentOnApply, parentFilte
 			sx={{ pt: 2 }}
 		>
 			<Grid item>
-				{appliedYearFrom | appliedYearTo ? <Typography color="primary">Year of publication</Typography> : <Typography color="secondary">Year of publication</Typography>}
+				{appliedYearFrom || appliedYearTo ? <Typography color="primary">Year of publication</Typography> : <Typography color="secondary">Year of publication</Typography>}
 			</Grid>
 			
 			
