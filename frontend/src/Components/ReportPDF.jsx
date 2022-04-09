@@ -2,18 +2,23 @@ import { Typography, Grid, Stack, IconButton } from "@mui/material";
 import { useWindowSize } from "../Utils/Screen";
 import { useUser } from "../Utils/UserContext";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useState } from "react";
 
 export default function ReportPDF() {
     const width = useWindowSize();
     const shouldCollapse = width < 992;
     const { articlesInReport, removeArcticleReport } = useUser();
+    const [articlesFromReport, setArticlesFromReport] = useState(articlesInReport);
     
     let searchDivStyle = {
         margin: "auto", 
         padding: shouldCollapse ? "20px 7%" : "20px 20%"
     };
 
-    const handleRemoveArticle = (articleId) => {
+    const handleRemoveArticle = (index, articleId) => {
+        let currArticlesFromReport = [...articlesFromReport]; // make a separate copy of the array
+        currArticlesFromReport.splice(index, 1);
+        setArticlesFromReport(currArticlesFromReport);
         removeArcticleReport(articleId);
     }
 
@@ -24,7 +29,7 @@ export default function ReportPDF() {
             </Grid>
             <Grid item xs={12}>
                 <Stack spacing={6} sx={{ pt: 4}}>
-                    {articlesInReport.map((article, index) => 
+                    {articlesFromReport.map((article, index) => 
                     <Grid container key={index}>
                         <Grid item xs={11.5} md={11.6} lg={11.7}>
                             <Stack spacing={1}>
@@ -70,7 +75,7 @@ export default function ReportPDF() {
                             </Stack>
                         </Grid>
                         <Grid item xs={0.5} md={0.4} lg={0.3} textAlign="end">
-                            <IconButton fontSize="small" onClick={() => handleRemoveArticle(article.id)} sx={{ padding: 0.2 }}>
+                            <IconButton fontSize="small" onClick={() => handleRemoveArticle(index, article.id)} sx={{ padding: 0.2 }}>
                                 <DeleteIcon fontSize="medium"/>
                             </IconButton>
                         </Grid>

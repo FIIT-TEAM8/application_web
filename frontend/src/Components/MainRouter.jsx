@@ -4,6 +4,7 @@ import SearchResults from "./SearchResults";
 import TitleSearch from "./TitleSearch";
 import Login from "./Login";
 import Archive from "./Archive";
+import ReportPDF from "./ReportPDF";
 
 export default function MainRouter() {
     return (
@@ -14,6 +15,7 @@ export default function MainRouter() {
             </Route>
             <Route path="archive" element={<Archive />} />
             <Route path="login" element={<Login open={true} />} />
+            <Route path="pdf_report" element={<ReportPDF />} />
             <Route path="example" element={<div>This is an example</div>} />
         </Routes>
     );
