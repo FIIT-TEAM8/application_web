@@ -26,6 +26,26 @@ export default function UserProvider({ children }) {
         }
     }, user);
 
+    // update or create user's 'In Progress' report, when articlesInReport array is updated
+    useEffect(() => {
+        if (reportId !== 0) {
+            // update user's in progress report
+            updateReportAPI();
+        } else if (user && typeof(user.id) === "number") {
+            // create new user's 'In progress' report
+            apiCall(`/api/pdf_report/create`, "POST", {
+                userId: user.id,
+                articlesInReport: articlesInReport,
+            }).then((result) => {
+                // TODO: info user, that PDF wasn't created
+                if (result.ok) {
+                    setReportId(result.reportId);
+                    console.log("PDF successfully created");
+                }
+            });
+        }
+    }, articlesInReport);
+
     const refresh = async () => {
         const loginRefToken = getCookieToken("__refToken");
         if (!loginRefToken) {
@@ -90,30 +110,12 @@ export default function UserProvider({ children }) {
             .catch((err) => console.log(err));
     };
 
-    // TODO: after user login or sign up load his in progress report
-    const addArticleReport = async (article) => {
+    const addArticleReport = (article) => {
         // add article to array of all articles in PDF report
-        await setArticlesInReport((prevState) => {
+        setArticlesInReport((prevState) => {
             prevState.push(article);
             return prevState;
         });
-
-        if (reportId !== 0) {
-            // update user's in progress report
-            updateReportAPI();
-        } else if (user && typeof(user.id) === "number") {
-            // in case 
-            apiCall(`/api/pdf_report/create`, "POST", {
-                userId: user.id,
-                articlesInReport: articlesInReport,
-            }).then((result) => {
-                // info user, that PDF wasn't created
-                if (result.ok) {
-                    setReportId(result.reportId);
-                    console.log("PDF successfully created");
-                }
-            });
-        }
     };
 
     const removeArcticleReport = (articleId) => {
@@ -130,12 +132,6 @@ export default function UserProvider({ children }) {
 
             return prevState;
         });
-
-        console.log(articlesInReport); // remove
-
-        if (reportId !== 0) {
-            updateReportAPI();
-        }
     };
 
     const signup = async (signupData) => {
