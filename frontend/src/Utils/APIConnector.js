@@ -67,13 +67,13 @@ export async function apiCall(endpoint = '', method = 'GET', data = null, ignore
     let result = {}
     try {
         if (response) {
-            result = await response.json()
+            result = await response.json();
         }
     } catch (e) {
         console.error("Response not in json format.");
         result = {ok: false, msg: "Invalid return value"}
     }
-    result.status = response.status
+    result.status = response.status;
     return result; // parses JSON response into native JavaScript objects
 }
 
@@ -82,27 +82,26 @@ export async function refreshToken() {
     if (response.status === 403 || response.status === 401) {
         Cookies.remove("__authToken");
         Cookies.remove("__refToken");
-        return false
+        return false;
     } else {
-        return true
+        return true;
     }
 }
 
 //https://medium.com/@SilentHackz/simple-way-to-secure-react-apps-using-jwt-and-react-router-2b4a05d780a3
 export function getCookieToken(cookieName='__refToken') {
-    const jwt = Cookies.get(cookieName)
-    let session
-    console.log(jwt);
+    const jwt = Cookies.get(cookieName);
+    let session;
     try {
         if (jwt) {
-            const base64Url = jwt.split('.')[1]
-            const base64 = base64Url.replace('-', '+').replace('_', '/')
-            session = JSON.parse(window.atob(base64))
+            const base64Url = jwt.split('.')[1];
+            const base64 = base64Url.replace('-', '+').replace('_', '/');
+            session = JSON.parse(window.atob(base64));
         }
     } catch (e) {
-        console.log(e)
+        console.log(e);
     }
-    return session
+    return session;
 }
 
 // export const logOut = async () => {

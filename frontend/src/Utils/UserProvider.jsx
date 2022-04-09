@@ -14,6 +14,18 @@ export default function UserProvider({ children }) {
         refresh();
     }, []);
 
+    useEffect(async () => {
+        if (user !== undefined) {
+            await apiCall(`/api/pdf_report/${user.id}?status=In Progress`, "GET")
+                .then((result) => {
+                    // TODO: info user, that PDF report wasn't loaded
+                    if (result.ok) {
+                        setReportId(result.reportId);
+                    }
+                });
+        }
+    }, user);
+
     const refresh = async () => {
         const loginRefToken = getCookieToken("__refToken");
         if (!loginRefToken) {
@@ -55,7 +67,6 @@ export default function UserProvider({ children }) {
     const logout = () => {
         apiCall(`/api/user/logout`, "POST")
             .then((result) => {
-                console.log(result);
                 if (result.ok) {
                     setUser(undefined);
                 }
@@ -80,28 +91,28 @@ export default function UserProvider({ children }) {
     };
 
     // TODO: after user login or sign up load his in progress report
-    const addArticleReport = (article) => {
+    const addArticleReport = async (article) => {
         // add article to array of all articles in PDF report
-        setArticlesInReport((prevState) => {
+        await setArticlesInReport((prevState) => {
             prevState.push(article);
             return prevState;
         });
 
-        console.log(articlesInReport); // remove
-
-        // TODO: remove this and on user login/singup load automatically
         if (reportId !== 0) {
+            // update user's in progress report
             updateReportAPI();
-        } else {
+        } else if (user && typeof(user.id) === "number") {
+            // in case 
             apiCall(`/api/pdf_report/create`, "POST", {
-                userId: 1,
+                userId: user.id,
                 articlesInReport: articlesInReport,
-            }) // switch 1 to user_id
-                .then((result) => {
-                    if (result.ok) {
-                        setReportId(result.reportId);
-                    }
-                });
+            }).then((result) => {
+                // info user, that PDF wasn't created
+                if (result.ok) {
+                    setReportId(result.reportId);
+                    console.log("PDF successfully created");
+                }
+            });
         }
     };
 
