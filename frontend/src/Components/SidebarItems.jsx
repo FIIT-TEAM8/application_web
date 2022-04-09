@@ -1,7 +1,7 @@
 import React from "react";
 import { List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import HomeIcon from '@mui/icons-material/Home';
-import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
+import ArticleIcon from '@mui/icons-material/Article';
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 import { Link } from "react-router-dom";
 
@@ -10,6 +10,7 @@ export function SidebarItems({ open }) {
         <List>
             <SidebarItem open={open} text="Home" icon={<HomeIcon />} href="/search" />
             <SidebarItem open={open} text="Archive" icon={<HistoryEduIcon />} href="/archive" />
+            <SidebarItem open={open} text="PDF Report" icon={<ArticleIcon />} href="pdf_report" />
         </List>
     );
 }
