@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useEffect } from "react";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
@@ -20,7 +21,6 @@ import {
     DrawerHeader,
     closedMixin,
     openedMixin,
-    MobileDrawer,
     drawerWidth,
 } from "../Style/NavStyledComponents";
 import HomeLink from "./HomeLink";

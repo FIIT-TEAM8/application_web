@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Typography, Grid, Stack, IconButton } from "@mui/material";
 import { useWindowSize } from "../Utils/Screen";
 import { useUser } from "../Utils/UserContext";
@@ -5,14 +6,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useState } from "react";
 
 export default function ReportPDF() {
-    const width = useWindowSize();
+    const { width } = useWindowSize();
     const shouldCollapse = width < 992;
     const { articlesInReport, removeArcticleReport } = useUser();
     const [articlesFromReport, setArticlesFromReport] = useState(articlesInReport);
     
     let searchDivStyle = {
-        margin: "auto", 
-        padding: shouldCollapse ? "20px 7%" : "20px 20%"
+        margin: "auto",
+        padding: shouldCollapse ? "20px 7%" : "20px 20%",
     };
 
     const handleRemoveArticle = (index, articleId) => {
@@ -20,12 +21,14 @@ export default function ReportPDF() {
         currArticlesFromReport.splice(index, 1);
         setArticlesFromReport(currArticlesFromReport);
         removeArcticleReport(articleId);
-    }
+    };
 
     return (
         <Grid container style={searchDivStyle}>
             <Grid item xs={12}>
-                <Typography variant="h1" color="primary">pdf report</Typography>
+                <Typography variant="h1" color="primary">
+                    pdf report
+                </Typography>
             </Grid>
             <Grid item xs={12}>
                 <Stack spacing={6} sx={{ pt: 4}}>
@@ -52,12 +55,12 @@ export default function ReportPDF() {
                                         </Typography>
                                     </Link>
                                 </Stack> */}
-                                {/* <Link href={article.link} target="_blank" rel="noopener" underline="hover"> */}
+                                    {/* <Link href={article.link} target="_blank" rel="noopener" underline="hover"> */}
                                     <Typography noWrap variant="h2" color="primary">
                                         {article.title}
                                     </Typography>
-                                {/* </Link> */}
-                                {/* <Stack direction="row" color="secondary" spacing={2}>
+                                    {/* </Link> */}
+                                    {/* <Stack direction="row" color="secondary" spacing={2}>
                                     {article.keywords.map((crime, index) => (
                                         <Box
                                             key={index}
@@ -79,10 +82,9 @@ export default function ReportPDF() {
                                 <DeleteIcon fontSize="medium"/>
                             </IconButton>
                         </Grid>
-                    </Grid>
-                )}
+                    ))}
                 </Stack>
             </Grid>
-        </Grid>        
+        </Grid>
     );
 }

@@ -7,7 +7,7 @@ export default function ResultItem ({item, index}){
 
     return (
         <Grid container justifyContent="space-between" alignItems="flex-start">
-            <Grid item xs={user.username ? 11.5 : 12} md={user.username ? 11.6 : 12} lg={user.username ? 11.7 : 12}>
+            <Grid item xs={user ? 11.5 : 12} md={user ? 11.6 : 12} lg={user ? 11.7 : 12}>
                 <Stack spacing={1}>
                     <Stack
                         direction="row"
@@ -47,7 +47,7 @@ export default function ResultItem ({item, index}){
                     </Stack>
                 </Stack>
             </Grid>
-            {user.username ? 
+            {user ? 
                 <Grid item xs={0.5} md={0.4} lg={0.3} textAlign="end">
                     <Stack>
                         <ButtonPDF articleId={item._id} articleTitle={item.title} />

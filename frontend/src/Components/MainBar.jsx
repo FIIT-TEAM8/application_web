@@ -3,7 +3,6 @@ import { useState } from "react";
 import Login from "../Components/Login";
 import Signup from "../Components/Signup";
 import { useUser } from "../Utils/UserContext";
-import { useNavigate } from "react-router-dom";
 
 
 export default function MainBar() {
@@ -11,7 +10,6 @@ export default function MainBar() {
     const [isOpenLogin, setIsOpenLogin] = useState(false);
     const [isOpenSignup, setIsOpenSignup] = useState(false);
     const { user, logout } = useUser();
-    const navigate = useNavigate();
 
 
     const onLoginOpen = () => {
@@ -50,7 +48,7 @@ export default function MainBar() {
                 spacing={0.5}
                 m={2} 
                 >
-                {user.username ? <Button color="primary" variant="outlined" onClick={onLogout}>Log out</Button> : 
+                {user ? <Button color="primary" variant="outlined" onClick={onLogout}>Log out</Button> : 
                 <>
                     <Button color="primary" variant="contained" onClick={onLoginOpen}>Log in</Button>
                     <Button color="primary" variant="outlined" onClick={onSignupOpen}>Sign up</Button>

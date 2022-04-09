@@ -7,7 +7,9 @@ const routes = require('./routes/routes')
 const {cfg} = require("./config");
 const db = require('./db/postgres')
 
-const cron = require('./cron')
+const cron = require('./utils/cron')
+const { attachUser } = require('./middleware/auth')
+const { debug } = require('console')
 
 // Start up connection to DB
 db.getPool()
@@ -29,8 +31,14 @@ if (process.env.NODE_ENV !== 'production') {
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS, PUT')
         next()
     })
+}
 
-    app.use(async function(req, res, next) {
+app.use(express.json({limit: '50mb'}))
+app.use(express.urlencoded({limit: '50mb', extended: true}))
+app.use(cookieParser())
+
+if (process.env.NODE_ENV !== 'production') {
+    app.use(attachUser, async function(req, res, next) {
         // Database demo
         const query = {
             text: `SELECT NOW() AS now`,
@@ -38,15 +46,11 @@ if (process.env.NODE_ENV !== 'production') {
         }
     
         const result = await db.query(query)
-        
-        console.log(`${result.rows[0].now} New request: ${req.url}`)
+        debug(`${result.rows[0].now} New request: ${req.url} From user: ${req.body.user && req.body.user.username}`)
         next()
     })
 }
 
-app.use(express.json({limit: '50mb'}))
-app.use(express.urlencoded({limit: '50mb', extended: true}))
-app.use(cookieParser())
 
 // React build is found here
 app.use(`${cfg.PUBLIC_URL}/`, express.static(path.resolve(cfg.BUILD_PATH) ))
