@@ -5,7 +5,7 @@ import Signup from "../Components/Signup";
 import { useUser } from "../Utils/UserContext";
 
 
-export default function MainBar({}) {
+export default function MainBar() {
 
     const [isOpenLogin, setIsOpenLogin] = useState(false);
     const [isOpenSignup, setIsOpenSignup] = useState(false);
