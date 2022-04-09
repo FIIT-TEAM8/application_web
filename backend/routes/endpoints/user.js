@@ -93,7 +93,7 @@ router.get('/token', async function(req, res) {
 router.post('/logout', async function(req, res) {
     try {
         await tokendb.deleteRefreshToken(req.cookies.__refToken)
-        return res.status(204).json({ok: true, msg: "Log out successful."})
+        return res.status(200).json({ok: true, msg: "Log out successful."})
     } catch (e) {
         errLog(e.stack)
         res.status(500).json({ok: false, msg: "Internal server error."})

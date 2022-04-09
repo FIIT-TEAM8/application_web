@@ -19,13 +19,14 @@ export default function Signup({isOpen, onClose, onLoginOpen}) {
         validationSchema: signupValidationSchema,
 
         // method to handle signup form submit
-        onSubmit: (signupData) => {
+        onSubmit: async (signupData) => {
             // give values to UserProvider, if the values are correct,
             // call the parent method to close signup dialog
-            if (signup(signupData)){
+            let isSignedup = await signup(signupData);
+            if (isSignedup) {
                 onClose();
             }
-            else{
+            else {
                 setTakenUsername(true);
             }
         },
