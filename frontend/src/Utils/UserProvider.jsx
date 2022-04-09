@@ -20,31 +20,33 @@ export default function UserProvider({ children }) {
                 .then((result) => {
                     // TODO: info user, that PDF report wasn't loaded
                     if (result.ok) {
+                        console.log("PDF report was succesfully loaded.")
                         setReportId(result.reportId);
+                        setArticlesInReport(result.articlesInReport);
                     }
                 });
         }
-    }, user);
+    }, [user]);
 
     // update or create user's 'In Progress' report, when articlesInReport array is updated
-    useEffect(() => {
-        if (reportId !== 0) {
-            // update user's in progress report
-            updateReportAPI();
-        } else if (user && typeof(user.id) === "number") {
-            // create new user's 'In progress' report
-            apiCall(`/api/pdf_report/create`, "POST", {
-                userId: user.id,
-                articlesInReport: articlesInReport,
-            }).then((result) => {
-                // TODO: info user, that PDF wasn't created
-                if (result.ok) {
-                    setReportId(result.reportId);
-                    console.log("PDF successfully created");
-                }
-            });
-        }
-    }, articlesInReport);
+    // useEffect(() => {
+    //     if (reportId !== 0) {
+    //         // update user's in progress report
+    //         updateReportAPI();
+    //     } else if (user && typeof(user.id) === "number") {
+    //         // create new user's 'In progress' report
+    //         apiCall(`/api/pdf_report/create`, "POST", {
+    //             userId: user.id,
+    //             articlesInReport: articlesInReport,
+    //         }).then((result) => {
+    //             // TODO: info user, that PDF wasn't created
+    //             if (result.ok) {
+    //                 setReportId(result.reportId);
+    //                 console.log("PDF successfully created");
+    //             }
+    //         });
+    //     }
+    // }, [articlesInReport]);
 
     const refresh = async () => {
         const loginRefToken = getCookieToken("__refToken");
@@ -89,6 +91,8 @@ export default function UserProvider({ children }) {
             .then((result) => {
                 if (result.ok) {
                     setUser(undefined);
+                    setReportId(0);
+                    setArticlesInReport([]);
                 }
             })
             .catch((err) => console.log(err));
@@ -96,9 +100,28 @@ export default function UserProvider({ children }) {
         Cookies.remove("__refToken");
     };
 
-    const updateReportAPI = () => {
+    const reportRequest = (newArticlesInReport) => {
+        if (reportId !== 0) {
+            // update user's in progress report
+            updateReportAPI(newArticlesInReport);
+        } else if (user && typeof(user.id) === "number") {
+            // create new user's 'In progress' report
+            apiCall(`/api/pdf_report/create`, "POST", {
+                userId: user.id,
+                articlesInReport: newArticlesInReport,
+            }).then((result) => {
+                // TODO: info user, that PDF wasn't created
+                if (result.ok) {
+                    setReportId(result.reportId);
+                    console.log("PDF successfully created");
+                }
+            });
+        }
+    }
+
+    const updateReportAPI = (newArticlesInReport) => {
         apiCall(`/api/pdf_report/update/${reportId}`, "POST", {
-            articlesInReport: articlesInReport,
+            articlesInReport: newArticlesInReport,
         })
             .then((result) => {
                 if (result.ok) {
@@ -111,27 +134,27 @@ export default function UserProvider({ children }) {
     };
 
     const addArticleReport = (article) => {
-        // add article to array of all articles in PDF report
         setArticlesInReport((prevState) => {
             prevState.push(article);
+            reportRequest(prevState);
             return prevState;
         });
     };
 
     const removeArcticleReport = (articleId) => {
-        // remove article by id from articles in PDF report
         setArticlesInReport((prevState) => {
             const articleIndex = prevState.findIndex((article) => {
                 return article.id === articleId;
             });
 
-            // make sure array contains articleId
+            // don't change state, when article isn't in it
             if (articleIndex !== -1) {
                 prevState.splice(articleIndex, 1);
+                reportRequest(prevState);
             }
-
+            
             return prevState;
-        });
+        })
     };
 
     const signup = async (signupData) => {

@@ -16,6 +16,7 @@ export default function MainRouter() {
             <Route path="archive" element={<Archive />} />
             {/* TODO: ADD PROPER ON CLOSE */}
             <Route path="login" element={<Login isOpen={true}/>} />
+            <Route path="pdf_report" element={<ReportPDF/>} />
         </Routes>
     );
 }
