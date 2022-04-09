@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { apiCall } from "../Utils/APIConnector";
 import { UserContext } from "../Utils/UserContext";
-import { apiCall } from "../Utils/APIConnector";
 
 
 export default function UserProvider({children}) {
@@ -113,7 +112,7 @@ export default function UserProvider({children}) {
 
 
     return (
-        <UserContext.Provider value={{ user, login, logout, singup, articlesInReport, addArticleReport, removeArcticleReport }}>
+        <UserContext.Provider value={{ user, login, logout, signup, articlesInReport, addArticleReport, removeArcticleReport }}>
             {children}
         </UserContext.Provider>
     );
