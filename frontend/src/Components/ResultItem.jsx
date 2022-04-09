@@ -21,7 +21,7 @@ export default function ResultItem ({item, index}){
                         </Box>
                         <Link href={item.link} target="_blank" rel="noopener" underline="none" noWrap>
                             <Typography noWrap color="secondary">
-                                {item.link}
+                                {new URL(item.link).hostname.replace('www.','')}
                             </Typography>
                         </Link>
                     </Stack>

@@ -1,33 +1,40 @@
 import { useState } from "react";
 import { apiCall } from "../Utils/APIConnector";
 import { UserContext } from "../Utils/UserContext";
+import { apiCall } from "../Utils/APIConnector";
 
 
 export default function UserProvider({children}) {
-    const [accessToken, setAccessToken] = useState(localStorage.getItem("access_token"));
+    //const [accessToken, setAccessToken] = useState(localStorage.getItem("access_token"));
     const [user, setUser] = useState({});
     const [articlesInReport, setArticlesInReport] = useState([]);
     const [reportId, setReportId] = useState(0);
 
 
-    const login = (loginData) => {
-        // get user data and access token from server
-        // let result = clientLogin(loginData)
-        // if result.ok ... return true
-        // else return false
-        console.log(loginData.username);
-        console.log(loginData.password);
-        const token = "awesomeAccessToken123456789";
-        const user = {"username": "xpolakovat", "name": "Táňa", "surname": "Poláková"};
-        setAccessToken(token);
-        setUser(user);
-        return true
+    const login = async (loginData) => {
+        let isLogged = await apiCall(`/api/user/login`, "POST", loginData).then((result) => {
+            if (result.ok) {
+                return true
+			} else {
+                return false
+            }
+		});
+
+        if (isLogged){
+            setUser({"username": loginData.username});
+            return true;
+        } else {
+            return false;
+        }
     }
     
 
     const logout = () => {
-        setAccessToken(null);
-        setUser({});
+        apiCall(`/api/user/logout`, "POST").then((result) => {
+            if (result.ok) {
+				setUser({});
+			}
+		}).catch(err => console.log(err));
     }
 
     const updateReportAPI = () => {
@@ -86,8 +93,21 @@ export default function UserProvider({children}) {
     }
     
 
+    const signup = (signupData) => {
+        let username = signupData.username;
+        apiCall(`/api/user/signup`, "POST", signupData).then((result) => {
+			if (result.ok) {
+                setUser({"username": username});
+                return true
+			} else {
+                return false
+            }
+		});
+    }
+
+
     return (
-        <UserContext.Provider value={{ user, accessToken, articlesInReport, login, logout, addArticleReport, removeArcticleReport }}>
+        <UserContext.Provider value={{ user, login, logout, singup, articlesInReport, addArticleReport, removeArcticleReport }}>
             {children}
         </UserContext.Provider>
     );

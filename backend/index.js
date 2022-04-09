@@ -6,7 +6,11 @@ const path = require('path')
 const routes = require('./routes/routes')
 const {cfg} = require("./config");
 const db = require('./db/postgres')
+
 const cron = require('./cron')
+
+// Start up connection to DB
+db.getPool()
 
 cron.setup()
 
@@ -32,6 +36,7 @@ if (process.env.NODE_ENV !== 'production') {
             text: `SELECT NOW() AS now`,
             values: []
         }
+    
         const result = await db.query(query)
         
         console.log(`${result.rows[0].now} New request: ${req.url}`)

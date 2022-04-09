@@ -6,14 +6,18 @@ export const theme = createTheme({
     palette: {
         primary: {
             main: teal[500],
-            light: teal[100],
+            light: teal[50],
             dark: teal[900],
+            mediumLight: teal[100],
         },
         secondary: {
             main: grey[600],
             light: grey[100],
             dark: grey[900],
         },
+        neutral: {
+            main: "#fff",
+        }
     },
     typography: {
         fontSize: 12,

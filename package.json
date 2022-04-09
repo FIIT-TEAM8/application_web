@@ -5,9 +5,13 @@
   "main": "index.js",
   "scripts": {
     "postgres_up": "cd dev && docker-compose pull && docker-compose up -d",
+    "postgres_up_regular": "cd dev && docker-compose pull && docker-compose up",
     "postgres_down": "cd dev && docker-compose down -v",
-    "dev": "npm install && export NODE_ENV=development || set NODE_ENV=development&& concurrently \"cd frontend && npm install && npm start\" \"cd backend && npm install && npm run dev\" ",
-    "deploy": "export NODE_ENV=production || set NODE_ENV=production&& concurrently \"cd frontend && npm install && npm run build\" \"cd backend && npm install && npm run deploy\" "
+    "dev_frontend": "cd frontend && npm install && npm start",
+    "dev_backend": "cd backend && npm install && npm run dev",
+    "dev": "npm install && export NODE_ENV=development && concurrently -t \"yyyy-MM-dd HH:mm:ss\" -p \"{time} [{name}]\" -n \"react,server\" \"npm run dev_frontend\" \"npm run dev_backend\" ",
+    "dev_env": "npm install && export NODE_ENV=development && concurrently -t \"yyyy-MM-dd HH:mm:ss\" -p \"{time} [{name}]\" -n \"react,server,db\" \"npm run dev_frontend\" \"npm run dev_backend\" \"npm run postgres_up_regular\" ",
+    "deploy": "export NODE_ENV=production && concurrently -t \"yyyy-MM-dd HH:mm:ss\" -p \"{time} [{name}]\" -n \"react,server\" \"cd frontend && npm install && npm run build\" \"cd backend && npm install && npm run deploy\" "
   },
   "repository": {
     "type": "git",
