@@ -3,13 +3,15 @@ import { useState } from "react";
 import Login from "../Components/Login";
 import Signup from "../Components/Signup";
 import { useUser } from "../Utils/UserContext";
+import { useNavigate } from "react-router-dom";
 
 
 export default function MainBar() {
 
     const [isOpenLogin, setIsOpenLogin] = useState(false);
     const [isOpenSignup, setIsOpenSignup] = useState(false);
-    const {user, logout} = useUser();
+    const { user, logout } = useUser();
+    const navigate = useNavigate();
 
 
     const onLoginOpen = () => {

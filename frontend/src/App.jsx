@@ -9,7 +9,7 @@ function App() {
         <div className="App" style={{ maxWidth: "1920px", margin: "auto" }}>
             <UserProvider>
                 <ThemeProvider theme={theme}>
-					<MainLayout/>
+					          <MainLayout/>
                 </ThemeProvider>
             </UserProvider>
         </div>

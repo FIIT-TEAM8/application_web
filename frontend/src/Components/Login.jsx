@@ -19,10 +19,11 @@ export default function Login({isOpen, onClose, onSignupOpen}) {
         validationSchema: loginValidationSchema,
 
         // method to handle login form submit
-        onSubmit: (loginData) => {
+        onSubmit: async (loginData) => {
             // give values to UserProvider, if the values are correct,
             // call the parent method to close login dialog
-            if (login(loginData)){
+            let isLogged = await login(loginData);
+            if (isLogged){
                 onClose();
             }
             else{
