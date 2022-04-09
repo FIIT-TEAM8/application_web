@@ -5,17 +5,26 @@ import { apiCall } from "../Utils/APIConnector";
 import ResultItem from "../Components/ResultItem";
 
 
-export default function SearchResults({}) {
+export default function SearchResults() {
 
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [actResults, setActResults] = useState([]);
 	const [totalPages, setTotalPages] = useState(0);
 	const [totalResults, setTotalResults] = useState(0);
 	const [isLoaded, setIsLoaded] = useState(false);
+	const [lastSearched, setLastSearched] = useState('');
 
 
 	useEffect(() => {
-		apiCall(`/api/data/search/?q=${searchParams.get("q")}&page=${searchParams.get("page")}`, "GET").then((result) => {
+		setIsLoaded(false);
+
+		let q = searchParams.get('q');
+		if (q !== lastSearched) {
+			setTotalResults(0);
+			setLastSearched(q);
+		}
+
+		apiCall(`/api/data/search/?${searchParams.toString()}`, "GET").then((result) => {
 			if (result.ok) {
 				setActResults(result.data.results);
 				setTotalPages(result.data.total_pages);
@@ -27,32 +36,34 @@ export default function SearchResults({}) {
 
 
 	const handlePageChange = (event, value) => {
+		window.scroll({top: 0, left: 0, behavior: 'smooth' });
 		searchParams.delete("page");
 		searchParams.append("page", value);
 		setSearchParams(searchParams);
-		window.scrollTo(0, 0);
 	};
 
 
 	if (isLoaded) {
 		return (
 			<Stack sx={{ pt: 2 }}>
-				<Typography color="secondary">{totalResults} results found.</Typography>
+				{totalResults === 1 ? <Typography color="secondary">{totalResults} result found.</Typography> : <Typography color="secondary">{totalResults} results found.</Typography>}
 				<Stack spacing={6} sx={{ pt: 4 }}>
 					{actResults.map((result, index) => (
 						<ResultItem item={result} key={index} /> ))}
 				</Stack>
 				<Box my={2} display="flex" justifyContent="center">
-					{totalPages <= 1 ? <div></div>: <Pagination count={totalPages} page={parseInt(searchParams.get("page"))} onChange={handlePageChange} />}
+					{totalPages <= 1 ? <></>: <Pagination count={totalPages} page={parseInt(searchParams.get("page"))} onChange={handlePageChange} />}
 				</Box>
 			</Stack>
 		);
 	} else {
 		return (
-			<Stack spacing={1} sx={{ pt: 2 }} alignItems="center" direction="row" >
-				<CircularProgress size={10} color="secondary" />
-				<Typography color="secondary">Loading results.</Typography>
-			</Stack>
+			<div>
+				{totalResults === 0 ? <div style={{paddingTop: "2"}}></div> : <Typography pt={2} color="secondary">{totalResults} results found.</Typography>}
+				<Stack spacing={1} sx={{ pt: 2 }} alignItems="center">
+					<CircularProgress size={50} thickness={2} color="secondary" />
+				</Stack>
+			</div>
 		);
 	}
 }

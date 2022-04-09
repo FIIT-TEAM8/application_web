@@ -9,14 +9,14 @@ export default function ResultItem ({item, index}){
                 direction="row"
                 divider={<Divider sx={{ borderRightWidth: 0.5 }} style={{ background: "#757575" }} orientation="vertical" flexItem />}
                 spacing={2}>
-                <Box sx={{ width: 80 }}>
+                <Box sx={{ minWidth: 'max-content' }}>
                     <Typography noWrap color="secondary">
                         {item.published.slice(5, -13)}
                     </Typography>
                 </Box>
                 <Link href={item.link} target="_blank" rel="noopener" underline="none" noWrap>
                     <Typography noWrap color="secondary">
-                        {item.link}
+                        {new URL(item.link).hostname.replace('www.','')}
                     </Typography>
                 </Link>
             </Stack>

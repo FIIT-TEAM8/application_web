@@ -1,16 +1,19 @@
 import { Stack, Button, Typography } from "@mui/material";
 import { useState } from "react";
 import Login from "../Components/Login";
+import Signup from "../Components/Signup";
 import { useUser } from "../Utils/UserContext";
 
 
-export default function MainBar({}) {
+export default function MainBar() {
 
     const [isOpenLogin, setIsOpenLogin] = useState(false);
-    const { user, logout } = useUser();
+    const [isOpenSignup, setIsOpenSignup] = useState(false);
+    const {user, logout} = useUser();
 
 
     const onLoginOpen = () => {
+        setIsOpenSignup(false);
         setIsOpenLogin(true);
     };
 
@@ -25,6 +28,17 @@ export default function MainBar({}) {
     };
 
 
+    const onSignupOpen = () => {
+        setIsOpenLogin(false);
+        setIsOpenSignup(true);
+    };
+
+
+    const onSignupClose = () => {
+        setIsOpenSignup(false);
+    };
+
+
     return (
         <div>
             <Stack 
@@ -35,12 +49,18 @@ export default function MainBar({}) {
                 m={2} 
                 >
                 <Typography>
-                    {user.name ? user.name : ""}
+                    {user.username ? user.username : ""}
                 </Typography>
-                {user.name ? <Button color="primary" variant="outlined" onClick={onLogout}>Log out</Button> : <Button color="primary" variant="outlined" onClick={onLoginOpen}>Log in</Button>}
+                {user.username ? <Button color="primary" variant="outlined" onClick={onLogout}>Log out</Button> : 
+                <>
+                    <Button color="primary" variant="contained" onClick={onLoginOpen}>Log in</Button>
+                    <Button color="primary" variant="outlined" onClick={onSignupOpen}>Sign up</Button>
+                </>
+                }
             </Stack>
 
-            <Login isOpen={isOpenLogin} onClose={onLoginClose} />
+            <Login isOpen={isOpenLogin} onClose={onLoginClose} onSignupOpen={onSignupOpen}/>
+            <Signup isOpen={isOpenSignup} onClose={onSignupClose} onLoginOpen={onLoginOpen}/>
         </div>
     );
 }
