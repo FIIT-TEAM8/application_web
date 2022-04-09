@@ -38,7 +38,7 @@ export default function TitleSearch() {
             setSearchTerm(q);
         }
     }, []);
-    
+
 
     const onSubmit = (event) => {
         event.preventDefault();
