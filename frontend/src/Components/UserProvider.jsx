@@ -30,6 +30,7 @@ export default function UserProvider({children}) {
 
     const logout = () => {
         apiCall(`/api/user/logout`, "POST").then((result) => {
+            console.log(result);
             if (result.ok) {
 				setUser({});
 			}
@@ -92,16 +93,21 @@ export default function UserProvider({children}) {
     }
     
 
-    const signup = (signupData) => {
-        let username = signupData.username;
-        apiCall(`/api/user/signup`, "POST", signupData).then((result) => {
-			if (result.ok) {
-                setUser({"username": username});
+    const signup = async (signupData) => {
+        let isSignedup = await apiCall(`/api/user/signup`, "POST", signupData).then((result) => {
+            if (result.ok) {
                 return true
 			} else {
                 return false
             }
 		});
+
+        if (isSignedup){
+            setUser({"username": signupData.username});
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
