@@ -4,11 +4,13 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { useState, useEffect } from "react";
 import { YEARS, REGIONS, KEYWORDS } from "../Utils/AdvancedSearchItems";
 import { StyledToggleButton, StyledToggleButtonGroup } from "../Style/StyledToggleButton";
+import { useSearchParams } from "react-router-dom";
 
 
 
 export default function AdvancedSearch({onSelectAdvancedSearchFilter, parentOnHide, parentOnApply, parentOnCancel}) {
 
+	const [searchParams] = useSearchParams();
 	const [allYearsFrom, setAllYearsFrom] = useState([]);
 	const [allYearsTo, setAllYearsTo] = useState([]);
 	const [allRegions, setAllRegions] = useState([]);
@@ -25,18 +27,34 @@ export default function AdvancedSearch({onSelectAdvancedSearchFilter, parentOnHi
 		setAllRegions(REGIONS);
 		setAllKeywords(KEYWORDS);
 		
-		// define first and last year
-		let copySelectedFilters = selectedFilters;
-		copySelectedFilters['from'] = YEARS[0];
-		copySelectedFilters['to'] = YEARS[YEARS.length - 1];
-		setSelectedFilters(copySelectedFilters);
-	}, []);
+		let from = searchParams.get("from");
+		let to = searchParams.get("to");
+		let regions = searchParams.get("regions");
+		let keywords = searchParams.get("keywords");
 
+		let prevSelectedFilters = {...selectedFilters};
+
+		// e.g. from="2019-01-01"
+		prevSelectedFilters['from'] = from ? from.slice(0, 4) : YEARS[0];
+		prevSelectedFilters['to'] = to ? to.slice(0, 4) : YEARS[YEARS.length - 1];
+		
+		// e.g. regions="[czech republic,great britan]"
+		if (regions) {
+			regions = regions.slice(1, -1).split(',');
+			prevSelectedFilters['regions'] = regions;
+		}
+		if (keywords) {
+			keywords = keywords.slice(1, -1).split(',');
+			prevSelectedFilters['keywords'] = keywords;
+		}
+
+		setSelectedFilters(prevSelectedFilters);
+	}, []);
 
 	useEffect(() => {
 		let numOfSelFilters = 0
 
-		// is filter for year range applied?
+		// is filter for year range applied? (different from first and last year of scraped data)
 		if (selectedFilters['from'] !== allYearsFrom[0]) {
 			numOfSelFilters += 1;
 			setAppliedYearFrom(true);
@@ -58,17 +76,14 @@ export default function AdvancedSearch({onSelectAdvancedSearchFilter, parentOnHi
 
 	}, [selectedFilters, onSelectAdvancedSearchFilter, allYearsFrom, allYearsTo]);
 
-
   	const handleChangeYearFrom = (e) => {
 		setAllYearsTo(allYearsFrom.slice(allYearsFrom.indexOf(e.target.value)));
 		setSelectedFilters({ ...selectedFilters, 'from': e.target.value })
   	};
 
-
 	const handleChangeYearTo = (e) => {
 		setSelectedFilters({ ...selectedFilters, 'to': e.target.value })
   	};
-
 
 	const handleRegionClick = (e, allSelectedRegions) => {
 		setSelectedFilters({ ...selectedFilters, 'regions': allSelectedRegions })
@@ -79,27 +94,26 @@ export default function AdvancedSearch({onSelectAdvancedSearchFilter, parentOnHi
 		setSelectedFilters({ ...selectedFilters, 'keywords': allSelectedKeywords })
 	}
 
+	const clearSelectedFilters = () => {
+		setSelectedFilters({'from': allYearsFrom[0], 'to': allYearsFrom[allYearsFrom.length - 1], 'regions': [], 'keywords': []});
+	}
 
 	const onHide = () => {
 		parentOnHide();
 	}
-
 	
 	const onCancel = () => {
-		setSelectedFilters({'from': 2016, 'to': 2022, 'regions': [], 'keywords': []});
+		clearSelectedFilters();
 		parentOnCancel();
 	}
 
-
 	const onClear = () => {
-		setSelectedFilters({'from': 2016, 'to': 2022, 'regions': [], 'keywords': []});
+		clearSelectedFilters();
 	}
-
 
 	const onApply = () => {
 		parentOnApply();
 	}
-
  
 	return (
 		<Grid container

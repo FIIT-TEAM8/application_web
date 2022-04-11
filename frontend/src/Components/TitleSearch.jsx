@@ -83,12 +83,12 @@ export default function TitleSearch() {
 
 
     const submitSearchParams = () => {
+        // delete previous state of search params
         searchParams.delete("q");
         searchParams.delete("page");
-        searchParams.delete("from");
-		searchParams.delete("to");
-		searchParams.delete("regions");
-		searchParams.delete("keywords");
+        for (const filterName in selectedAdvancedSearchFilters) {
+            searchParams.delete(filterName);
+        }
 
         searchParams.append("q", searchTerm);
 		searchParams.append("page", 1);
