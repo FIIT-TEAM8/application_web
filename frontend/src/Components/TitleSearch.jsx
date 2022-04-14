@@ -4,6 +4,11 @@ import { useEffect, useState, useCallback } from "react";
 import { Outlet, useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useWindowSize } from "../Utils/Screen";
 import AdvancedSearch from "../Components/AdvancedSearch";
+import {emptyFilters, getYears} from "../Utils/AdvancedSearchUtils";
+
+// data will be replaced
+import * as regionCodeMapping from '../Utils/region_code_maping.json';
+const KEYWORDS = ['Abusive Sexual Contact', 'Antitrust', 'Arson', 'Assassination', 'Assault', 'Attempted Murder', 'Bank Burglary', 'Bankruptcy Fraud', 'Blackmail', 'Bombing Matters', 'Bomb Threat', 'Bond Default', 'Bribery', 'Burglary', 'Child Abuse', 'Child Abandonment', 'Child Abduction', 'Child Exploitation', 'Child Pornography', 'Civil Rights Violations', 'Computer Crime', 'Conspiracy', 'Conspiracy to Murder', 'Conveying False Information', 'Copyright Matters', 'Counterfeiting', 'Credit Card Fraud', 'Cruelty of Animals', 'Cyber Crimes', 'Cyberbullying', 'Dangerous Driving', 'Death Threat', 'Domestic Violence', 'Drug Distribution', 'Drug Possession', 'Drug Smuggling', 'Drug Trafficking', 'Drunk Driving', 'Embezzlement', 'Escaping Custody', 'Exportation of Drugs', 'Extortion', 'False Bail', 'Falsely Claiming Citizenship', 'False Information and Hoaxes', 'Felony', 'First Degree Murder', 'Forced Labor', 'Forgery', 'Fraud', 'Hacking Crimes', 'Harassment', 'Hate Crime Acts', 'Homicide', 'Hostage Taking', 'Identity Theft', 'Illegal Emigration', 'Illegal Possession of Firearms', 'Importation of Drugs', 'Insurance Fraud', 'Kidnapping', 'Larceny', 'Manslaughter', 'Molestation', 'Money Laundering', 'Murder', 'Narcotics Violations', 'Pirating', 'Probation Violation', 'Prostitution', 'Racketeering', 'Ransom Money', 'Rape', 'Robbery', 'Sabotage', 'Sale of Citizenship Papers', 'Sale of Stolen Vehicles', 'Second Degree Murder', 'Serial Murders', 'Sexual Abuse', 'Sexual Assault', 'Sexual Conduct with a Minor', 'Sex Trafficking', 'Shoplifting', 'Smuggling', 'Stalking', 'Tax Evasion', 'Tax Fraud', 'Terrorism', 'Theft', 'Torture', 'Transportation of Stolen Vehicles', 'Trespassing', 'Treason', 'Vandalism', 'Wire Fraud']
 
 
 export default function TitleSearch() {
@@ -15,11 +20,14 @@ export default function TitleSearch() {
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchTerm, setSearchTerm] = useState("");
     const [showingResults, setShowingResults] = useState(false);
+    
+    // states for advanced search
     const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false);
-    const [selectedAdvancedSearchFilters, setSelectedAdvancedSearchFilters] = useState(undefined);
-    const [numOfSelectedAdvancedSearchFilters, setNumOfSelectedAdvancedSearchFilters] = useState(0);
-    const [isSelectedAdvSearchYearFrom, setIsSelectedAdvSearchYearFrom] = useState(false);
-    const [isSelectedAdvSearchYearTo, setIsSelectedAdvSearchYearTo] = useState(false);
+	const [allYears, setAllYears] = useState([]);
+	const [allRegions, setAllRegions] = useState([]);
+	const [allKeywords, setAllKeywords] = useState([]);
+    const [selectedFilters, setSelectedFilters] = useState(emptyFilters);
+    const [numSelectedFilters, setNumSelectedFilters] = useState(0);
 
     let searchDivStyle = {
         margin: "auto", 
@@ -31,18 +39,24 @@ export default function TitleSearch() {
         searchDivStyle.padding = shouldCollapse ? "20px 7%" : "20px 20%";
     }
 
-
-    // during render, check search params and fill appropriate fields/components
     useEffect(() => {
+		// api call get regions and keywords
+        // api call to get first and last year of scrapped articles, then call getYears(firstYear, lastYear)
+		setAllYears(getYears(2016, new Date().getFullYear()));
+		setAllRegions(regionCodeMapping.default);
+		setAllKeywords(KEYWORDS);
+
         const q = searchParams.get("q");
+
         if (q) {
             setShowingResults(true);
             setSearchTerm(q);
         }
-    }, []);
 
+	}, []);
 
     // check if we should change actual state to main page state
+    // handling when click on logo
     useEffect(() => {
         const q = searchParams.get("q");
         if (!q) {
@@ -50,68 +64,151 @@ export default function TitleSearch() {
             setSearchTerm("");
         }
     }, [searchParams]);
+    
+    useEffect(() => {
+        let from = searchParams.get("from");
+		let to = searchParams.get("to");
+		const regionCodes = searchParams.get("regions");
+		const keywords = searchParams.get("keywords");
 
+        let prevSelectedFilters = {...selectedFilters};
+
+        let defaultYearFrom = allYears[0];
+        let defaultYearTo = allYears[allYears.length - 1];
+
+        // e.g. from="2019-01-01", to="2022-12-31"
+        prevSelectedFilters['from']['defaultValue'] = defaultYearFrom;
+		prevSelectedFilters['from']['value'] = from ? from.slice(0, 4) : defaultYearFrom;
+
+        prevSelectedFilters['to']['defaultValue'] = defaultYearTo;
+		prevSelectedFilters['to']['value'] = to ? to.slice(0, 4) : defaultYearTo;
+
+		// e.g. regionCodes="[sk,us,gb]"
+		if (regionCodes) {
+			let regionCodesArr = regionCodes.slice(1, -1).split(',');
+            let selectedRegions = [];
+
+            // e.g. selectedRegions=['Slovakia', 'United States', 'Great Britan']
+            regionCodesArr.map((regionCode) => {
+                let regionName = Object.keys(allRegions).find(key => allRegions[key] === regionCode);
+                selectedRegions.push(regionName);
+            });
+
+            prevSelectedFilters['regions'] = selectedRegions;
+
+		}
+		if (keywords) {
+			let keywordsArr = keywords.slice(1, -1).split(',');
+			prevSelectedFilters['keywords'] = keywordsArr;
+		}
+
+		setSelectedFilters(prevSelectedFilters);
+    }, [allYears, allRegions, allKeywords]);
+
+    // calculate number of selected filters
+    useEffect(() => {
+        let yearFrom = selectedFilters['from']['defaultValue'] !== selectedFilters['from']['value'] ? 1 : 0;
+        let yearTo = selectedFilters['to']['defaultValue'] !== selectedFilters['to']['value'] ? 1 : 0;
+        let regions = selectedFilters['regions'].length;
+        let keywords = selectedFilters['keywords'].length;
+
+        setNumSelectedFilters(yearFrom + yearTo + regions + keywords);
+    }, [selectedFilters]);
 
     const handleSearchChange = (value) => {
         setSearchTerm(value);
     };
 
+    const onYearFromSelect = (yearFrom) => {
+        let yearTo = selectedFilters['to']['value'];
+        // disable wrong year range
+        if (yearFrom > selectedFilters['to']['value']) {
+            yearTo = yearFrom;
+        }
+        setSelectedFilters({...selectedFilters, 'from': {...selectedFilters['from'], 'value': yearFrom}, 'to': {...selectedFilters['to'], 'value': yearTo}});
+    }
+
+    const onYearToSelect = (yearTo) => {
+        setSelectedFilters({...selectedFilters, 'to': {...selectedFilters['to'], 'value': yearTo}});
+    }
+
+    const onRegionSelect = (selectedRegions) => {
+        setSelectedFilters({...selectedFilters, 'regions': selectedRegions});
+    }
+
+    const onKeywordSelect = (selectedKeywords) => {
+        setSelectedFilters({...selectedFilters, 'keywords': selectedKeywords});
+    }
 
     const onAdvancedSearchHide = () => {
         setAdvancedSearchOpen(false);
         window.scroll({top: 0, left: 0, behavior: 'smooth' });
     }
 
+    const onAdvancedSearchClear = () => {
+        let defaultYearFrom = allYears[0];
+        let defaultYearTo = allYears[allYears.length - 1];
+
+        setSelectedFilters({
+            ...emptyFilters, 
+            'from': {
+                'value':defaultYearFrom, 
+                'defaultValue': defaultYearFrom,
+            }, 
+            'to': {
+                'value': defaultYearTo,
+                'defaultValue': defaultYearTo,
+            },
+        });
+    }
 
     const onAdvancedSearchApply = () => {
         onAdvancedSearchHide();
         submitSearchParams();
     }
 
-
     const onAdvancedSearchCancel = () => {
+        for (const filterName in selectedFilters) {
+            searchParams.delete(filterName);
+        }
+        setSearchParams(searchParams);
+
+        onAdvancedSearchClear();
         onAdvancedSearchHide();
     }
 
-
-    const onSelectAdvancedSearchFilter = useCallback((numOfSelectedFilters, selectedFilter, isSelectedYearFrom, isSelectedYearTo) => {
-        setNumOfSelectedAdvancedSearchFilters(numOfSelectedFilters);
-        setSelectedAdvancedSearchFilters(selectedFilter);
-        setIsSelectedAdvSearchYearFrom(isSelectedYearFrom);
-        setIsSelectedAdvSearchYearTo(isSelectedYearTo);
-    }, [])
-
-
     const submitSearchParams = () => {
-        // delete previous state of search params
         searchParams.delete("q");
         searchParams.delete("page");
-        for (const filterName in selectedAdvancedSearchFilters) {
+        for (const filterName in selectedFilters) {
             searchParams.delete(filterName);
         }
 
         searchParams.append("q", searchTerm);
 		searchParams.append("page", 1);
 
-        if (selectedAdvancedSearchFilters) {
-            // nefunguje spravne, lebo setIsApplied year from este nie je dokoncene
-            console.log(isSelectedAdvSearchYearFrom);
-            if (isSelectedAdvSearchYearFrom) {
-                searchParams.append("from", selectedAdvancedSearchFilters['from'] + '-01-01');
-            }
+        const selectedFrom = selectedFilters['from']['value'] !== selectedFilters['from']['defaultValue'] ? selectedFilters['from']['value'] : null;
+        const selectedTo = selectedFilters['to']['value'] !== selectedFilters['to']['defaultValue'] ? selectedFilters['to']['value'] : null;
+        
+        let selectedRegions = [];
+        selectedFilters['regions'].map(region => {
+            selectedRegions.push(allRegions[region]);
+        })
+        selectedRegions = selectedRegions.length ? selectedRegions : null;
 
-            if (isSelectedAdvSearchYearTo) {
-                searchParams.append("to", selectedAdvancedSearchFilters['to'] + '-31-12');
-            }
-            
-            if (Object.keys(selectedAdvancedSearchFilters['regions']).length) {
-                searchParams.append("regions", '[' + Object.values(selectedAdvancedSearchFilters['regions']).join(',') + ']');
-            }
+        const selectedKeywords = selectedFilters['keywords'].length ? selectedFilters['keywords'] : null;
 
-            if (selectedAdvancedSearchFilters['keywords'].length) {
-                searchParams.append("keywords", '[' + selectedAdvancedSearchFilters['keywords'].join(',') + ']');
-            }
-            
+        if (selectedFrom) {
+            searchParams.append("from", selectedFrom + '-01-01');
+        }
+        if (selectedTo) {
+            searchParams.append("to", selectedTo + '-12-31');
+        }
+        if (selectedRegions) {
+            searchParams.append("regions", '[' + selectedRegions.join(',') + ']');
+        }
+        if (selectedKeywords) {
+            searchParams.append("keywords", '[' + selectedKeywords.join(',') + ']');
         }
 
         setShowingResults(true);
@@ -152,7 +249,20 @@ export default function TitleSearch() {
             </form>
             
             <Collapse timeout={1200} in={advancedSearchOpen}>
-                <AdvancedSearch selectedAdvancedSearchFilters={selectedAdvancedSearchFilters} onSelectAdvancedSearchFilter={onSelectAdvancedSearchFilter} parentOnHide={onAdvancedSearchHide} parentOnApply={onAdvancedSearchApply} parentOnCancel={onAdvancedSearchCancel} />
+                <AdvancedSearch 
+                    allYearsFromAPI={allYears}
+                    allRegionsFromAPI={allRegions}
+                    allKeywordsFromAPI={allKeywords}
+                    selectedAdvancedFilters={selectedFilters}
+                    onYearFromSelect={onYearFromSelect}
+                    onYearToSelect={onYearToSelect}
+                    onRegionSelect={onRegionSelect}
+                    onKeywordSelect={onKeywordSelect}
+                    onHide={onAdvancedSearchHide}
+                    onClear={onAdvancedSearchClear}
+                    onApply={onAdvancedSearchApply}
+                    onCancel={onAdvancedSearchCancel}
+                />
             </Collapse>
             
             {(!advancedSearchOpen) && 
@@ -162,16 +272,16 @@ export default function TitleSearch() {
                     direction={"row"}
                     spacing={1}
                     >
-                    {numOfSelectedAdvancedSearchFilters ? 
+                    {numSelectedFilters ? 
                         <ButtonBase onClick={() => setAdvancedSearchOpen(true)}>
                             <Stack
                                 direction={"row"}
                                 spacing={0.3}
                             >
                                 <Box sx={{ textAlign: 'center', borderRadius: "50%", width: "0.9rem", height: "0.9rem", backgroundColor: 'primary.main' }}>
-                                    <Typography fontSize={11}  color="white">{numOfSelectedAdvancedSearchFilters}</Typography>
+                                    <Typography fontSize={11}  color="white">{numSelectedFilters}</Typography>
                                 </Box>
-                                {numOfSelectedAdvancedSearchFilters === 1 ? 
+                                {numSelectedFilters === 1 ? 
                                     <Typography color="primary" fontSize={11}>applied filter</Typography>
                                     : 
                                     <Typography color="primary" fontSize={11}>applied filters</Typography>
