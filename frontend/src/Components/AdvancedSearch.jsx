@@ -3,7 +3,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useState, useEffect } from "react";
 import { StyledToggleButton, StyledToggleButtonGroup } from "../Style/StyledToggleButton";
-import {emptyFilters} from "../Utils/AdvancedSearchUtils";
+import { emptyFilters } from "../Utils/AdvancedSearchUtils";
 
 
 export default function AdvancedSearch({allYearsFromAPI, allRegionsFromAPI, allKeywordsFromAPI, selectedAdvancedFilters, onYearFromSelect, onYearToSelect, onRegionSelect, onKeywordSelect, onHide, onClear, onApply, onCancel}) {
@@ -45,7 +45,13 @@ export default function AdvancedSearch({allYearsFromAPI, allRegionsFromAPI, allK
 			sx={{ pt: 2 }}
 		>
 			<Grid item>
-				{(selectedFilters['from']['value'] !== selectedFilters['from']['defaultValue'] || selectedFilters['to']['value'] !== selectedFilters['to']['defaultValue']) ? <Typography color="primary">Year of publication</Typography> : <Typography color="secondary">Year of publication</Typography>}
+				{((selectedFilters['from']['value'] !== selectedFilters['from']['defaultValue']) 
+					  || 
+				  	(selectedFilters['to']['value'] !== selectedFilters['to']['defaultValue'])) 
+				  	  ? 
+				  	<Typography color="primary">Year of publication</Typography> 
+					  : 
+					<Typography color="secondary">Year of publication</Typography>}
 			</Grid>
 			
 			
@@ -54,21 +60,24 @@ export default function AdvancedSearch({allYearsFromAPI, allRegionsFromAPI, allK
 				direction="row"
 			>
 				<Grid item container xs={5} justifyContent={"center"}>
-					<FormControl 
-						variant="standard"
-					>
-						<InputLabel>From</InputLabel>
-						<Select
-							label="From"
-							value={selectedFilters['from']['value']}
-							onChange={handleChangeYearFrom}
+					{selectedFilters['from']['value'] ? 
+						<FormControl 
+							variant="standard"
 						>
-							{allYears.map((year) => (
-								<MenuItem key={year} value={year}>{year}</MenuItem>
-							))}
-						</Select>
-					</FormControl>
-	
+							<InputLabel>From</InputLabel>
+							<Select
+								label="From"
+								value={selectedFilters['from']['value']}
+								onChange={handleChangeYearFrom}
+							>
+								{allYears.map((year) => (
+									<MenuItem key={year} value={year}>{year}</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+						:
+						<></>
+					}
 				</Grid>
 
 				<Grid item container xs justifyContent={"center"}>
@@ -76,20 +85,24 @@ export default function AdvancedSearch({allYearsFromAPI, allRegionsFromAPI, allK
 				</Grid>
 
 				<Grid item container xs={5} justifyContent={"center"}>
-					<FormControl 
-						variant="standard"
-					>
-						<InputLabel>To</InputLabel>
-						<Select
-							label="To"
-							value={selectedFilters['to']['value']}
-							onChange={handleChangeYearTo}
+					{selectedFilters['to']['value'] ? 
+						<FormControl 
+							variant="standard"
 						>
-							{allYears.slice(allYears.indexOf(selectedFilters['from']['value'])).map((year) => (
-								<MenuItem key={year} value={year}>{year}</MenuItem>
-							))}
-						</Select>
-					</FormControl>
+							<InputLabel>To</InputLabel>
+							<Select
+								label="To"
+								value={selectedFilters['to']['value']}
+								onChange={handleChangeYearTo}
+							>
+								{allYears.slice(allYears.indexOf(selectedFilters['from']['value'])).map((year) => (
+									<MenuItem key={year} value={year}>{year}</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+						:
+						<></>
+					}
 				</Grid>
 			</Grid>
 
