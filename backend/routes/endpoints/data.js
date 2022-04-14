@@ -26,12 +26,24 @@ async function apiFetch(endpoint, req) {
 // node_host /ams/api/data/search/
 router.get('/search/', async function (req, res){
     try {
-        const data = await apiFetch("search/", req)
+        const data = await apiFetch("search", req)
 
         return res.status(200).json({ok: true, data: data})
     } catch (e) {
         console.log(e);
         console.log('Exception happened while handling: /search')
+        return res.status(500).json({ok: false, msg: "Something went wrong while forwarding the request"})
+    }
+})
+
+router.get('/report', async function (req, res){
+    try {
+        const data = await apiFetch('report', req)
+
+        return res.status(200).json({ok: true, data: data})
+    } catch (e) {
+        console.log(e)
+        console.log('Exception happened while handling: /report')
         return res.status(500).json({ok: false, msg: "Something went wrong while forwarding the request"})
     }
 })
