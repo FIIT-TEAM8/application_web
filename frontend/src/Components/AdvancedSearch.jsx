@@ -6,6 +6,7 @@ import { YEARS, REGIONS, KEYWORDS } from "../Utils/AdvancedSearchItems";
 import { StyledToggleButton, StyledToggleButtonGroup } from "../Style/StyledToggleButton";
 import { useSearchParams } from "react-router-dom";
 
+import * as countryCodeMapping from '../Utils/country_code_maping.json';
 
 
 export default function AdvancedSearch({onSelectAdvancedSearchFilter, parentOnHide, parentOnApply, parentOnCancel}) {
@@ -15,7 +16,7 @@ export default function AdvancedSearch({onSelectAdvancedSearchFilter, parentOnHi
 	const [allYearsTo, setAllYearsTo] = useState([]);
 	const [allRegions, setAllRegions] = useState([]);
 	const [allKeywords, setAllKeywords] = useState([]);
-	const [selectedFilters, setSelectedFilters] = useState({'from': '', 'to': '', 'regions': [], 'keywords': []});
+	const [selectedFilters, setSelectedFilters] = useState({'from': '', 'to': '', 'regions': {}, 'keywords': []});
 	const [appliedYearFrom, setAppliedYearFrom] = useState(false);
 	const [appliedYearTo, setAppliedYearTo] = useState(false);
 
@@ -24,9 +25,12 @@ export default function AdvancedSearch({onSelectAdvancedSearchFilter, parentOnHi
 		// api call get regions and keywords
 		setAllYearsFrom(YEARS);
 		setAllYearsTo(YEARS);
-		setAllRegions(REGIONS);
+		setAllRegions(countryCodeMapping.default);
 		setAllKeywords(KEYWORDS);
-		
+	}, []);
+
+
+	useEffect(() => {
 		let from = searchParams.get("from");
 		let to = searchParams.get("to");
 		let regions = searchParams.get("regions");
@@ -35,13 +39,21 @@ export default function AdvancedSearch({onSelectAdvancedSearchFilter, parentOnHi
 		let prevSelectedFilters = {...selectedFilters};
 
 		// e.g. from="2019-01-01"
-		prevSelectedFilters['from'] = from ? from.slice(0, 4) : YEARS[0];
-		prevSelectedFilters['to'] = to ? to.slice(0, 4) : YEARS[YEARS.length - 1];
+		prevSelectedFilters['from'] = from ? from.slice(0, 4) : allYearsFrom[0];
+		prevSelectedFilters['to'] = to ? to.slice(0, 4) : allYearsTo[allYearsTo.length - 1];
 		
-		// e.g. regions="[czech republic,great britan]"
+		// e.g. regions="[sk,us,gb]"
 		if (regions) {
-			regions = regions.slice(1, -1).split(',');
-			prevSelectedFilters['regions'] = regions;
+			let regionCodes = regions.slice(1, -1).split(',');
+
+			// save regions as {regionName: regionCode}
+			let regionCodesObj = {}
+			regionCodes.map((regionCode) => {
+				let regionName = Object.keys(allRegions).find(key => allRegions[key] === regionCode);
+				regionCodesObj[regionName] = allRegions[regionName];
+			})
+
+			prevSelectedFilters['regions'] = regionCodesObj;
 		}
 		if (keywords) {
 			keywords = keywords.slice(1, -1).split(',');
@@ -49,10 +61,11 @@ export default function AdvancedSearch({onSelectAdvancedSearchFilter, parentOnHi
 		}
 
 		setSelectedFilters(prevSelectedFilters);
-	}, []);
+
+	}, [allYearsFrom, allRegions, allKeywords]);
 
 	useEffect(() => {
-		let numOfSelFilters = 0
+		let numOfSelFilters = 0;
 
 		// is filter for year range applied? (different from first and last year of scraped data)
 		if (selectedFilters['from'] !== allYearsFrom[0]) {
@@ -69,16 +82,18 @@ export default function AdvancedSearch({onSelectAdvancedSearchFilter, parentOnHi
 			setAppliedYearTo(false);
 		}
 
-		numOfSelFilters += selectedFilters['regions'].length + selectedFilters['keywords'].length;
+		numOfSelFilters += Object.values(selectedFilters['regions']).length + selectedFilters['keywords'].length;
 		
 		// always sent to parent after change of selected filters
 		onSelectAdvancedSearchFilter(numOfSelFilters, selectedFilters, appliedYearFrom, appliedYearTo);
 
-	}, [selectedFilters, onSelectAdvancedSearchFilter, allYearsFrom, allYearsTo]);
+	}, [selectedFilters, onSelectAdvancedSearchFilter]);
 
   	const handleChangeYearFrom = (e) => {
 		setAllYearsTo(allYearsFrom.slice(allYearsFrom.indexOf(e.target.value)));
-		setSelectedFilters({ ...selectedFilters, 'from': e.target.value })
+		console.log('from clik');
+		console.log(e.target.value);
+		setSelectedFilters({ ...selectedFilters, 'from': e.target.value });
   	};
 
 	const handleChangeYearTo = (e) => {
@@ -86,7 +101,11 @@ export default function AdvancedSearch({onSelectAdvancedSearchFilter, parentOnHi
   	};
 
 	const handleRegionClick = (e, allSelectedRegions) => {
-		setSelectedFilters({ ...selectedFilters, 'regions': allSelectedRegions })
+		let selectedRegionsWithCodesObject = {}
+		allSelectedRegions.map((region) => {
+			selectedRegionsWithCodesObject[region] = allRegions[region];
+ 		});
+		setSelectedFilters({ ...selectedFilters, 'regions': selectedRegionsWithCodesObject })
 	}
 
 
@@ -166,14 +185,14 @@ export default function AdvancedSearch({onSelectAdvancedSearchFilter, parentOnHi
 			</Grid>
 
 			<Grid item>
-				{selectedFilters['regions'].length ? <Typography color="primary">Region</Typography> : <Typography color="secondary">Region</Typography>}
+				{Object.values(selectedFilters['regions']).length ? <Typography color="primary">Region</Typography> : <Typography color="secondary">Region</Typography>}
 			</Grid>
 
 			<StyledToggleButtonGroup
-				value={selectedFilters['regions']}
+				value={Object.keys(selectedFilters['regions'])}
 				onChange={handleRegionClick}
 			>
-				{allRegions.map((region) => (
+				{Object.keys(allRegions).map((region) => (
 					<StyledToggleButton 
 						key={region}
 						sx={{ whiteSpace: 'nowrap' }} 

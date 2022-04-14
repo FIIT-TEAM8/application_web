@@ -94,6 +94,8 @@ export default function TitleSearch() {
 		searchParams.append("page", 1);
 
         if (selectedAdvancedSearchFilters) {
+            // nefunguje spravne, lebo setIsApplied year from este nie je dokoncene
+            console.log(isSelectedAdvSearchYearFrom);
             if (isSelectedAdvSearchYearFrom) {
                 searchParams.append("from", selectedAdvancedSearchFilters['from'] + '-01-01');
             }
@@ -102,8 +104,8 @@ export default function TitleSearch() {
                 searchParams.append("to", selectedAdvancedSearchFilters['to'] + '-31-12');
             }
             
-            if (selectedAdvancedSearchFilters['regions'].length) {
-                searchParams.append("regions", '[' + selectedAdvancedSearchFilters['regions'].join(',') + ']');
+            if (Object.keys(selectedAdvancedSearchFilters['regions']).length) {
+                searchParams.append("regions", '[' + Object.values(selectedAdvancedSearchFilters['regions']).join(',') + ']');
             }
 
             if (selectedAdvancedSearchFilters['keywords'].length) {
