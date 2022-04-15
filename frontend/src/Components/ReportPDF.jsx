@@ -145,30 +145,6 @@ export default function ReportPDF() {
         setIsReportGenerating(false);
 
         doc.save('report.pdf');
-
-        // setIsReportGenerating(true);
-        // const doc = new jsPDF('p', 'pt', 'a4'); // necessary settings
-
-        // // create one html from all articles in report
-        // const htmlTemplate = `
-        //     <div>
-        //         ${articlesFromReport.map((article, index) => {
-        //             return `<div style="font-size:10px; width:550px;">
-        //                 <span>Article found by term: <strong>${articlesInReport[index].searchTerm}</strong></span>
-        //                 ${article.html}
-        //             </div>`;
-        //         })}
-        //     </div>`;
-
-        // await doc.html(htmlTemplate, {
-        //     callback: function(doc) {
-        //         doc.save("report.pdf");
-        //     },
-        //     x: 20,
-        //     y: 20,
-        // });
-
-        // setIsReportGenerating(false);
     }
 
     return (
