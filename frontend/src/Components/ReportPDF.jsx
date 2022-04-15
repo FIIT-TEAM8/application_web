@@ -49,29 +49,126 @@ export default function ReportPDF() {
     }
 
     const downloadPDF = async () => {
+        // display loading circle
         setIsReportGenerating(true);
-        const doc = new jsPDF('p', 'pt', 'a4'); // necessary settings
 
-        // create one html from all articles in report
-        const htmlTemplate = `
-            <div>
-                ${articlesFromReport.map((article, index) => {
-                    return `<div style="font-size:10px; width:550px;">
-                        <span>Article found by term: <strong>${articlesInReport[index].searchTerm}</strong></span>
-                        ${article.html}
-                    </div>`;
-                })}
-            </div>`;
+        // parse string to html
+        const parser = new DOMParser();
+        const doc = new jsPDF('p', 'pt', 'a4');
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const x = 25; // horizontal starting point in pdf page
+        const lineLength = pageWidth - (x * 2);
+        let lineHeight, lines, y; // y is vertical starting point in pdf page
+        
+        for (let i = 0; i < articlesFromReport.length; i++) {
+            const articleFromReport = articlesFromReport[i];
+            const searchTermLower = articlesInReport[i].searchTerm.toLowerCase();
+            // parse article html string to html doc
+            const htmlDoc = parser.parseFromString(articleFromReport.html, 'text/html');
+            y = 30; // vertical starting point in pdf page
 
-        await doc.html(htmlTemplate, {
-            callback: function(doc) {
-                doc.save("report.pdf");
-            },
-            x: 20,
-            y: 20,
-        });
+            // add title
+            doc.setFontSize(16);
+            lineHeight = doc.getLineHeight();
+            lines = doc.splitTextToSize(articleFromReport.title, lineLength);
+            
+            for (let j = 0; j < lines.length; j++) {
+                doc.text(lines[j], x, y);
+                y += lineHeight;
+            }
 
+            // add some space
+            y += 4;
+
+            // add keywords
+            doc.setFontSize(13);
+            lineHeight = doc.getLineHeight();
+            let keywordsText = `Keywords: ${articleFromReport.keywords.join(', ')}`
+            lines = doc.splitTextToSize(keywordsText, lineLength);
+
+            for (let j = 0; j < lines.length; j++) {
+                doc.text(lines[j], x, y);
+                y += lineHeight;
+            }
+
+            // add some space
+            y += 2;
+
+            doc.setFontSize(12);
+            lineHeight = doc.getLineHeight();
+            let termText = `Found by term: ${articlesInReport[i].searchTerm}`; // articlesInReport !!!
+            lines = doc.splitTextToSize(termText, lineLength);
+
+            for (let j = 0; j < lines.length; j++) {
+                doc.text(lines[j], x, y);
+                y += lineHeight;
+            }
+            
+            doc.setFontSize(11);
+            doc.setTextColor(30, 144, 255); // rgb for dodger blue
+            lineHeight = doc.getLineHeight();
+            const link = articleFromReport.link;
+            doc.textWithLink(`${new URL(link).hostname.replace('www.','')}`, x, y, {url: `${link}`});
+            y += lineHeight;
+
+            // add some space
+            y += 5;
+
+            doc.setFontSize(11);
+            doc.setTextColor(0, 0, 0); // rgb for dodger blue
+            lineHeight = doc.getLineHeight();
+            lines = doc.splitTextToSize(htmlDoc.body.innerText, lineLength);
+
+            for (let j = 0; j < lines.length; j++) {
+                if ((y + lineHeight) >= pageHeight) {
+                    doc.addPage();
+                    y = 30; // reset starting point for new page
+                }
+
+                if (lines[j].toLowerCase().includes(searchTermLower)) {
+                    doc.setDrawColor(0);
+                    doc.setFillColor(255, 255, 0); // rgb for yellow
+                    doc.rect(x, y - lineHeight + 1, lineLength, lineHeight, 'F'); //Fill and Border
+                }
+
+                doc.text(lines[j], x, y);
+                y = y + lineHeight + 1;
+            }
+
+            if ((i + 1) < articlesFromReport.length) {
+                doc.addPage();
+            }
+        }
+
+        // display loading circle
         setIsReportGenerating(false);
+
+        doc.save('report.pdf');
+
+        // setIsReportGenerating(true);
+        // const doc = new jsPDF('p', 'pt', 'a4'); // necessary settings
+
+        // // create one html from all articles in report
+        // const htmlTemplate = `
+        //     <div>
+        //         ${articlesFromReport.map((article, index) => {
+        //             return `<div style="font-size:10px; width:550px;">
+        //                 <span>Article found by term: <strong>${articlesInReport[index].searchTerm}</strong></span>
+        //                 ${article.html}
+        //             </div>`;
+        //         })}
+        //     </div>`;
+
+        // await doc.html(htmlTemplate, {
+        //     callback: function(doc) {
+        //         doc.save("report.pdf");
+        //     },
+        //     x: 20,
+        //     y: 20,
+        // });
+
+        // setIsReportGenerating(false);
     }
 
     return (
