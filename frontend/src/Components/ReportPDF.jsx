@@ -1,11 +1,12 @@
 // @ts-nocheck
-import { Typography, Grid, Stack, IconButton, CircularProgress, Link, Box, Divider, Button } from "@mui/material";
+import { Typography, Grid, Stack, CircularProgress, Button, Dialog, DialogTitle, DialogActions } from "@mui/material";
 import { useWindowSize } from "../Utils/Screen";
 import { useUser } from "../Utils/UserContext";
-import DeleteIcon from '@mui/icons-material/Delete';
 import { useEffect, useState } from "react";
 import { apiCall } from "../Utils/APIConnector";
 import { jsPDF } from "jspdf";
+import ReportItem from "./ReportItem";
+import SuccessSnackbar from "./SuccessSnackbar";
 
 export default function ReportPDF() {
     const { width } = useWindowSize();
@@ -13,6 +14,7 @@ export default function ReportPDF() {
     const { articlesInReport, removeArcticleReport } = useUser();
     const [articlesFromReport, setArticlesFromReport] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
+    const [successMsgOpen, setSuccessMsgOpen] = useState(false);
     
     let searchDivStyle = {
         margin: "auto",
@@ -33,12 +35,18 @@ export default function ReportPDF() {
     }, []);
 
     const handleRemoveArticle = (index, articleId) => {
-        let currArticlesFromReport = [...articlesFromReport]; // make a separate copy of the array
+        let currArticlesFromReport = [...articlesFromReport];
         currArticlesFromReport.splice(index, 1);
         removeArcticleReport(articleId);
         setArticlesFromReport(currArticlesFromReport);
+        setSuccessMsgOpen(true);
     };
 
+    const handleSnackbarClose = () => {
+        setSuccessMsgOpen(false);
+    }
+
+    // TODO: tell user, that pdf is generating
     const downloadPDF = () => {
         const doc = new jsPDF('p', 'pt', 'a4'); // necessary settings
 
@@ -63,78 +71,53 @@ export default function ReportPDF() {
     }
 
     return (
-        <Grid container style={searchDivStyle}>
-            <Grid item xs={12}>
-                <Typography variant="h1" color="primary">
-                    pdf report
-                </Typography>
-                <Button onClick={() => downloadPDF()}>Download as PDF</Button> 
-            </Grid>
-            {articlesInReport.length > 0 ?
-                isLoaded ?
-                    <Grid item xs={12}>
-                        <Stack spacing={6} sx={{ pt: 4}}>
-                            {articlesFromReport.map((article, index) => 
-                            <Grid container key={index}>
-                                <Grid item xs={11.5} md={11.6} lg={11.7}>
-                                    <Stack spacing={1}>
-                                        <Typography noWrap variant="h6" color="secondary">
-                                            Found by term: <strong>{articlesInReport[index].searchTerm}</strong>
-                                        </Typography>
-                                        <Stack
-                                            direction="row"
-                                            divider={<Divider sx={{ borderRightWidth: 0.5 }} style={{ background: "#757575" }} orientation="vertical" flexItem />}
-                                            spacing={2}
-                                        >
-                                            <Box sx={{ width: 80 }}>
-                                                <Typography noWrap color="secondary">
-                                                    {article.published.slice(5, -13)}
-                                                </Typography>
-                                            </Box>
-                                            <Link href={article.link} target="_blank" rel="noopener" underline="none" noWrap>
-                                                <Typography noWrap color="secondary">
-                                                    {new URL(article.link).hostname.replace('www.','')}
-                                                </Typography>
-                                            </Link>
-                                        </Stack>
-                                            <Link href={article.link} target="_blank" rel="noopener" underline="hover">
-                                            <Typography noWrap variant="h2" color="primary">
-                                                {article.title}
-                                            </Typography>
-                                            </Link>
-                                            <Stack direction="row" color="secondary" spacing={2}>
-                                            {article.keywords.map((crime, index) => (
-                                                <Box
-                                                    key={index}
-                                                    sx={{
-                                                        pl: 0.7,
-                                                        pr: 0.7,
-                                                        borderRadius: 1.5,
-                                                    }}
-                                                    bgcolor="#e6e7eb"
-                                                    >
-                                                    <Typography color="secondary">{crime}</Typography>
-                                                </Box>
-                                            ))}
-                                        </Stack>
-                                    </Stack>
-                                </Grid>
-                                <Grid item xs={0.5} md={0.4} lg={0.3} textAlign="end">
-                                    <IconButton fontSize="small" onClick={() => handleRemoveArticle(index, article._id)} sx={{ padding: 0.2 }}>
-                                        <DeleteIcon fontSize="medium"/>
-                                    </IconButton>
-                                </Grid>
-                            </Grid>
-                            )}
-                        </Stack>
-                    </Grid>
-                :
-                <Grid item xs={12} textAlign="center">
-                    <CircularProgress size={50} thickness={2} color="secondary" />
+        <>
+            <SuccessSnackbar 
+                text={"Article was successfully removed from PDF report!"}
+                open={successMsgOpen}
+                handleClose={handleSnackbarClose}
+            />
+            <Grid container style={searchDivStyle} justifyContent="space-between" alignItems="center">
+                <Grid item xs={8}>
+                    <Typography variant="h1" color="primary">
+                        pdf report
+                    </Typography>
                 </Grid>
-             : <Grid item xs={12} textAlign="center">
-                 <Typography>PDF report is empty.</Typography>
-                </Grid>}
-        </Grid>
+                {articlesInReport.length > 0 ?
+                    (isLoaded ?
+                        (<>
+                            <Grid item xs={4} textAlign="end">
+                                <Button 
+                                    size="large"
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={downloadPDF}
+                                >
+                                    Download
+                                </Button> 
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Stack spacing={6} sx={{ pt: 4}}>
+                                    {articlesFromReport.map((article, index) => 
+                                        <ReportItem 
+                                            article={article}
+                                            index={index}
+                                            handleRemoveArticle={handleRemoveArticle}
+                                            articlesInReport={articlesInReport}
+                                        />
+                                    )}
+                                </Stack>
+                            </Grid>
+                        </>)
+                    :
+                    (<Grid item xs={12} textAlign="center">
+                        <CircularProgress size={50} thickness={2} color="secondary" />
+                    </Grid>))
+                :
+                (<Grid item xs={12} textAlign="center">
+                    <Typography>PDF report is empty.</Typography>
+                </Grid>)}
+            </Grid>
+        </>
     );
 }

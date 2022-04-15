@@ -5,6 +5,7 @@ import { Tooltip, Snackbar, Alert } from "@mui/material";
 import { useUser } from "../Utils/UserContext";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import SuccessSnackbar from "./SuccessSnackbar";
 
 export default function ButtonPDF({ articleId, articleTitle }) {
     const { articlesInReport, addArticleReport, removeArcticleReport } =
@@ -40,21 +41,12 @@ export default function ButtonPDF({ articleId, articleTitle }) {
     // if user doesn't have this article in PDF report, allow him to add it
     // otherwise allow him to remove article from report
     return (
-        <>
-            <Snackbar
+        <>  
+            <SuccessSnackbar 
+                text={"Article was added to PDF report!"}
                 open={successMsgOpen}
-                anchorOrigin={{ vertical: "top", horizontal: "center" }}
-                onClose={handleSnackbarClose}
-                autoHideDuration={3000}
-            >
-                <Alert
-                    onClose={handleSnackbarClose}
-                    severity="success"
-                    sx={{ width: "100%" }}
-                >
-                    Article was added to PDF report!
-                </Alert>
-            </Snackbar>
+                handleClose={handleSnackbarClose}
+            />
             {isInReport ? (
                 <Tooltip
                     title="Remove from PDF report"
