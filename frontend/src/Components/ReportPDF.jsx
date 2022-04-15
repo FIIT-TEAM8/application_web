@@ -1,5 +1,6 @@
 // @ts-nocheck
-import { Typography, Grid, Stack, CircularProgress, Button, Dialog, DialogTitle, DialogActions } from "@mui/material";
+import { Typography, Grid, Stack, CircularProgress, Button, Dialog,
+     DialogTitle, DialogContent } from "@mui/material";
 import { useWindowSize } from "../Utils/Screen";
 import { useUser } from "../Utils/UserContext";
 import { useEffect, useState } from "react";
@@ -15,6 +16,7 @@ export default function ReportPDF() {
     const [articlesFromReport, setArticlesFromReport] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
     const [successMsgOpen, setSuccessMsgOpen] = useState(false);
+    const [isReportGenerating, setIsReportGenerating] = useState(false);
     
     let searchDivStyle = {
         margin: "auto",
@@ -46,8 +48,8 @@ export default function ReportPDF() {
         setSuccessMsgOpen(false);
     }
 
-    // TODO: tell user, that pdf is generating
-    const downloadPDF = () => {
+    const downloadPDF = async () => {
+        setIsReportGenerating(true);
         const doc = new jsPDF('p', 'pt', 'a4'); // necessary settings
 
         // create one html from all articles in report
@@ -61,13 +63,15 @@ export default function ReportPDF() {
                 })}
             </div>`;
 
-        doc.html(htmlTemplate, {
+        await doc.html(htmlTemplate, {
             callback: function(doc) {
                 doc.save("report.pdf");
             },
             x: 20,
             y: 20,
         });
+
+        setIsReportGenerating(false);
     }
 
     return (
@@ -77,6 +81,15 @@ export default function ReportPDF() {
                 open={successMsgOpen}
                 handleClose={handleSnackbarClose}
             />
+            <Dialog open={isReportGenerating}>
+                <DialogTitle>
+                    We are generating your report...
+                </DialogTitle>
+                <DialogContent align="center">
+                    <CircularProgress size={50} thickness={2} color="primary" />
+                </DialogContent>
+            </Dialog>
+            {/* Main content of the page starts here */}
             <Grid container style={searchDivStyle} justifyContent="space-between" alignItems="center">
                 <Grid item xs={8}>
                     <Typography variant="h1" color="primary">
