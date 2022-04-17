@@ -3,6 +3,7 @@ import { Search } from "@mui/icons-material";
 import { useEffect, useState, useCallback } from "react";
 import { Outlet, useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useWindowSize } from "../Utils/Screen";
+import { apiCall } from "../Utils/APIConnector";
 import AdvancedSearch from "../Components/AdvancedSearch";
 import {emptyFilters, getYears} from "../Utils/AdvancedSearchUtils";
 
@@ -40,11 +41,19 @@ export default function TitleSearch() {
     }
 
     useEffect(() => {
-		// api call get regions and keywords
-        // api call to get first and last year of scrapped articles, then call getYears(firstYear, lastYear)
-		setAllYears(getYears(2016, new Date().getFullYear()));
-		setAllRegions(regionCodeMapping.default);
-		setAllKeywords(KEYWORDS);
+        apiCall(`/api/advanced_search/keyword_categories`, "GET").then((result) => {
+            if (result.ok) {
+                setAllKeywords(Object.keys(result.data));
+            }
+        });
+
+        apiCall(`/api/advanced_search/region_mapping`, "GET").then((result) => {
+            if (result.ok) {
+                setAllRegions(result.data);
+            }
+        });
+
+        setAllYears(getYears(2016, new Date().getFullYear()));
 
         const q = searchParams.get("q");
 
