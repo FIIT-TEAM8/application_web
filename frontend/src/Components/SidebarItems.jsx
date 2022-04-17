@@ -3,6 +3,7 @@ import { List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
 import HomeIcon from '@mui/icons-material/Home';
 import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
+import InfoIcon from '@mui/icons-material/Info';
 import { Link } from "react-router-dom";
 
 export function SidebarItems({ open }) {
@@ -10,6 +11,7 @@ export function SidebarItems({ open }) {
         <List>
             <SidebarItem open={open} text="Home" icon={<HomeIcon />} href="/search" />
             <SidebarItem open={open} text="Archive" icon={<HistoryEduIcon />} href="/archive" />
+            <SidebarItem open={open} text="About" icon={<InfoIcon />} href="/about" />
         </List>
     );
 }
