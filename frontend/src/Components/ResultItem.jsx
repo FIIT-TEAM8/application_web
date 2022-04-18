@@ -1,4 +1,4 @@
-import { Box, Divider, Typography, Link, Stack, Grid, Button } from "@mui/material";
+import { Box, Divider, Typography, Link, Stack, Grid } from "@mui/material";
 import ButtonPDF from "./ButtonPDF";
 import { useUser } from "../Utils/UserContext";
 import { Link as RouterLink } from "react-router-dom";
@@ -42,8 +42,8 @@ export default function ResultItem({ item, index }) {
                             </Typography>
                         </RouterLink>
                     </Stack>
-                    <Link href={item.link} target="_blank" rel="noopener" underline="hover">
-                        <Typography noWrap variant="h2" color="primary">
+                    <Link style={{ color: '#009688' }} href={item.link} target="_blank" rel="noopener" underline="hover" >
+                        <Typography noWrap variant="h2">
                             {item.title}
                         </Typography>
                     </Link>

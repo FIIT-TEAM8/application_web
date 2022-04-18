@@ -21,6 +21,17 @@ export default function UserProvider({ children }) {
             return;
         }
 
+        // use user id from loginRefToken
+        await apiCall(`/api/pdf_report/${loginRefToken.id}?status=In Progress`, "GET")
+                .then((result) => {
+                    // TODO: info user, that PDF report wasn't loaded
+                    if (result.ok) {
+                        console.log("PDF report was succesfully loaded.")
+                        setReportId(result.reportId);
+                        setArticlesInReport(result.articlesInReport);
+                    }
+                });
+
         setUser({
             username: loginRefToken.username,
             id: loginRefToken.id,
@@ -28,6 +39,8 @@ export default function UserProvider({ children }) {
 
         await refreshToken().then((ok) => {
             if (!ok) {
+                setArticlesInReport([]);
+                setReportId([]);
                 setUser(undefined);
             }
         });
@@ -55,9 +68,10 @@ export default function UserProvider({ children }) {
     const logout = () => {
         apiCall(`/api/user/logout`, "POST")
             .then((result) => {
-                console.log(result);
                 if (result.ok) {
                     setUser(undefined);
+                    setReportId(0);
+                    setArticlesInReport([]);
                 }
             })
             .catch((err) => console.log(err));
@@ -65,9 +79,28 @@ export default function UserProvider({ children }) {
         Cookies.remove("__refToken");
     };
 
-    const updateReportAPI = () => {
+    const reportRequest = (newArticlesInReport) => {
+        if (reportId !== 0) {
+            // update user's in progress report
+            updateReportAPI(newArticlesInReport);
+        } else if (user && typeof(user.id) === "number") {
+            // create new user's 'In progress' report
+            apiCall(`/api/pdf_report/create`, "POST", {
+                userId: user.id,
+                articlesInReport: newArticlesInReport,
+            }).then((result) => {
+                // TODO: info user, that PDF wasn't created
+                if (result.ok) {
+                    setReportId(result.reportId);
+                    console.log("PDF successfully created");
+                }
+            });
+        }
+    }
+
+    const updateReportAPI = (newArticlesInReport) => {
         apiCall(`/api/pdf_report/update/${reportId}`, "POST", {
-            articlesInReport: articlesInReport,
+            articlesInReport: newArticlesInReport,
         })
             .then((result) => {
                 if (result.ok) {
@@ -79,52 +112,28 @@ export default function UserProvider({ children }) {
             .catch((err) => console.log(err));
     };
 
-    // TODO: after user login or sign up load his in progress report
     const addArticleReport = (article) => {
-        // add article to array of all articles in PDF report
         setArticlesInReport((prevState) => {
             prevState.push(article);
+            reportRequest(prevState);
             return prevState;
         });
-
-        console.log(articlesInReport); // remove
-
-        // TODO: remove this and on user login/singup load automatically
-        if (reportId !== 0) {
-            updateReportAPI();
-        } else {
-            apiCall(`/api/pdf_report/create`, "POST", {
-                userId: 1,
-                articlesInReport: articlesInReport,
-            }) // switch 1 to user_id
-                .then((result) => {
-                    if (result.ok) {
-                        setReportId(result.reportId);
-                    }
-                });
-        }
     };
 
     const removeArcticleReport = (articleId) => {
-        // remove article by id from articles in PDF report
         setArticlesInReport((prevState) => {
             const articleIndex = prevState.findIndex((article) => {
                 return article.id === articleId;
             });
 
-            // make sure array contains articleId
+            // don't change state, when article isn't in it
             if (articleIndex !== -1) {
                 prevState.splice(articleIndex, 1);
+                reportRequest(prevState);
             }
-
+            
             return prevState;
-        });
-
-        console.log(articlesInReport); // remove
-
-        if (reportId !== 0) {
-            updateReportAPI();
-        }
+        })
     };
 
     const signup = async (signupData) => {
