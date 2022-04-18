@@ -22,7 +22,7 @@ export default function MainRouter() {
             <Route path="about" element={<AboutPage />} />
             {/* TODO: ADD PROPER ON CLOSE */}
             <Route path="login" element={<Login isOpen={true}/>} />
-            {user ? <Route path="pdf_report" element={<ReportPDF/>} /> : <Route path="login" element={<Login isOpen={true}/>} /> }
+            {user ? <Route path="pdf_report" element={<ReportPDF/>} /> : <Route path="pdf_report" element={<Navigate to="/search"/>} /> }
         </Routes>
     );
 }

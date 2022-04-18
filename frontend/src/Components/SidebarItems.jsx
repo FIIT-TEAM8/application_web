@@ -5,13 +5,16 @@ import ArticleIcon from '@mui/icons-material/Article';
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 import InfoIcon from '@mui/icons-material/Info';
 import { Link } from "react-router-dom";
+import { useUser } from "../Utils/UserContext";
 
 export function SidebarItems({ open }) {
+    const {user} = useUser()
+
     return (
         <List>
             <SidebarItem open={open} text="home" icon={<HomeIcon />} href="/search" />
             <SidebarItem open={open} text="archive" icon={<HistoryEduIcon />} href="/archive" />
-            <SidebarItem open={open} text="pdf report" icon={<ArticleIcon />} href="/pdf_report" />
+            {user && <SidebarItem open={open} text="pdf report" icon={<ArticleIcon />} href="/pdf_report" />}
             <SidebarItem open={open} text="about" icon={<InfoIcon />} href="/about" />
         </List>
     );
