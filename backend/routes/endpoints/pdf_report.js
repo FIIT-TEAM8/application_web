@@ -16,7 +16,7 @@ router.get('/:user_id', async function (req, res) {
             return res.status(400).json({ok: false, msg: "Unable to retrieve PDF report."})
         }
 
-        return res.status(200).json({ok: true, articlesInReport: report.content, msg: "Report was successfully retrieved."})
+        return res.status(200).json({ok: true, reportId: report.id, articlesInReport: report.content, msg: "Report was successfully retrieved."})
     } catch (e) {
         console.log(e);
         console.log('Exception happened while handling: /pdf_report/:id')

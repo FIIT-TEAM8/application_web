@@ -17,6 +17,8 @@ router.get('/', function (req, res) {
 })
 
 router.post('/signup', async function(req, res) {
+    const cookieAge = req.body.maxCookieAge || 60 * 60 * 24 // 1 day default (60s * 60m * 24h)
+
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
         const user = {username: req.body.username, password: hashedPassword}
@@ -24,7 +26,21 @@ router.post('/signup', async function(req, res) {
         if (!id) {
             return res.status(400).json({ok: false, msg: "Sign up failed. Username might already be in use."})
         }
-        return res.status(200).json({ok: true, msg: "Sign up successful."})
+        const accessToken = generateAccessToken({username: user.username, id: id})
+        const refreshToken = jwt.sign({username: user.username, id: id}, process.env.REFRESH_TOKEN_SECRET)
+        tokendb.insertRefreshToken(refreshToken, cookieAge)
+        
+        // @ts-ignore
+        res.cookie('__authToken', accessToken, {maxAge: cfg.AUTH_COOKIE_AGE, httpOnly: true, secure: cfg.IS_HTTPS})
+        // @ts-ignore
+        res.cookie('__refToken', refreshToken, {maxAge: cookieAge * 1000, httpOnly: false, secure: cfg.IS_HTTPS})
+        res.status(200).json({
+            ok: true, 
+            auth: true, 
+            msg: "Sign up successful.", 
+            accessToken: accessToken, 
+            refreshToken: refreshToken
+        })
     } catch (e) {
         errLog(e.stack)
         return res.status(500).json({ok: false, msg: "Internal server error."})
