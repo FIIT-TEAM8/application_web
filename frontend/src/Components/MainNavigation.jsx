@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useEffect } from "react";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
@@ -20,7 +21,6 @@ import {
     DrawerHeader,
     closedMixin,
     openedMixin,
-    MobileDrawer,
     drawerWidth,
 } from "../Style/NavStyledComponents";
 import HomeLink from "./HomeLink";
@@ -108,12 +108,6 @@ export default function MainNavigation() {
     const [isOpen, setIsOpen] = React.useState(false);
     const { width, height } = useWindowSize();
     const isMobile = width < 768;
-
-    useEffect(() => {
-        if (height && !isMobile) {
-            setIsOpen(true);
-        }
-    }, [width]);
 
     const handleDrawerOpen = () => {
         setIsOpen(true);
