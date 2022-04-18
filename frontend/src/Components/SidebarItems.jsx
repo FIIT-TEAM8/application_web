@@ -9,9 +9,9 @@ import { Link } from "react-router-dom";
 export function SidebarItems({ open }) {
     return (
         <List>
-            <SidebarItem open={open} text="Home" icon={<HomeIcon />} href="/search" />
-            <SidebarItem open={open} text="Archive" icon={<HistoryEduIcon />} href="/archive" />
-            <SidebarItem open={open} text="About" icon={<InfoIcon />} href="/about" />
+            <SidebarItem open={open} text="home" icon={<HomeIcon />} href="/search" />
+            <SidebarItem open={open} text="archive" icon={<HistoryEduIcon />} href="/archive" />
+            <SidebarItem open={open} text="about" icon={<InfoIcon />} href="/about" />
         </List>
     );
 }
