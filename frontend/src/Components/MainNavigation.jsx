@@ -109,12 +109,6 @@ export default function MainNavigation() {
     const { width, height } = useWindowSize();
     const isMobile = width < 768;
 
-    useEffect(() => {
-        if (height && !isMobile) {
-            setIsOpen(true);
-        }
-    }, [width]);
-
     const handleDrawerOpen = () => {
         setIsOpen(true);
     };

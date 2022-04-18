@@ -20,18 +20,7 @@ export default function UserProvider({ children }) {
             setUser(undefined);
             return;
         }
-
-        // use user id from loginRefToken
-        await apiCall(`/api/pdf_report/${loginRefToken.id}?status=In Progress`, "GET")
-                .then((result) => {
-                    // TODO: info user, that PDF report wasn't loaded
-                    if (result.ok) {
-                        console.log("PDF report was succesfully loaded.")
-                        setReportId(result.reportId);
-                        setArticlesInReport(result.articlesInReport);
-                    }
-                });
-
+        
         setUser({
             username: loginRefToken.username,
             id: loginRefToken.id,
@@ -45,6 +34,18 @@ export default function UserProvider({ children }) {
             }
         });
         console.log("Logged in via refToken");
+
+        // use user id from loginRefToken
+        await apiCall(`/api/pdf_report/${loginRefToken.id}?status=In Progress`, "GET").then(
+            (result) => {
+                // TODO: info user, that PDF report wasn't loaded
+                if (result.ok) {
+                    console.log("PDF report was succesfully loaded.");
+                    setReportId(result.reportId);
+                    setArticlesInReport(result.articlesInReport);
+                }
+            }
+        );
     };
 
     const login = async (loginData) => {
@@ -83,7 +84,7 @@ export default function UserProvider({ children }) {
         if (reportId !== 0) {
             // update user's in progress report
             updateReportAPI(newArticlesInReport);
-        } else if (user && typeof(user.id) === "number") {
+        } else if (user && typeof user.id === "number") {
             // create new user's 'In progress' report
             apiCall(`/api/pdf_report/create`, "POST", {
                 userId: user.id,
@@ -96,7 +97,7 @@ export default function UserProvider({ children }) {
                 }
             });
         }
-    }
+    };
 
     const updateReportAPI = (newArticlesInReport) => {
         apiCall(`/api/pdf_report/update/${reportId}`, "POST", {
@@ -131,9 +132,9 @@ export default function UserProvider({ children }) {
                 prevState.splice(articleIndex, 1);
                 reportRequest(prevState);
             }
-            
+
             return prevState;
-        })
+        });
     };
 
     const signup = async (signupData) => {
