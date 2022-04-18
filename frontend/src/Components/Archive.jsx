@@ -9,6 +9,7 @@ import { Search } from "@mui/icons-material";
 import { apiCall } from "../Utils/APIConnector";
 import { format } from "date-fns";
 import DOMPurify from "dompurify";
+import MainHeading from "./MainHeading";
 
 export default function Archive() {
     const { width } = useWindowSize();
@@ -42,10 +43,9 @@ export default function Archive() {
     return (
         <div style={searchDivStyle}>
             <form onSubmit={onSubmit}>
-                <Typography variant="h4" color="secondary">
-                    .archive
-                </Typography>
+                <MainHeading text={"ams archive"}/>
                 <TextField
+                    sx={{mt: 2}}
                     id="outlined-search"
                     color={"secondary"}
                     value={searchTerm}

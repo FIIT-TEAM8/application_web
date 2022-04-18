@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { theme } from "../Style/Theme";
+import { Link as RouterLink } from "react-router-dom";
 
 export default function ReportItem({ article, index, articlesInReport, handleRemoveArticle }) {
     const [showDialog, setShowDialog] = useState(false);
@@ -76,8 +77,18 @@ export default function ReportItem({ article, index, articlesInReport, handleRem
                                     {new URL(article.link).hostname.replace("www.", "")}
                                 </Typography>
                             </Link>
+                            <RouterLink to={`/archive?link=${article.link}`}>
+                                <Typography noWrap color="secondary">
+                                    Archived Article
+                                </Typography>
+                            </RouterLink>
                         </Stack>
-                        <Link href={article.link} style={{color: theme.palette.primary.main}} target="_blank" rel="noopener" underline="hover">
+                        <Link
+                            href={article.link}
+                            style={{ color: theme.palette.primary.main }}
+                            target="_blank"
+                            rel="noopener"
+                            underline="hover">
                             <Typography variant="h2" color="primary">
                                 {article.title}
                             </Typography>
