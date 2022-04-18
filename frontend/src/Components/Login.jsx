@@ -6,7 +6,7 @@ import { initialLoginValues, loginValidationSchema } from "../Utils/AccountSchem
 import { useUser } from "../Utils/UserContext";
 
 
-export default function Login({isOpen, onClose, onSignupOpen}) {
+export default function Login({isOpen, onClose=()=>{}, onSignupOpen=()=>{}}) {
 
     const [displayedPassword, setDisplayedPassword] = useState(false);  // diplayed password means showing the plain text of entered string
     const [passwordType, setPasswordType] = useState("password");  // set to hide the plain text of entered password

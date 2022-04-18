@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Example POST method implementation:
 import Cookies from 'js-cookie'
 const DEV = process.env.NODE_ENV !== 'production'
@@ -10,7 +11,7 @@ if (DEV){
     CREDENTIALS = 'include'
 }
 
-export async function apiCall(endpoint = '', method = 'GET', data = null, ) {
+export async function apiCall(endpoint = '', method = 'GET', data = null, ignoreAuthError=false) {
     let baseUrl = ''
     let baseEndpoint = process.env.PUBLIC_URL
     // DEV ENVIRONMENT
@@ -48,26 +49,39 @@ export async function apiCall(endpoint = '', method = 'GET', data = null, ) {
             console.log(error)
         }
     );
-    if (response.status === 403 || response.status === 401) {
+
+    if ((response.status === 403 || response.status === 401) && !ignoreAuthError) {
         const refreshed = await refreshToken()
         if (refreshed) {
-            response = await fetch(url, init);
+            response = await fetch(url, init).then(
+                (res) => {
+                    response = res;
+                },
+                (error) => {
+                    console.log(error)
+                }
+            );
         }
     }
     //if (DEV) console.log(response)
     let result = {}
     try {
-        result = response ? response.json() : {}
+        if (response) {
+            result = await response.json()
+        }
     } catch (e) {
+        console.error("Response not in json format.");
         result = {ok: false, msg: "Invalid return value"}
     }
+    result.status = response.status
     return result; // parses JSON response into native JavaScript objects
 }
 
 export async function refreshToken() {
-    const response = await apiCall('/api/user/token')
+    const response = await apiCall('/api/user/token', 'GET', undefined, true)
     if (response.status === 403 || response.status === 401) {
-        // window.location.replace(`/login`);
+        Cookies.remove("__authToken");
+        Cookies.remove("__refToken");
         return false
     } else {
         return true
@@ -75,9 +89,10 @@ export async function refreshToken() {
 }
 
 //https://medium.com/@SilentHackz/simple-way-to-secure-react-apps-using-jwt-and-react-router-2b4a05d780a3
-export function getCookieRefToken() {
-    const jwt = Cookies.get('__refToken')
+export function getCookieToken(cookieName='__refToken') {
+    const jwt = Cookies.get(cookieName)
     let session
+    console.log(jwt);
     try {
         if (jwt) {
             const base64Url = jwt.split('.')[1]

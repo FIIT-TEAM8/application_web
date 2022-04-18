@@ -1,22 +1,31 @@
-import { Collapse, IconButton, TextField, Typography, InputAdornment, Stack, Button, Box, ButtonBase } from "@mui/material";
+import {
+    Collapse,
+    IconButton,
+    TextField,
+    Typography,
+    InputAdornment,
+    Stack,
+    Button,
+    Box,
+    ButtonBase,
+} from "@mui/material";
 import { Search } from "@mui/icons-material";
 import { useEffect, useState, useCallback } from "react";
 import { Outlet, useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useWindowSize } from "../Utils/Screen";
 import { apiCall } from "../Utils/APIConnector";
 import AdvancedSearch from "../Components/AdvancedSearch";
-import {emptyFilters, getYears} from "../Utils/AdvancedSearchUtils";
+import { emptyFilters, getYears } from "../Utils/AdvancedSearchUtils";
 
 export default function TitleSearch() {
-
     const navigate = useNavigate();
-    const width = useWindowSize();
-    const shouldCollapse = width < 992
+    const { width } = useWindowSize();
+    const shouldCollapse = width < 992;
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchTerm, setSearchTerm] = useState("");
     const [showingResults, setShowingResults] = useState(false);
-    
+
     // states for advanced search
     const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false);
 	const [allYears, setAllYears] = useState([]);
@@ -26,10 +35,9 @@ export default function TitleSearch() {
     const [numSelectedFilters, setNumSelectedFilters] = useState(0);
 
     let searchDivStyle = {
-        margin: "auto", 
-        padding: shouldCollapse ? "200px 7%" : "200px 20%"
+        margin: "auto",
+        padding: shouldCollapse ? "200px 7%" : "200px 20%",
     };
-
 
     if (showingResults) {
         searchDivStyle.padding = shouldCollapse ? "20px 7%" : "20px 20%";
@@ -228,12 +236,16 @@ export default function TitleSearch() {
         submitSearchParams();
     };
 
-
     return (
         <div style={searchDivStyle}>
             <form onSubmit={onSubmit}>
-                <Link to="/search" onClick={onAdvancedSearchHide} style={{ textDecoration: 'none' }} >
-                    <Typography variant="h1" color="primary">ams</Typography>
+                <Link
+                    to="/search"
+                    onClick={onAdvancedSearchHide}
+                    style={{ textDecoration: "none" }}>
+                    <Typography variant="h1" color="primary">
+                        ams
+                    </Typography>
                 </Link>
                 <TextField
                     id="outlined-search"
@@ -242,14 +254,20 @@ export default function TitleSearch() {
                     label={"Search"}
                     autoComplete="off"
                     variant="outlined"
-                    onChange={event => handleSearchChange(event.target.value)}
-                    fullWidth 
+                    onChange={(event) => handleSearchChange(event.target.value)}
+                    fullWidth
                     InputProps={{
                         endAdornment: (
-                            <InputAdornment position="end">{<IconButton color="primary" type="submit"><Search /></IconButton>}</InputAdornment>
-                        ) 
+                            <InputAdornment position="end">
+                                {
+                                    <IconButton color="primary" type="submit">
+                                        <Search />
+                                    </IconButton>
+                                }
+                            </InputAdornment>
+                        ),
                     }}
-                    />
+                />
             </form>
             
             <Collapse timeout={1200} in={advancedSearchOpen}>
@@ -309,5 +327,5 @@ export default function TitleSearch() {
 
             <Outlet />
         </div>
-    )
+    );
 }

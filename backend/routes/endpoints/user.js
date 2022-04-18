@@ -7,14 +7,10 @@ const {cfg} = require("../../config")
 const {debug, infoLog, errLog} = require("../../utils/logging")
 const userdb = require("../../db/user_db")
 const tokendb = require("../../db/token_db")
+const { generateAccessToken, refreshToken } = require('../../middleware/auth')
 
 
 const router = express.Router()
-
-// https://www.youtube.com/watch?v=mbsmsi7l3r4&ab_channel=WebDevSimplified auth
-function generateAccessToken(username) {
-    return jwt.sign({username: username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1m'})
-}
 
 router.get('/', function (req, res) {
     res.status(200).json({ok: true, data: {}, msg: "Default user route is working"})
@@ -46,11 +42,13 @@ router.post('/login', async function(req, res) {
 
     try {
         if (await bcrypt.compare(req.body.password, user.password)) {
-            const accessToken = generateAccessToken(user.username)
-            const refreshToken = jwt.sign({username: user.username}, process.env.REFRESH_TOKEN_SECRET)
+            const accessToken = generateAccessToken({username: user.username, id: user.id})
+            const refreshToken = jwt.sign({username: user.username, id: user.id}, process.env.REFRESH_TOKEN_SECRET)
             tokendb.insertRefreshToken(refreshToken, cookieAge)
 
+            // @ts-ignore
             res.cookie('__authToken', accessToken, {maxAge: cfg.AUTH_COOKIE_AGE, httpOnly: true, secure: cfg.IS_HTTPS})
+            // @ts-ignore
             res.cookie('__refToken', refreshToken, {maxAge: cookieAge * 1000, httpOnly: false, secure: cfg.IS_HTTPS})
             res.status(200).json({
                 ok: true, 
@@ -68,32 +66,14 @@ router.post('/login', async function(req, res) {
     }
 })
 
-router.get('/token', async function(req, res) {
-    const refreshToken = req.cookies.__refToken
-
-    if (! refreshToken) {
-        return res.sendStatus(401)
-    }
-    
-    const refreshTokenMaxAge = await tokendb.checkRefreshToken(refreshToken)
-    if (! refreshTokenMaxAge) {
-        return res.sendStatus(403)
-    }
-
-    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-        if (err) return res.sendStatus(403)
-
-        const accessToken = generateAccessToken(user.username)
-        res.cookie('__authToken', accessToken, {maxAge: cfg.AUTH_COOKIE_AGE, httpOnly: true, secure: cfg.IS_HTTPS})
-        res.cookie('__refToken', refreshToken, {maxAge: refreshTokenMaxAge * 1000, httpOnly: false, secure: cfg.IS_HTTPS})
-        res.status(200).json({ok: true, accessToken: accessToken})
-    })
+router.get('/token', refreshToken, async function(req, res) {
+    res.status(200).json({ok: true})
 })
 
 router.post('/logout', async function(req, res) {
     try {
         await tokendb.deleteRefreshToken(req.cookies.__refToken)
-        return res.status(204).json({ok: true, msg: "Log out successful."})
+        return res.status(200).json({ok: true, msg: "Log out successful."})
     } catch (e) {
         errLog(e.stack)
         res.status(500).json({ok: false, msg: "Internal server error."})

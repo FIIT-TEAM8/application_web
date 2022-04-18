@@ -4,6 +4,7 @@ import SearchResults from "./SearchResults";
 import TitleSearch from "./TitleSearch";
 import Login from "./Login";
 import Archive from "./Archive";
+import AboutPage from "./AboutPage";
 
 export default function MainRouter() {
     return (
@@ -13,8 +14,9 @@ export default function MainRouter() {
                 <Route path="results" element={<SearchResults />} />
             </Route>
             <Route path="archive" element={<Archive />} />
-            <Route path="login" element={<Login open={true} />} />
-            <Route path="example" element={<div>This is an example</div>} />
+            <Route path="about" element={<AboutPage />} />
+            {/* TODO: ADD PROPER ON CLOSE */}
+            <Route path="login" element={<Login isOpen={true}/>} />
         </Routes>
     );
 }

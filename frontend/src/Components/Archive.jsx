@@ -9,7 +9,7 @@ import { Search } from "@mui/icons-material";
 import { apiCall } from "../Utils/APIConnector";
 
 export default function Archive() {
-    const width = useWindowSize();
+    const { width } = useWindowSize();
     const shouldCollapse = width < 992;
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -26,6 +26,7 @@ export default function Archive() {
 
     const onSubmit = (event) => {
         event.preventDefault();
+        // @ts-ignore
         document.activeElement.blur() //remove focus from the text field
         searchParams.delete("url");
         searchParams.append("url", searchTerm);
