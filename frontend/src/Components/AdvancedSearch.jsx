@@ -2,140 +2,42 @@ import { Button, Grid, Typography, FormControl, InputLabel, Select, MenuItem } f
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import { YEARS, REGIONS, KEYWORDS } from "../Utils/AdvancedSearchItems";
 import { StyledToggleButton, StyledToggleButtonGroup } from "../Style/StyledToggleButton";
+import { emptyFilters } from "../Utils/AdvancedSearchUtils";
 
 
+export default function AdvancedSearch({allYearsFromAPI, allRegionsFromAPI, allKeywordsFromAPI, selectedAdvancedFilters, onYearFromSelect, onYearToSelect, onRegionSelect, onKeywordSelect, onHide, onClear, onApply, onCancel}) {
 
-export default function AdvancedSearch({parentOnHide, parentOnApply, parentFilterClick}) {
+	const [selectedFilters, setSelectedFilters] = useState(emptyFilters);
+	const [allYears, setAllYears] = useState([]);
+	const [allRegions, setAllRegions] = useState([]);
+	const [allKeywords, setAllKeywords] = useState([]);
 
-	const [searchParams, setSearchParams] = useSearchParams();
-	const [allYearsTo, setAllYearsTo] = useState(YEARS);
-	const [selectedRegions, setSelectedRegions] = useState([]);
-	const [selectedKeywords, setSelectedKeywords] = useState([]);
-	const [selectedYearFrom, setSelectedYearFrom] = useState(YEARS[0]);
-	const [selectedYearTo, setSelectedYearTo] = useState(YEARS[YEARS.length - 1]);
-	const [appliedYearFrom, setAppliedYearFrom] = useState(false);
-	const [appliedYearTo, setAppliedYearTo] = useState(false);
+	useEffect(() => {
+		setSelectedFilters(selectedAdvancedFilters);
+	}, [selectedAdvancedFilters]);
 
-
-	const getNoOfSelectedFiltes = () => {
-		var sum = 0;
-		var appliedRegions = selectedRegions.length;
-		var appliedKeywords = selectedKeywords.length;
-
-		if (appliedYearFrom) {
-			sum += 1;
-		}
-		if (appliedYearTo) {
-			sum += 1;
-		}
-		
-		sum += appliedRegions;
-		sum += appliedKeywords;
-
-		return sum;
-	}
-	
+	useEffect(() => {
+		setAllYears(allYearsFromAPI);
+		setAllRegions(Object.keys(allRegionsFromAPI));
+		setAllKeywords(allKeywordsFromAPI);
+	}, [allYearsFromAPI, allRegionsFromAPI, allKeywordsFromAPI]);
 
   	const handleChangeYearFrom = (e) => {
-		setAllYearsTo(YEARS.slice(YEARS.indexOf(e.target.value))); // changing based on selected lower limit year range - years from
-		setSelectedYearFrom(e.target.value);
+		onYearFromSelect(e.target.value);
   	};
-
 
 	const handleChangeYearTo = (e) => {
-		setSelectedYearTo(e.target.value);
+		onYearToSelect(e.target.value);
   	};
 
-
-	const handleRegionClick = (e, newRegion) => {
-		setSelectedRegions(newRegion);
-		parentFilterClick(getNoOfSelectedFiltes());
+	const handleRegionClick = (e, selectedRegions) => {
+		onRegionSelect(selectedRegions);
 	}
 
-
-	const handleKeywordClick = (e, newKeyword) => {
-		setSelectedKeywords(newKeyword);
-		parentFilterClick(getNoOfSelectedFiltes());
+	const handleKeywordClick = (e, selectedKeywords) => {
+		onKeywordSelect(selectedKeywords);
 	}
-
-
-	const onHide = () => {
-		parentOnHide();
-	}
-
-	
-	const onCancel = () => {
-		setSelectedYearFrom(YEARS[0]);
-		setSelectedYearTo(YEARS[YEARS.length - 1]);
-		setSelectedRegions([]);
-		setSelectedKeywords([]);
-		parentFilterClick(0);
-		parentOnHide();
-	}
-
-
-	const onClear = () => {
-		//window.scroll({top: 0, left: 0, behavior: 'smooth' });
-		setSelectedYearFrom(YEARS[0]);
-		setSelectedYearTo(YEARS[YEARS.length - 1]);
-		setSelectedRegions([]);
-		setSelectedKeywords([]);
-		parentFilterClick(0);
-	}
-
-
-	const onApply = () => {
-		searchParams.delete("from");
-		searchParams.delete("to");
-		searchParams.delete("regions");
-		searchParams.delete("keywords");
-
-		if (appliedYearFrom) {
-			searchParams.append("from", selectedYearFrom + '-01-01');
-		}
-
-		if (appliedYearFrom) {
-			searchParams.append("to", selectedYearTo + '-31-12');
-		}
-
-		if (selectedRegions.length) {
-			searchParams.append("regions", '[' + selectedRegions.join(',') + ']');
-		}
-
-		if (selectedKeywords.length) {
-			searchParams.append("keywords", '[' + selectedKeywords.join(',') + ']');
-		}
-
-		setSearchParams(searchParams);
-		parentOnApply();
-	}
-
-
-	useEffect(() => {
-		if (selectedYearFrom !== YEARS[0]) {
-			setAppliedYearFrom(true);
-		} else {
-			setAppliedYearFrom(false);
-		}
-	}, [selectedYearFrom]);
-
-
-	useEffect(() => {
-		if (selectedYearTo !== YEARS[YEARS.length - 1]) {
-			setAppliedYearTo(true);
-		} else {
-			setAppliedYearTo(false);
-		}
-	}, [selectedYearTo]);
-
-
-	useEffect(() => {
-		parentFilterClick(getNoOfSelectedFiltes());
-	}, [appliedYearFrom, appliedYearTo, selectedKeywords, selectedRegions]);
-
  
 	return (
 		<Grid container
@@ -143,7 +45,13 @@ export default function AdvancedSearch({parentOnHide, parentOnApply, parentFilte
 			sx={{ pt: 2 }}
 		>
 			<Grid item>
-				{appliedYearFrom || appliedYearTo ? <Typography color="primary">Year of publication</Typography> : <Typography color="secondary">Year of publication</Typography>}
+				{((selectedFilters['from']['value'] !== selectedFilters['from']['defaultValue']) 
+					  || 
+				  	(selectedFilters['to']['value'] !== selectedFilters['to']['defaultValue'])) 
+				  	  ? 
+				  	<Typography color="primary">Year of publication</Typography> 
+					  : 
+					<Typography color="secondary">Year of publication</Typography>}
 			</Grid>
 			
 			
@@ -152,19 +60,24 @@ export default function AdvancedSearch({parentOnHide, parentOnApply, parentFilte
 				direction="row"
 			>
 				<Grid item container xs={5} justifyContent={"center"}>
-					<FormControl 
-						variant="standard"
-					>
-						<InputLabel>From</InputLabel>
-						<Select
-							label="From"
-							value={selectedYearFrom}
-							onChange={handleChangeYearFrom}
+					{selectedFilters['from']['value'] ? 
+						<FormControl 
+							variant="standard"
 						>
-							{YEARS.map(year => (<MenuItem key={year} value={year}>{year}</MenuItem>))}
-						</Select>
-					</FormControl>
-	
+							<InputLabel>From</InputLabel>
+							<Select
+								label="From"
+								value={selectedFilters['from']['value']}
+								onChange={handleChangeYearFrom}
+							>
+								{allYears.map((year) => (
+									<MenuItem key={year} value={year}>{year}</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+						:
+						<></>
+					}
 				</Grid>
 
 				<Grid item container xs justifyContent={"center"}>
@@ -172,30 +85,36 @@ export default function AdvancedSearch({parentOnHide, parentOnApply, parentFilte
 				</Grid>
 
 				<Grid item container xs={5} justifyContent={"center"}>
-					<FormControl 
-						variant="standard"
-					>
-						<InputLabel>To</InputLabel>
-						<Select
-							label="To"
-							value={selectedYearTo}
-							onChange={handleChangeYearTo}
+					{selectedFilters['to']['value'] ? 
+						<FormControl 
+							variant="standard"
 						>
-							{allYearsTo.map(year => (<MenuItem key={year} value={year}>{year}</MenuItem>))}
-						</Select>
-					</FormControl>
+							<InputLabel>To</InputLabel>
+							<Select
+								label="To"
+								value={selectedFilters['to']['value']}
+								onChange={handleChangeYearTo}
+							>
+								{allYears.slice(allYears.indexOf(selectedFilters['from']['value'])).map((year) => (
+									<MenuItem key={year} value={year}>{year}</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+						:
+						<></>
+					}
 				</Grid>
 			</Grid>
 
 			<Grid item>
-				{selectedRegions.length ? <Typography color="primary">Region</Typography> : <Typography color="secondary">Region</Typography>}
+				{selectedFilters['regions'].length ? <Typography color="primary">Region</Typography> : <Typography color="secondary">Region</Typography>}
 			</Grid>
 
 			<StyledToggleButtonGroup
-				value={selectedRegions}
+				value={selectedFilters['regions']}
 				onChange={handleRegionClick}
 			>
-				{REGIONS.map((region) => (
+				{allRegions.map((region) => (
 					<StyledToggleButton 
 						key={region}
 						sx={{ whiteSpace: 'nowrap' }} 
@@ -208,14 +127,14 @@ export default function AdvancedSearch({parentOnHide, parentOnApply, parentFilte
 			</StyledToggleButtonGroup>
 			
 			<Grid item>
-				{selectedKeywords.length ? <Typography color="primary">Included keywords</Typography> : <Typography color="secondary">Included keywords</Typography>}
+				{selectedFilters['keywords'].length ? <Typography color="primary">Included keywords</Typography> : <Typography color="secondary">Included keywords</Typography>}
 			</Grid>
 			
 			<StyledToggleButtonGroup
-				value={selectedKeywords}
+				value={selectedFilters['keywords']}
 				onChange={handleKeywordClick}
 			>
-				{KEYWORDS.map((keyword) => (
+				{allKeywords.map((keyword) => (
 					<StyledToggleButton 
 						key={keyword}
 						sx={{ whiteSpace: 'nowrap' }} 
@@ -231,10 +150,47 @@ export default function AdvancedSearch({parentOnHide, parentOnApply, parentFilte
 				justifyContent="flex-end"
 				spacing={1}
 			>
-				<Grid item><Button color="secondary" variant="text" size="small" style={{textDecoration: "underline"}} onClick={onHide}><KeyboardArrowUpIcon />Hide</Button></Grid>
-				<Grid item><Button color="secondary" variant="text" size="small" style={{textDecoration: "underline"}} onClick={onClear}><ClearIcon />Clear</Button></Grid>
-				<Grid item><Button size="small" variant="contained" onClick={onApply}>Apply & Search</Button></Grid>
-				<Grid item><Button color="secondary" variant="contained" size="small" onClick={onCancel}>Cancel</Button></Grid>
+				<Grid item>
+					<Button 
+						color="secondary"
+						variant="text" 
+						size="small" 
+						style={{textDecoration: "underline"}} 
+						onClick={onHide}
+					>
+						<KeyboardArrowUpIcon />Hide
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button 
+						color="secondary" 
+						variant="text" 
+						size="small" 
+						style={{textDecoration: "underline"}} 
+						onClick={onClear}
+					>
+						<ClearIcon />Clear
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button 
+						size="small" 
+						variant="contained" 
+						onClick={onApply}
+					>
+						{"Apply & Search"}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button 
+						color="secondary" 
+						variant="contained" 
+						size="small" 
+						onClick={onCancel}
+					>
+						Cancel
+					</Button>
+				</Grid>
 			</Grid>
 		</Grid>
 
