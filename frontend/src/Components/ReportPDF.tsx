@@ -20,14 +20,14 @@ import MainHeading from "./MainHeading";
 
 export default function ReportPDF() {
     const { width } = useWindowSize();
-    const shouldCollapse = width < 992;
+    const shouldCollapse: boolean = width < 992;
     const { articlesInReport, removeArcticleReport } = useUser();
-    const [articlesFromReport, setArticlesFromReport] = useState([]);
+    const [articlesFromReport, setArticlesFromReport] = useState<Array>([]);
     const [isLoaded, setIsLoaded] = useState(false);
     const [successMsgOpen, setSuccessMsgOpen] = useState(false);
     const [isReportGenerating, setIsReportGenerating] = useState(false);
 
-    let searchDivStyle = {
+    let searchDivStyle: { margin:string, padding: boolean } = {
         margin: "auto",
         padding: shouldCollapse ? "20px 7%" : "20px 20%",
     };
