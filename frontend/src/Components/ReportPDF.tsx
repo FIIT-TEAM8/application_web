@@ -20,7 +20,7 @@ import { APIResult, Article } from 'Utils/Interfaces';
 
 export default function ReportPDF() {
     const { width } = useWindowSize();
-    const shouldCollapse: boolean = width < 992;
+    const shouldCollapse: boolean = (width && width < 992) ? true : false;
     const { articlesInReport, removeArcticleReport } = useUser();
     const [articlesFromReport, setArticlesFromReport] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
@@ -33,7 +33,7 @@ export default function ReportPDF() {
     };
 
     useEffect(() => {
-        const articlesIds:Array<Article> = articlesInReport.map((article: Article) => article.id);
+        const articlesIds:Array<string> = articlesInReport.map((article: Article) => article.id);
         if (articlesIds.length <= 0) {
             return;
         }
@@ -68,7 +68,7 @@ export default function ReportPDF() {
         // display loading circle
         setIsReportGenerating(true);
 
-        const articlesIds:Array<number> = articlesInReport.map((article: Article) => article.id);
+        const articlesIds:Array<string> = articlesInReport.map((article: Article) => article.id);
 
         apiCall(`/api/pdf_report/download?ids=[${articlesIds.join(', ')}]`, 'GET').then((result: APIResult) => {
             if (result.ok) {
@@ -184,7 +184,7 @@ export default function ReportPDF() {
             />
             <Dialog open={isReportGenerating}>
                 <DialogTitle>We are generating your report...</DialogTitle>
-                <DialogContent align="center">
+                <DialogContent>
                     <CircularProgress size={50} thickness={2} color="primary" />
                 </DialogContent>
             </Dialog>
