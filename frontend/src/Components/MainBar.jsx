@@ -1,8 +1,8 @@
-import { Stack, Button, Typography } from "@mui/material";
-import { useState } from "react";
-import Login from "../Components/Login";
-import Signup from "../Components/Signup";
-import { useUser } from "../Utils/UserContext";
+import { Stack, Button, Typography } from '@mui/material';
+import { useState } from 'react';
+import Login from '../Components/Login';
+import Signup from '../Components/Signup';
+import { useUser } from '../Utils/UserContext';
 
 
 export default function MainBar() {
@@ -42,9 +42,9 @@ export default function MainBar() {
     return (
         <div>
             <Stack 
-                direction={"row"}
-                alignItems={"flex-end"}
-                justifyContent={"flex-end"}
+                direction={'row'}
+                alignItems={'flex-end'}
+                justifyContent={'flex-end'}
                 spacing={0.5}
                 m={2} 
                 >

@@ -1,5 +1,5 @@
-import { createTheme } from "@mui/material/styles";
-import { teal, grey } from "@mui/material/colors";
+import { createTheme } from '@mui/material/styles';
+import { teal, grey } from '@mui/material/colors';
 
 
 export const theme = createTheme({
@@ -15,16 +15,16 @@ export const theme = createTheme({
             dark: grey[900],
         },
         neutral: {
-            main: "#fff",
+            main: '#fff',
         },
     },
     typography: {
         fontSize: 12,
         h2: {
-            fontSize: "1.5rem",
+            fontSize: '1.5rem',
         },
         h3: {
-            fontSize: "1.2rem",
+            fontSize: '1.2rem',
         },
     },
 });

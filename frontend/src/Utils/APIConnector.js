@@ -1,27 +1,27 @@
 // @ts-nocheck
 // Example POST method implementation:
-import Cookies from 'js-cookie'
-const DEV = process.env.NODE_ENV !== 'production'
+import Cookies from 'js-cookie';
+const DEV = process.env.NODE_ENV !== 'production';
 
-let MODE = 'same-origin'
-let CREDENTIALS = 'same-origin'
+let MODE = 'same-origin';
+let CREDENTIALS = 'same-origin';
 
 if (DEV){
-    MODE = 'cors'
-    CREDENTIALS = 'include'
+    MODE = 'cors';
+    CREDENTIALS = 'include';
 }
 
 export async function apiCall(endpoint = '', method = 'GET', data = null, ignoreAuthError=false) {
-    let baseUrl = ''
-    let baseEndpoint = process.env.PUBLIC_URL
+    let baseUrl = '';
+    let baseEndpoint = process.env.PUBLIC_URL;
     // DEV ENVIRONMENT
     if (DEV) {
-        baseUrl = `http://localhost:${process.env.REACT_APP_PORT}`
+        baseUrl = `http://localhost:${process.env.REACT_APP_PORT}`;
         // baseEndpoint = ''
     }
 
-    const url = baseUrl + baseEndpoint + endpoint
-    let response = {}
+    const url = baseUrl + baseEndpoint + endpoint;
+    let response = {};
 
     // Default options are marked with *
     const init = {
@@ -35,10 +35,10 @@ export async function apiCall(endpoint = '', method = 'GET', data = null, ignore
         redirect: 'follow', // manual, *follow, error
         referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         // body: JSON.stringify(data) // body data type must match "Content-Type" header
-    }
+    };
 
     if (data) {
-        init.body = JSON.stringify(data)
+        init.body = JSON.stringify(data);
     }
 
     await fetch(url, init).then(
@@ -46,42 +46,42 @@ export async function apiCall(endpoint = '', method = 'GET', data = null, ignore
             response = res;
         },
         (error) => {
-            console.log(error)
+            console.log(error);
         }
     );
 
     if ((response.status === 403 || response.status === 401) && !ignoreAuthError) {
-        const refreshed = await refreshToken()
+        const refreshed = await refreshToken();
         if (refreshed) {
             response = await fetch(url, init).then(
                 (res) => {
                     response = res;
                 },
                 (error) => {
-                    console.log(error)
+                    console.log(error);
                 }
             );
         }
     }
     //if (DEV) console.log(response)
-    let result = {}
+    let result = {};
     try {
         if (response) {
             result = await response.json();
         }
     } catch (e) {
-        console.error("Response not in json format.");
-        result = {ok: false, msg: "Invalid return value"}
+        console.error('Response not in json format.');
+        result = {ok: false, msg: 'Invalid return value'};
     }
     result.status = response.status;
     return result; // parses JSON response into native JavaScript objects
 }
 
 export async function refreshToken() {
-    const response = await apiCall('/api/user/token', 'GET', undefined, true)
+    const response = await apiCall('/api/user/token', 'GET', undefined, true);
     if (response.status === 403 || response.status === 401) {
-        Cookies.remove("__authToken");
-        Cookies.remove("__refToken");
+        Cookies.remove('__authToken');
+        Cookies.remove('__refToken');
         return false;
     } else {
         return true;

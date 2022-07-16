@@ -9,10 +9,10 @@ export const emptyFilters = {
     },
     'regions': [],
     'keywords': [],
-}
+};
 
 export function getYears (firstYear, lastYear) {
-    let numYears = lastYear - firstYear + 1
+    let numYears = lastYear - firstYear + 1;
     let years = new Array(numYears);
     
     for (let i = 0; i < numYears; i++) {

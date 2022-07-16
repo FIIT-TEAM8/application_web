@@ -4,13 +4,13 @@ import * as yup from 'yup';
 export const initialLoginValues = {
   username: '',
   password: '',
-}
+};
 
 export const initialSignupValues = {
   // TODO add more fields to sign up process
   username: '',
   password: '',
-}
+};
 
 export const loginValidationSchema = yup.object({
     username: yup

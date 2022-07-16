@@ -1,4 +1,4 @@
-import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
     Typography,
     Grid,
@@ -11,10 +11,10 @@ import {
     DialogTitle,
     DialogActions,
     Button,
-} from "@mui/material";
-import { useState } from "react";
-import { theme } from "../Style/Theme";
-import { Link as RouterLink } from "react-router-dom";
+} from '@mui/material';
+import { useState } from 'react';
+import { theme } from '../Style/Theme';
+import { Link as RouterLink } from 'react-router-dom';
 
 export default function ReportItem({ article, index, articlesInReport, handleRemoveArticle }) {
     const [showDialog, setShowDialog] = useState(false);
@@ -56,7 +56,7 @@ export default function ReportItem({ article, index, articlesInReport, handleRem
                             divider={
                                 <Divider
                                     sx={{ borderRightWidth: 0.5 }}
-                                    style={{ background: "#757575" }}
+                                    style={{ background: '#757575' }}
                                     orientation="vertical"
                                     flexItem
                                 />
@@ -74,7 +74,7 @@ export default function ReportItem({ article, index, articlesInReport, handleRem
                                 underline="none"
                                 noWrap>
                                 <Typography noWrap color="secondary">
-                                    {new URL(article.link).hostname.replace("www.", "")}
+                                    {new URL(article.link).hostname.replace('www.', '')}
                                 </Typography>
                             </Link>
                             <RouterLink to={`/archive?link=${article.link}`}>

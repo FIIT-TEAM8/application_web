@@ -1,11 +1,11 @@
-import IconButton from "@mui/material/IconButton";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { Tooltip, Snackbar, Alert } from "@mui/material";
-import { useUser } from "../Utils/UserContext";
-import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import SuccessSnackbar from "./SuccessSnackbar";
+import IconButton from '@mui/material/IconButton';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { Tooltip, Snackbar, Alert } from '@mui/material';
+import { useUser } from '../Utils/UserContext';
+import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import SuccessSnackbar from './SuccessSnackbar';
 
 export default function ButtonPDF({ articleId, articleTitle }) {
     const { articlesInReport, addArticleReport, removeArcticleReport } =
@@ -15,13 +15,13 @@ export default function ButtonPDF({ articleId, articleTitle }) {
     );
     const [searchParams, setSearchParams] = useSearchParams();
     const [successMsgOpen, setSuccessMsgOpen] = useState(false);
-    const buttonSize = "small";
-    const iconSize = "medium";
+    const buttonSize = 'small';
+    const iconSize = 'medium';
 
     const handleAddArticle = (articleId, articleTitle) => {
         addArticleReport({
             id: articleId,
-            searchTerm: searchParams.get("q"),
+            searchTerm: searchParams.get('q'),
             title: articleTitle,
             timeAdded: new Date().toLocaleString(), // example: Tue, 05 Apr 2022 06:30:57 GMT
         });
@@ -43,7 +43,7 @@ export default function ButtonPDF({ articleId, articleTitle }) {
     return (
         <>  
             <SuccessSnackbar 
-                text={"Article was added to PDF report!"}
+                text={'Article was added to PDF report!'}
                 open={successMsgOpen}
                 handleClose={handleSnackbarClose}
             />

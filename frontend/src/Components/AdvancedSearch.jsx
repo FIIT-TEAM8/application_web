@@ -1,9 +1,9 @@
-import { Button, Grid, Typography, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Button, Grid, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ClearIcon from '@mui/icons-material/Clear';
-import { useState, useEffect } from "react";
-import { StyledToggleButton, StyledToggleButtonGroup } from "../Style/StyledToggleButton";
-import { emptyFilters } from "../Utils/AdvancedSearchUtils";
+import { useState, useEffect } from 'react';
+import { StyledToggleButton, StyledToggleButtonGroup } from '../Style/StyledToggleButton';
+import { emptyFilters } from '../Utils/AdvancedSearchUtils';
 
 
 export default function AdvancedSearch({allYearsFromAPI, allRegionsFromAPI, allKeywordsFromAPI, selectedAdvancedFilters, onYearFromSelect, onYearToSelect, onRegionSelect, onKeywordSelect, onHide, onClear, onApply, onCancel}) {
@@ -33,11 +33,11 @@ export default function AdvancedSearch({allYearsFromAPI, allRegionsFromAPI, allK
 
 	const handleRegionClick = (e, selectedRegions) => {
 		onRegionSelect(selectedRegions);
-	}
+	};
 
 	const handleKeywordClick = (e, selectedKeywords) => {
 		onKeywordSelect(selectedKeywords);
-	}
+	};
  
 	return (
 		<Grid container
@@ -59,7 +59,7 @@ export default function AdvancedSearch({allYearsFromAPI, allRegionsFromAPI, allK
 				spacing={1} 
 				direction="row"
 			>
-				<Grid item container xs={5} justifyContent={"center"}>
+				<Grid item container xs={5} justifyContent={'center'}>
 					{selectedFilters['from']['value'] ? 
 						<FormControl 
 							variant="standard"
@@ -80,11 +80,11 @@ export default function AdvancedSearch({allYearsFromAPI, allRegionsFromAPI, allK
 					}
 				</Grid>
 
-				<Grid item container xs justifyContent={"center"}>
+				<Grid item container xs justifyContent={'center'}>
 					<Typography variant="h2" component="p" color="secondary" sx={{ pt: 2}}>-</Typography>
 				</Grid>
 
-				<Grid item container xs={5} justifyContent={"center"}>
+				<Grid item container xs={5} justifyContent={'center'}>
 					{selectedFilters['to']['value'] ? 
 						<FormControl 
 							variant="standard"
@@ -155,7 +155,7 @@ export default function AdvancedSearch({allYearsFromAPI, allRegionsFromAPI, allK
 						color="secondary"
 						variant="text" 
 						size="small" 
-						style={{textDecoration: "underline"}} 
+						style={{textDecoration: 'underline'}} 
 						onClick={onHide}
 					>
 						<KeyboardArrowUpIcon />Hide
@@ -166,7 +166,7 @@ export default function AdvancedSearch({allYearsFromAPI, allRegionsFromAPI, allK
 						color="secondary" 
 						variant="text" 
 						size="small" 
-						style={{textDecoration: "underline"}} 
+						style={{textDecoration: 'underline'}} 
 						onClick={onClear}
 					>
 						<ClearIcon />Clear
@@ -178,7 +178,7 @@ export default function AdvancedSearch({allYearsFromAPI, allRegionsFromAPI, allK
 						variant="contained" 
 						onClick={onApply}
 					>
-						{"Apply & Search"}
+						{'Apply & Search'}
 					</Button>
 				</Grid>
 				<Grid item>

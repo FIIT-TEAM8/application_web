@@ -1,8 +1,8 @@
-import { Box, Divider, Typography, Link, Stack, Grid } from "@mui/material";
-import ButtonPDF from "./ButtonPDF";
-import { useUser } from "../Utils/UserContext";
-import { theme } from "../Style/Theme";
-import { Link as RouterLink } from "react-router-dom";
+import { Box, Divider, Typography, Link, Stack, Grid } from '@mui/material';
+import ButtonPDF from './ButtonPDF';
+import { useUser } from '../Utils/UserContext';
+import { theme } from '../Style/Theme';
+import { Link as RouterLink } from 'react-router-dom';
 
 export default function ResultItem({ item, index }) {
     const { user } = useUser();
@@ -16,7 +16,7 @@ export default function ResultItem({ item, index }) {
                         divider={
                             <Divider
                                 sx={{ borderRightWidth: 0.5 }}
-                                style={{ background: "#757575" }}
+                                style={{ background: '#757575' }}
                                 orientation="vertical"
                                 flexItem
                             />
@@ -34,7 +34,7 @@ export default function ResultItem({ item, index }) {
                             underline="none"
                             noWrap>
                             <Typography noWrap color="secondary">
-                                {new URL(item.link).hostname.replace("www.", "")}
+                                {new URL(item.link).hostname.replace('www.', '')}
                             </Typography>
                         </Link>
                         <RouterLink to={`/archive?link=${item.link}`}>

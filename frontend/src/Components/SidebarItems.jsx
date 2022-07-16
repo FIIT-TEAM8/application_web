@@ -1,14 +1,14 @@
-import React from "react";
-import { List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import React from 'react';
+import { List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import ArticleIcon from '@mui/icons-material/Article';
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 import InfoIcon from '@mui/icons-material/Info';
-import { Link } from "react-router-dom";
-import { useUser } from "../Utils/UserContext";
+import { Link } from 'react-router-dom';
+import { useUser } from '../Utils/UserContext';
 
 export function SidebarItems({ open }) {
-    const {user} = useUser()
+    const {user} = useUser();
 
     return (
         <List>
@@ -20,21 +20,21 @@ export function SidebarItems({ open }) {
     );
 }
 
-function SidebarItem({ open, text, icon, href = "/" }) {
+function SidebarItem({ open, text, icon, href = '/' }) {
     return (
-        <Link to={href} style={{ textDecoration: "none" }}>
+        <Link to={href} style={{ textDecoration: 'none' }}>
             <ListItemButton
                 color="primary"
                 sx={{
                     minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
+                    justifyContent: open ? 'initial' : 'center',
                     px: 2.5,
                 }}>
                 <ListItemIcon
                     sx={{
                         minWidth: 0,
-                        mr: open ? 3 : "auto",
-                        justifyContent: "center",
+                        mr: open ? 3 : 'auto',
+                        justifyContent: 'center',
                     }}>
                     {icon}
                 </ListItemIcon>

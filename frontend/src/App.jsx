@@ -1,11 +1,11 @@
-import { ThemeProvider } from "@mui/material/styles";
-import { theme } from "./Style/Theme";
-import UserProvider from "./Utils/UserProvider";
-import MainLayout from "./Components/MainLayout";
+import { ThemeProvider } from '@mui/material/styles';
+import { theme } from './Style/Theme';
+import UserProvider from './Utils/UserProvider';
+import MainLayout from './Components/MainLayout';
 
 function App() {
     return (
-        <div className="App" style={{ maxWidth: "1920px", margin: "auto" }}>
+        <div className="App" style={{ maxWidth: '1920px', margin: 'auto' }}>
             <UserProvider>
                 <ThemeProvider theme={theme}>
 					          <MainLayout/>

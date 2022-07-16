@@ -1,5 +1,15 @@
 {
     "configurations": [
+        // TODO: attach to to processes
+        {
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
         {
             "name": "Launch via NPM",
             "request": "launch",
@@ -12,6 +22,14 @@
                 "<node_internals>/**"
             ],
             "type": "node"
-        }
+        },
+        // Launch Chrome currently not working
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:3000/ams",
+            "webRoot": "${workspaceFolder}"
+        },
     ]
 }

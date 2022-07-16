@@ -1,20 +1,20 @@
 // @ts-nocheck
-import React, { useEffect } from "react";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
-import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
-import { styled, useTheme } from "@mui/material/styles";
-import MainBar from "./MainBar";
+import React, { useEffect } from 'react';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import MailIcon from '@mui/icons-material/Mail';
+import Toolbar from '@mui/material/Toolbar';
+import List from '@mui/material/List';
+import { styled, useTheme } from '@mui/material/styles';
+import MainBar from './MainBar';
 import {
     DesktopDrawer,
     AppBar,
@@ -22,13 +22,13 @@ import {
     closedMixin,
     openedMixin,
     drawerWidth,
-} from "../Style/NavStyledComponents";
-import HomeLink from "./HomeLink";
-import { useWindowSize } from "../Utils/Screen";
-import SearchIcon from "@mui/icons-material/Search";
-import { Link } from "react-router-dom";
-import { Drawer, SwipeableDrawer } from "@mui/material";
-import { SidebarItems } from "./SidebarItems";
+} from '../Style/NavStyledComponents';
+import HomeLink from './HomeLink';
+import { useWindowSize } from '../Utils/Screen';
+import SearchIcon from '@mui/icons-material/Search';
+import { Link } from 'react-router-dom';
+import { Drawer, SwipeableDrawer } from '@mui/material';
+import { SidebarItems } from './SidebarItems';
 
 // SOURCE (MUI DOCS):
 // https://mui.com/components/drawers/#MiniDrawer.js
@@ -47,11 +47,11 @@ export function Topbar({ open, handleDrawerOpen, handleDrawerToggle }) {
                     edge="start"
                     sx={{
                         marginRight: 5,
-                        ...(!isMobile && open && { display: "none" }),
+                        ...(!isMobile && open && { display: 'none' }),
                     }}>
                     <MenuIcon />
                 </IconButton>
-                <div style={{ marginLeft: "auto" }}>
+                <div style={{ marginLeft: 'auto' }}>
                     <MainBar />
                 </div>
             </Toolbar>
@@ -71,11 +71,11 @@ export function Sidebar({
     const isMobile = width && width < 768;
 
     let DrawerComponent = DesktopDrawer;
-    let drawerVariant = "permanent";
+    let drawerVariant = 'permanent';
     let onClickAway = () => {};
     if (isMobile) {
         DrawerComponent = SwipeableDrawer;
-        drawerVariant = "temporary";
+        drawerVariant = 'temporary';
         onClickAway = handleDrawerClose;
     }
 
@@ -93,8 +93,8 @@ export function Sidebar({
             <DrawerHeader style={{ minWidth: `${drawerWidth}px` }}>
                 <HomeLink variant="h4" />
 
-                <IconButton onClick={handleDrawerClose} style={{ marginLeft: "auto" }}>
-                    {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                <IconButton onClick={handleDrawerClose} style={{ marginLeft: 'auto' }}>
+                    {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
                 </IconButton>
             </DrawerHeader>
             <Divider />

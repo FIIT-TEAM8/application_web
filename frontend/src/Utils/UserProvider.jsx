@@ -1,7 +1,7 @@
-import Cookies from "js-cookie";
-import { useEffect, useState } from "react";
-import { apiCall, getCookieToken, refreshToken } from "./APIConnector";
-import { UserContext } from "./UserContext";
+import Cookies from 'js-cookie';
+import { useEffect, useState } from 'react';
+import { apiCall, getCookieToken, refreshToken } from './APIConnector';
+import { UserContext } from './UserContext';
 
 export default function UserProvider({ children }) {
     //const [accessToken, setAccessToken] = useState(localStorage.getItem("access_token"));
@@ -15,7 +15,7 @@ export default function UserProvider({ children }) {
     }, []);
 
     const refresh = async () => {
-        const loginRefToken = getCookieToken("__refToken");
+        const loginRefToken = getCookieToken('__refToken');
         if (!loginRefToken) {
             setUser(undefined);
             return;
@@ -33,14 +33,14 @@ export default function UserProvider({ children }) {
                 setUser(undefined);
             }
         });
-        console.log("Logged in via refToken");
+        console.log('Logged in via refToken');
 
         // use user id from loginRefToken
-        await apiCall(`/api/pdf_report/${loginRefToken.id}?status=In Progress`, "GET").then(
+        await apiCall(`/api/pdf_report/${loginRefToken.id}?status=In Progress`, 'GET').then(
             (result) => {
                 // TODO: info user, that PDF report wasn't loaded
                 if (result.ok) {
-                    console.log("PDF report was succesfully loaded.");
+                    console.log('PDF report was succesfully loaded.');
                     setReportId(result.reportId);
                     setArticlesInReport(result.articlesInReport);
                 }
@@ -49,7 +49,7 @@ export default function UserProvider({ children }) {
     };
 
     const login = async (loginData) => {
-        let isLogged = await apiCall(`/api/user/login`, "POST", loginData).then((result) => {
+        let isLogged = await apiCall('/api/user/login', 'POST', loginData).then((result) => {
             if (result.ok) {
                 return true;
             } else {
@@ -67,7 +67,7 @@ export default function UserProvider({ children }) {
     };
 
     const logout = () => {
-        apiCall(`/api/user/logout`, "POST")
+        apiCall('/api/user/logout', 'POST')
             .then((result) => {
                 if (result.ok) {
                     setUser(undefined);
@@ -76,38 +76,38 @@ export default function UserProvider({ children }) {
                 }
             })
             .catch((err) => console.log(err));
-        Cookies.remove("__authToken");
-        Cookies.remove("__refToken");
+        Cookies.remove('__authToken');
+        Cookies.remove('__refToken');
     };
 
     const reportRequest = (newArticlesInReport) => {
         if (reportId !== 0) {
             // update user's in progress report
             updateReportAPI(newArticlesInReport);
-        } else if (user && typeof user.id === "number") {
+        } else if (user && typeof user.id === 'number') {
             // create new user's 'In progress' report
-            apiCall(`/api/pdf_report/create`, "POST", {
+            apiCall('/api/pdf_report/create', 'POST', {
                 userId: user.id,
                 articlesInReport: newArticlesInReport,
             }).then((result) => {
                 // TODO: info user, that PDF wasn't created
                 if (result.ok) {
                     setReportId(result.reportId);
-                    console.log("PDF successfully created");
+                    console.log('PDF successfully created');
                 }
             });
         }
     };
 
     const updateReportAPI = (newArticlesInReport) => {
-        apiCall(`/api/pdf_report/update/${reportId}`, "POST", {
+        apiCall(`/api/pdf_report/update/${reportId}`, 'POST', {
             articlesInReport: newArticlesInReport,
         })
             .then((result) => {
                 if (result.ok) {
-                    console.log("Updated articles in PDF report");
+                    console.log('Updated articles in PDF report');
                 } else {
-                    console.log("Unable to update PDF report.");
+                    console.log('Unable to update PDF report.');
                 }
             })
             .catch((err) => console.log(err));
@@ -138,7 +138,7 @@ export default function UserProvider({ children }) {
     };
 
     const signup = async (signupData) => {
-        let isSignedup = await apiCall(`/api/user/signup`, "POST", signupData).then((result) => {
+        let isSignedup = await apiCall('/api/user/signup', 'POST', signupData).then((result) => {
             if (result.ok) {
                 return true;
             } else {

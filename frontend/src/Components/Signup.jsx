@@ -1,15 +1,15 @@
-import { Dialog, DialogContent, Button, Typography, TextField, Stack, IconButton, InputAdornment } from "@mui/material";
-import { VisibilityOutlined, VisibilityOffOutlined } from "@mui/icons-material";
-import { useState, useEffect } from "react";
-import { useFormik } from "formik";
-import { initialSignupValues, signupValidationSchema } from "../Utils/AccountSchemas";
-import { useUser } from "../Utils/UserContext";
+import { Dialog, DialogContent, Button, Typography, TextField, Stack, IconButton, InputAdornment } from '@mui/material';
+import { VisibilityOutlined, VisibilityOffOutlined } from '@mui/icons-material';
+import { useState, useEffect } from 'react';
+import { useFormik } from 'formik';
+import { initialSignupValues, signupValidationSchema } from '../Utils/AccountSchemas';
+import { useUser } from '../Utils/UserContext';
 
 
 export default function Signup({isOpen, onClose, onLoginOpen}) {
 
     const [displayedPassword, setDisplayedPassword] = useState(false);  // diplayed password means showing the plain text of entered string
-    const [passwordType, setPasswordType] = useState("password");  // set to hide the plain text of entered password
+    const [passwordType, setPasswordType] = useState('password');  // set to hide the plain text of entered password
     const [isOpenDialog, setIsOpenDialog] = useState(false);  // handling visibility of the signup dialog
     const [takenUsername, setTakenUsername] = useState(false);  // show/hide "taken username" error message
     const {signup} = useUser();
@@ -38,11 +38,11 @@ export default function Signup({isOpen, onClose, onLoginOpen}) {
         // if the password is displayed, hiding it by updating states
         if (displayedPassword){
             setDisplayedPassword(false);
-            setPasswordType("password");
+            setPasswordType('password');
         }
         else{
             setDisplayedPassword(true);
-            setPasswordType("text");
+            setPasswordType('text');
         }
     };
 
@@ -71,7 +71,7 @@ export default function Signup({isOpen, onClose, onLoginOpen}) {
             open={isOpenDialog} 
             onClose={onClose}
             >
-            <DialogContent sx={{ m: "auto",  width: 250 }}>
+            <DialogContent sx={{ m: 'auto',  width: 250 }}>
                 <form onSubmit={formikLogin.handleSubmit}>
                     <Stack sx={{ mb: 1}} spacing={1}>
                         <Typography color="primary">ams</Typography>
@@ -128,5 +128,5 @@ export default function Signup({isOpen, onClose, onLoginOpen}) {
                 </form>
             </DialogContent>
         </Dialog>    
-    )
+    );
 }

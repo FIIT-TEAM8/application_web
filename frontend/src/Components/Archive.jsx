@@ -1,38 +1,38 @@
-import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import { useWindowSize } from "../Utils/Screen";
-import { Box, CircularProgress, LinearProgress, Stack, Typography } from "@mui/material";
-import { TextField } from "@mui/material";
-import { InputAdornment } from "@mui/material";
-import { IconButton } from "@mui/material";
-import { Search } from "@mui/icons-material";
-import { apiCall } from "../Utils/APIConnector";
-import { format } from "date-fns";
-import DOMPurify from "dompurify";
-import MainHeading from "./MainHeading";
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useWindowSize } from '../Utils/Screen';
+import { Box, CircularProgress, LinearProgress, Stack, Typography } from '@mui/material';
+import { TextField } from '@mui/material';
+import { InputAdornment } from '@mui/material';
+import { IconButton } from '@mui/material';
+import { Search } from '@mui/icons-material';
+import { apiCall } from '../Utils/APIConnector';
+import { format } from 'date-fns';
+import DOMPurify from 'dompurify';
+import MainHeading from './MainHeading';
 
 export default function Archive() {
     const { width } = useWindowSize();
     const shouldCollapse = width < 992;
 
     const [searchParams, setSearchParams] = useSearchParams();
-    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm] = useState('');
 
     let searchDivStyle = {
-        margin: "auto",
-        padding: shouldCollapse ? "50px 7%" : "50px 20%",
+        margin: 'auto',
+        padding: shouldCollapse ? '50px 7%' : '50px 20%',
     };
 
     useEffect(() => {
-        setSearchTerm(searchParams.get("link"));
+        setSearchTerm(searchParams.get('link'));
     }, []);
 
     const onSubmit = (event) => {
         event.preventDefault();
         // @ts-ignore
         document.activeElement.blur(); //remove focus from the text field
-        searchParams.delete("link");
-        searchParams.append("link", searchTerm);
+        searchParams.delete('link');
+        searchParams.append('link', searchTerm);
         setSearchParams(searchParams);
     };
 
@@ -43,14 +43,14 @@ export default function Archive() {
     return (
         <div style={searchDivStyle}>
             <form onSubmit={onSubmit}>
-                <MainHeading text={"ams archive"}/>
+                <MainHeading text={'ams archive'}/>
                 <TextField
                     sx={{mt: 2}}
                     id="outlined-search"
-                    color={"secondary"}
+                    color={'secondary'}
                     value={searchTerm}
                     // helperText={"Search for an archived URL"}
-                    label={"Search URL"}
+                    label={'Search URL'}
                     autoComplete="off"
                     variant="outlined"
                     onChange={(event) => handleSearchChange(event.target.value)}
@@ -68,23 +68,23 @@ export default function Archive() {
                     }}
                 />
             </form>
-            <ArchivedArticle url={searchParams.get("link")} />
+            <ArchivedArticle url={searchParams.get('link')} />
         </div>
     );
 }
 
-export function ArchivedArticle({ url = "", displayArticle = undefined }) {
+export function ArchivedArticle({ url = '', displayArticle = undefined }) {
     const [article, setArticle] = useState({
-        title: "",
-        html: "",
+        title: '',
+        html: '',
         keywords: [],
-        published: "Mon, 04 Jan 2016 08:00:00 GMT",
-        region: "",
-        link: "",
+        published: 'Mon, 04 Jan 2016 08:00:00 GMT',
+        region: '',
+        link: '',
     });
     const [isLoading, setIsloading] = useState(false);
     const [loadingProgress, setLoadingProgress] = useState(0);
-    const [error, setError] = useState("");
+    const [error, setError] = useState('');
 
     useEffect(() => {
         if (displayArticle) {
@@ -111,9 +111,9 @@ export function ArchivedArticle({ url = "", displayArticle = undefined }) {
 
     if (error) {
         return (
-            <Box sx={{ width: "100%" }}>
+            <Box sx={{ width: '100%' }}>
                 <LinearProgress variant="determinate" value={loadingProgress} color="error" />
-                <Typography paragraph color={"error"}>
+                <Typography paragraph color={'error'}>
                     {error}
                 </Typography>
             </Box>
@@ -121,16 +121,16 @@ export function ArchivedArticle({ url = "", displayArticle = undefined }) {
     }
 
     return (
-        <Box sx={{ width: "100%" }}>
+        <Box sx={{ width: '100%' }}>
             <LinearProgress
-                variant={isLoading ? "indeterminate" : "determinate"}
+                variant={isLoading ? 'indeterminate' : 'determinate'}
                 value={loadingProgress}
             />
-            <Typography variant={"caption"} color={"secondary"} style={{ padding: "20px 0" }}>
-                Published {format(new Date(article.published), "yyyy/MM/dd")} in{" "}
+            <Typography variant={'caption'} color={'secondary'} style={{ padding: '20px 0' }}>
+                Published {format(new Date(article.published), 'yyyy/MM/dd')} in{' '}
                 {article.region.toUpperCase()}
             </Typography>
-            <Typography variant={"h3"} color={"primary"} style={{ padding: "20px 0" }}>
+            <Typography variant={'h3'} color={'primary'} style={{ padding: '20px 0' }}>
                 <a href={article.link}>{article.title}</a>
             </Typography>
 
@@ -149,7 +149,7 @@ export function ArchivedArticle({ url = "", displayArticle = undefined }) {
                 ))}
             </Stack>
 
-            <Typography paragraph color={"secondary"} style={{ padding: "20px 0" }}>
+            <Typography paragraph color={'secondary'} style={{ padding: '20px 0' }}>
                 <SanitizedHTML html={article.html} options={{}} />
             </Typography>
         </Box>
@@ -157,8 +157,8 @@ export function ArchivedArticle({ url = "", displayArticle = undefined }) {
 }
 
 const defaultOptions = {
-    ALLOWED_TAGS: ["b", "i", "em", "strong", "a", "h1", "h2", "h3", "h4", "h5", "h6", "p", "span"],
-    ALLOWED_ATTR: ["href"],
+    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'span'],
+    ALLOWED_ATTR: ['href'],
 };
 
 const sanitize = (dirty, options) => ({

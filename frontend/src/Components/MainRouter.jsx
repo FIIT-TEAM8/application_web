@@ -1,12 +1,12 @@
-import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import SearchResults from "./SearchResults";
-import TitleSearch from "./TitleSearch";
-import Login from "./Login";
-import Archive from "./Archive";
-import ReportPDF from "./ReportPDF";
-import { useUser } from "../Utils/UserContext";
-import AboutPage from "./AboutPage";
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import SearchResults from './SearchResults';
+import TitleSearch from './TitleSearch';
+import Login from './Login';
+import Archive from './Archive';
+import ReportPDF from './ReportPDF';
+import { useUser } from '../Utils/UserContext';
+import AboutPage from './AboutPage';
 
 
 export default function MainRouter() {

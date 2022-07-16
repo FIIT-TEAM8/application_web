@@ -1,6 +1,6 @@
 import { styled } from '@mui/material/styles';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { theme } from "./Theme";
+import { theme } from './Theme';
 
 
 export const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ originTheme }) => ({

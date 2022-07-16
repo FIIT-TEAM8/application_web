@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
     Typography,
     Grid,
@@ -8,45 +7,48 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
-} from "@mui/material";
-import { useWindowSize } from "../Utils/Screen";
-import { useUser } from "../Utils/UserContext";
-import { useEffect, useState } from "react";
-import { apiCall } from "../Utils/APIConnector";
-import ReportItem from "./ReportItem";
-import SuccessSnackbar from "./SuccessSnackbar";
-import MainHeading from "./MainHeading";
+} from '@mui/material';
+import { useWindowSize } from '../Utils/Screen';
+import { useUser } from '../Utils/UserContext';
+import { useEffect, useState } from 'react';
+import { apiCall } from '../Utils/APIConnector';
+import ReportItem from './ReportItem';
+import SuccessSnackbar from './SuccessSnackbar';
+import MainHeading from './MainHeading';
+import React from 'react';
+import { APIResult, Article } from 'Utils/Interfaces';
 
 export default function ReportPDF() {
     const { width } = useWindowSize();
     const shouldCollapse: boolean = width < 992;
     const { articlesInReport, removeArcticleReport } = useUser();
-    const [articlesFromReport, setArticlesFromReport] = useState<Array>([]);
+    const [articlesFromReport, setArticlesFromReport] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
     const [successMsgOpen, setSuccessMsgOpen] = useState(false);
     const [isReportGenerating, setIsReportGenerating] = useState(false);
 
-    let searchDivStyle: { margin:string, padding: boolean } = {
-        margin: "auto",
-        padding: shouldCollapse ? "20px 7%" : "20px 20%",
+    let searchDivStyle: { margin:string, padding: string } = {
+        margin: 'auto',
+        padding: shouldCollapse ? '20px 7%' : '20px 20%',
     };
 
     useEffect(() => {
-        const articlesIds:Array = articlesInReport.map((article) => article.id);
+        const articlesIds:Array<Article> = articlesInReport.map((article: Article) => article.id);
         if (articlesIds.length <= 0) {
             return;
         }
-        apiCall(`/api/data/report?ids=[${articlesIds.join(", ")}]`, "GET").then((result) => {
+        apiCall(`/api/data/report?ids=[${articlesIds.join(', ')}]`, 'GET').then((result: APIResult) => {
             if (result.ok && result.data && result.data.results) {
+                console.log(result.data.results);
                 setArticlesFromReport([...result.data.results]);
                 setIsLoaded(true);
             } else {
-                console.log("Unable to get articles which are in pdf report.");
+                console.log('Unable to get articles which are in pdf report.');
             }
         });
     }, [articlesInReport]);
 
-    const handleRemoveArticle = (index, articleId) => {
+    const handleRemoveArticle = (index: number, articleId: string) => {
         let currArticlesFromReport = [...articlesFromReport];
         currArticlesFromReport.splice(index, 1);
         removeArcticleReport(articleId);
@@ -66,13 +68,13 @@ export default function ReportPDF() {
         // display loading circle
         setIsReportGenerating(true);
 
-        const articlesIds:Array = articlesInReport.map((article) => article.id);
+        const articlesIds:Array<number> = articlesInReport.map((article: Article) => article.id);
 
-        apiCall(`/api/pdf_report/download?ids=[${articlesIds.join(", ")}]`, "GET").then((result) => {
+        apiCall(`/api/pdf_report/download?ids=[${articlesIds.join(', ')}]`, 'GET').then((result: APIResult) => {
             if (result.ok) {
                 console.log('AHOJ');
             } else {
-                console.log("FAILED");
+                console.log('FAILED');
             }
         }).catch(err => console.log(err));
 
@@ -176,7 +178,7 @@ export default function ReportPDF() {
     return (
         <>
             <SuccessSnackbar
-                text={"Article was successfully removed from PDF report!"}
+                text={'Article was successfully removed from PDF report!'}
                 open={successMsgOpen}
                 handleClose={handleSnackbarClose}
             />
@@ -193,7 +195,7 @@ export default function ReportPDF() {
                 justifyContent="space-between"
                 alignItems="center">
                 <Grid item xs={12} md={8}>
-                    <MainHeading text={"pdf report"}/>
+                    <MainHeading text={'pdf report'}/>
                 </Grid>
                 {articlesInReport.length > 0 ? (
                     isLoaded ? (
