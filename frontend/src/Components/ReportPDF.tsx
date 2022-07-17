@@ -7,25 +7,28 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
+    AlertColor,
 } from '@mui/material';
 import { useWindowSize } from '../Utils/Screen';
 import { useUser } from '../Utils/UserContext';
 import { useEffect, useState } from 'react';
 import { apiCall } from '../Utils/APIConnector';
 import ReportItem from './ReportItem';
-import SuccessSnackbar from './SuccessSnackbar';
+import InfoSnackbar from './InfoSnackbar';
 import MainHeading from './MainHeading';
 import React from 'react';
 import { APIResult, Article } from 'Utils/Interfaces';
 
-export default function ReportPDF() {
+const ReportPDF: React.FC = () => {
     const { width } = useWindowSize();
     const shouldCollapse: boolean = (width && width < 992) ? true : false;
     const { articlesInReport, removeArcticleReport } = useUser();
-    const [articlesFromReport, setArticlesFromReport] = useState([]);
+    const [articlesFromReport, setArticlesFromReport] = useState<Article[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
-    const [successMsgOpen, setSuccessMsgOpen] = useState(false);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [isReportGenerating, setIsReportGenerating] = useState(false);
+    const [snackbarText, setSnackbarText] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('info');
 
     let searchDivStyle: { margin:string, padding: string } = {
         margin: 'auto',
@@ -49,20 +52,31 @@ export default function ReportPDF() {
     }, [articlesInReport]);
 
     const handleRemoveArticle = (index: number, articleId: string) => {
-        let currArticlesFromReport = [...articlesFromReport];
-        currArticlesFromReport.splice(index, 1);
-        removeArcticleReport(articleId);
-        setArticlesFromReport(currArticlesFromReport);
-        setSuccessMsgOpen(true);
+        // NOTE: removeArticleReport can't be optional in User interface, but currently it isn't working otherwise...
+        if (removeArcticleReport) {
+            let currArticlesFromReport = [...articlesFromReport];
+            currArticlesFromReport.splice(index, 1);
+            removeArcticleReport(articleId);
+            setArticlesFromReport(currArticlesFromReport);
+            openSnackbar('Article was successfully removed from report.', 'success');
+        } else {
+            openSnackbar('Unable to remove selected article from report.', 'error');
+        }
+    };
+
+    const openSnackbar = (text: string, severity: AlertColor) => {
+        setSnackbarText(text);
+        setSnackbarSeverity(severity);
+        setSnackbarOpen(true);
     };
 
     const handleSnackbarClose = () => {
-        setSuccessMsgOpen(false);
+        setSnackbarOpen(false);
     };
 
     const downloadPDF = async () => {
         if (articlesInReport.length === 0) {
-            // TODO: error snackbar
+            openSnackbar('Unable to generate PDF, because there are no articles in report.', 'error');
         } 
 
         // display loading circle
@@ -177,9 +191,10 @@ export default function ReportPDF() {
 
     return (
         <>
-            <SuccessSnackbar
-                text={'Article was successfully removed from PDF report!'}
-                open={successMsgOpen}
+            <InfoSnackbar
+                text={snackbarText}
+                open={snackbarOpen}
+                severity={snackbarSeverity}
                 handleClose={handleSnackbarClose}
             />
             <Dialog open={isReportGenerating}>
@@ -236,4 +251,6 @@ export default function ReportPDF() {
             </Grid>
         </>
     );
-}
+};
+
+export default ReportPDF;

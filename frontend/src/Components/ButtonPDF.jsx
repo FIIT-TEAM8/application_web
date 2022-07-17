@@ -5,7 +5,7 @@ import { Tooltip, Snackbar, Alert } from '@mui/material';
 import { useUser } from '../Utils/UserContext';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import SuccessSnackbar from './SuccessSnackbar';
+import InfoSnackbar from './InfoSnackbar';
 
 export default function ButtonPDF({ articleId, articleTitle }) {
     const { articlesInReport, addArticleReport, removeArcticleReport } =
@@ -14,7 +14,9 @@ export default function ButtonPDF({ articleId, articleTitle }) {
         articlesInReport.some((article) => article.id === articleId)
     );
     const [searchParams, setSearchParams] = useSearchParams();
-    const [successMsgOpen, setSuccessMsgOpen] = useState(false);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarText, setSnackbarText] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState('info');
     const buttonSize = 'small';
     const iconSize = 'medium';
 
@@ -26,25 +28,34 @@ export default function ButtonPDF({ articleId, articleTitle }) {
             timeAdded: new Date().toLocaleString(), // example: Tue, 05 Apr 2022 06:30:57 GMT
         });
         setIsInReport(true);
-        setSuccessMsgOpen(true);
+        openSnackbar('Article was added to report!', 'success');
+    };
+
+    const openSnackbar = (text, severity) => {
+        setSnackbarOpen(false);
+        setSnackbarText(text);
+        setSnackbarSeverity(severity);
+        setSnackbarOpen(true);
     };
 
     const handleRemoveArticle = (articleId) => {
         removeArcticleReport(articleId);
         setIsInReport(false);
+        openSnackbar('Article was removed from report!', 'success');
     };
 
     const handleSnackbarClose = () => {
-        setSuccessMsgOpen(false);
+        setSnackbarOpen(false);
     };
 
     // if user doesn't have this article in PDF report, allow him to add it
     // otherwise allow him to remove article from report
     return (
-        <>  
-            <SuccessSnackbar 
-                text={'Article was added to PDF report!'}
-                open={successMsgOpen}
+        <>
+            <InfoSnackbar
+                text={snackbarText}
+                open={snackbarOpen}
+                severity={snackbarSeverity}
                 handleClose={handleSnackbarClose}
             />
             {isInReport ? (

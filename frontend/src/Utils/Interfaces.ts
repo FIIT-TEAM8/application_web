@@ -1,6 +1,7 @@
 export interface APIResult {
-  ok: boolean,
-  data: Data
+  ok?: boolean,
+  data?: Data
+  status: any
 }
 
 interface Data {
@@ -16,5 +17,6 @@ export interface Article {
 export interface User {
   username: Object,
   articlesInReport: Array<Article>,
-  reportId: number
+  reportId: number,
+  removeArcticleReport?(articleId: string): void
 }
