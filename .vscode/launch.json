@@ -1,14 +1,12 @@
 {
     "configurations": [
-        // TODO: attach to to processes
+        // TODO: figure out how to attach to running backend and frontend
         {
-            "name": "Attach by Process ID",
-            "processId": "${command:PickProcess}",
+            "type": "node", 
             "request": "attach",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "type": "node"
+            "name": "Attach to backend",
+            "restart": true,
+            "port": 8080
         },
         {
             "name": "Launch via NPM",
@@ -22,14 +20,6 @@
                 "<node_internals>/**"
             ],
             "type": "node"
-        },
-        // Launch Chrome currently not working
-        {
-            "name": "Launch Chrome",
-            "request": "launch",
-            "type": "chrome",
-            "url": "http://localhost:3000/ams",
-            "webRoot": "${workspaceFolder}"
         },
     ]
 }

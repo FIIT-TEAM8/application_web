@@ -42,11 +42,10 @@ const ReportPDF: React.FC = () => {
         }
         apiCall(`/api/data/report?ids=[${articlesIds.join(', ')}]`, 'GET').then((result: APIResult) => {
             if (result.ok && result.data && result.data.results) {
-                console.log(result.data.results);
                 setArticlesFromReport([...result.data.results]);
                 setIsLoaded(true);
             } else {
-                console.log('Unable to get articles which are in pdf report.');
+                openSnackbar('Unable to get articles in report.', 'error');
             }
         });
     }, [articlesInReport]);

@@ -1,6 +1,6 @@
 export interface APIResult {
   ok?: boolean,
-  data?: Data
+  data?: Data,
   status: any
 }
 
@@ -10,8 +10,13 @@ interface Data {
 
 export interface Article {
   id: string,
+  html: string,
+  keywords: Array<string>,
+  language: string,
   link: string,
   published: string,
+  region: string,
+  title: string
 }
 
 export interface User {

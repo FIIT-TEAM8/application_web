@@ -1,8 +1,9 @@
 const express = require('express')
 const pdfReportdb = require("../../db/pdf_report_db")
 const pdfPrinter = require("pdfmake")
-const DOMPurify = require("dompurify")
+const DOMPurify = require("isomorphic-dompurify")
 const dataApiTools = require("../../utils/data_api_tools")
+const htmlToPdfmake = require("html-to-pdfmake")
 
 const htmlSanitizeOptions = {
     ALLOWED_TAGS: ["b", "i", "em", "strong", "a", "h1", "h2", "h3", "h4", "h5", "h6", "p", "span"],
@@ -54,7 +55,29 @@ router.get('/download', async function (req, res) {
         const data = await dataApiTools.apiFetch('report', req)
 
         if (data && 'results' in data) {
+            const docDefinition = {
+                pageSize: "A4",
+                pageOrientation: "portrait",
+                content: []
+            }
+
+            const articles = data.results
+            for (let i = 0; i < articles.length; i++) {
+                if ('html' in articles[i]) {
+                    const sanitizedHTML = sanitize(articles[i].html, htmlSanitizeOptions)
+                    docDefinition.content.push(htmlToPdfmake(sanitizedHTML))
+                }
+            }
+
+            if (docDefinition.content.length !== 0) {
+                res.status(500).json({ok: false, msg: "Unable to sanitize articles for PDF."})
+            }
             
+            // TODO: maybe change library: https://www.npmjs.com/package/html-pdf-node
+            // TODO: https://github.com/marcbachmann/node-html-pdf/issues/49 (page breaks or merge)
+            const pdfFile = pdfPrinter.createPdf(docDefinition)
+            let foo = 3
+            //res.status(200).json({ok: true, pdf_file: pdf_file})
         }
 
         return res.status(500).json({ok: false, msg: "Articles wasn't recieved from API server."})
@@ -88,7 +111,7 @@ router.get('/:user_id', async function (req, res) {
 })
 
 const sanitize = (dirty, options) => ({
-    __html: DOMPurify.sanitize(dirty, { ...defaultOptions, ...options }),
+    __html: DOMPurify.sanitize(dirty, { ...htmlSanitizeOptions, ...options }),
 });
 
 module.exports = router
