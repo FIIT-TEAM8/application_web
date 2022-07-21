@@ -67,11 +67,18 @@ export async function apiCall(endpoint = '', method = 'GET', data = null, ignore
     let result = {};
     try {
         if (response) {
-            result = await response.json();
+            const contentType = response.headers.get('content-type'); // ADD content type to each response???
+
+            if (contentType === 'application/pdf') {
+                result.ok = true;
+                result.blobData = response;
+            } else {
+                result = await response.json();
+            }
         }
     } catch (e) {
-        console.error('Response not in json format.');
-        result = {ok: false, msg: 'Invalid return value'};
+        console.error(e);
+        result = {ok: false, msg: 'Something went wrong, while getting response content.'};
     }
     result.status = response.status;
     return result; // parses JSON response into native JavaScript objects

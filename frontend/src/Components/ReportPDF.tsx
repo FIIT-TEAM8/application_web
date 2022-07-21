@@ -51,7 +51,7 @@ const ReportPDF: React.FC = () => {
     }, [articlesInReport]);
 
     const handleRemoveArticle = (index: number, articleId: string) => {
-        // NOTE: removeArticleReport can't be optional in User interface, but currently it isn't working otherwise...
+        // NOTE: removeArticleReport shouldn't be optional in User interface, but currently it isn't working otherwise...
         if (removeArcticleReport) {
             let currArticlesFromReport = [...articlesFromReport];
             currArticlesFromReport.splice(index, 1);
@@ -73,7 +73,7 @@ const ReportPDF: React.FC = () => {
         setSnackbarOpen(false);
     };
 
-    const downloadPDF = async () => {
+    const downloadPDF = () => {
         if (articlesInReport.length === 0) {
             openSnackbar('Unable to generate PDF, because there are no articles in report.', 'error');
         } 
@@ -83,109 +83,40 @@ const ReportPDF: React.FC = () => {
 
         const articlesIds:Array<string> = articlesInReport.map((article: Article) => article.id);
 
-        apiCall(`/api/pdf_report/download?ids=[${articlesIds.join(', ')}]`, 'GET').then((result: APIResult) => {
+        apiCall(`/api/pdf_report/download?ids=[${articlesIds.join(', ')}]`, 'GET')
+        .then(async (result: APIResult) => {
             if (result.ok) {
-                console.log('AHOJ');
+                // https://stackoverflow.com/questions/63942715/how-to-download-a-readablestream-on-the-browser-that-has-been-returned-from-fetc
+                console.log(result.blobData);
+                const blob: Blob = await result.blobData.blob();
+                const newBlob = new Blob([blob]);
+
+                const blobUrl = window.URL.createObjectURL(newBlob);
+
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.setAttribute('download', 'report.pdf');
+                document.body.appendChild(link);
+                link.click();
+
+                if (link.parentNode) {
+                    link.parentNode.removeChild(link);
+                }
+                
+                // TODO: clean url and inform about succesfull download
+                // clean up Url
+                // window.URL.revokeObjectURL(blobUrl);
             } else {
+                // TODO: inform user about unsuccessfull generation
                 console.log('FAILED');
             }
-        }).catch(err => console.log(err));
 
-        // // parse string to html
-        // const parser = new DOMParser();
-        // const doc = new jsPDF("p", "pt", "a4");
-        // const pageHeight = doc.internal.pageSize.getHeight();
-        // const pageWidth = doc.internal.pageSize.getWidth();
-        // const x = 25; // horizontal starting point in pdf page
-        // const lineLength = pageWidth - x * 2;
-        // let lineHeight, lines, y; // y is vertical starting point in pdf page
-
-        // for (let i = 0; i < articlesFromReport.length; i++) {
-        //     const articleFromReport = articlesFromReport[i];
-        //     const searchTermLower = articlesInReport[i].searchTerm.toLowerCase();
-        //     // parse article html string to html doc
-        //     const htmlDoc = parser.parseFromString(articleFromReport.html, "text/html");
-        //     y = 30; // vertical starting point in pdf page
-
-        //     // add title
-        //     doc.setFontSize(16);
-        //     lineHeight = doc.getLineHeight();
-        //     lines = doc.splitTextToSize(articleFromReport.title, lineLength);
-
-        //     for (let j = 0; j < lines.length; j++) {
-        //         doc.text(lines[j], x, y);
-        //         y += lineHeight;
-        //     }
-
-        //     // add some space
-        //     y += 4;
-
-        //     // add keywords
-        //     doc.setFontSize(13);
-        //     lineHeight = doc.getLineHeight();
-        //     let keywordsText = `Keywords: ${articleFromReport.keywords.join(", ")}`;
-        //     lines = doc.splitTextToSize(keywordsText, lineLength);
-
-        //     for (let j = 0; j < lines.length; j++) {
-        //         doc.text(lines[j], x, y);
-        //         y += lineHeight;
-        //     }
-
-        //     // add some space
-        //     y += 2;
-
-        //     doc.setFontSize(12);
-        //     lineHeight = doc.getLineHeight();
-        //     let termText = `Found by term: ${articlesInReport[i].searchTerm}`; // articlesInReport !!!
-        //     lines = doc.splitTextToSize(termText, lineLength);
-
-        //     for (let j = 0; j < lines.length; j++) {
-        //         doc.text(lines[j], x, y);
-        //         y += lineHeight;
-        //     }
-
-        //     doc.setFontSize(11);
-        //     doc.setTextColor(30, 144, 255); // rgb for dodger blue
-        //     lineHeight = doc.getLineHeight();
-        //     const link = articleFromReport.link;
-        //     doc.textWithLink(`${new URL(link).hostname.replace("www.", "")}`, x, y, {
-        //         url: `${link}`,
-        //     });
-        //     y += lineHeight;
-
-        //     // add some space
-        //     y += 5;
-
-        //     doc.setFontSize(11);
-        //     doc.setTextColor(0, 0, 0); // rgb for dodger blue
-        //     lineHeight = doc.getLineHeight();
-        //     lines = doc.splitTextToSize(htmlDoc.body.innerText, lineLength);
-
-        //     for (let j = 0; j < lines.length; j++) {
-        //         if (y + lineHeight >= pageHeight) {
-        //             doc.addPage();
-        //             y = 30; // reset starting point for new page
-        //         }
-
-        //         if (lines[j].toLowerCase().includes(searchTermLower)) {
-        //             doc.setDrawColor(0);
-        //             doc.setFillColor(255, 255, 0); // rgb for yellow
-        //             doc.rect(x, y - lineHeight + 1, lineLength, lineHeight, "F"); //Fill and Border
-        //         }
-
-        //         doc.text(lines[j], x, y);
-        //         y = y + lineHeight + 1;
-        //     }
-
-        //     if (i + 1 < articlesFromReport.length) {
-        //         doc.addPage();
-        //     }
-        // }
-
-        // display loading circle
-        setIsReportGenerating(false);
-
-        // doc.save("report.pdf");
+            setIsReportGenerating(false);
+        }).catch(err => {
+            // TODO: inform user about unsuccessfull generation
+            console.log(err);
+            setIsReportGenerating(false);
+        });
     };
 
     return (
@@ -196,8 +127,8 @@ const ReportPDF: React.FC = () => {
                 severity={snackbarSeverity}
                 handleClose={handleSnackbarClose}
             />
-            <Dialog open={isReportGenerating}>
-                <DialogTitle>We are generating your report...</DialogTitle>
+            <Dialog open={isReportGenerating} style={{textAlign: 'center'}}>
+                <DialogTitle>We are generating PDF from your report...</DialogTitle>
                 <DialogContent>
                     <CircularProgress size={50} thickness={2} color="primary" />
                 </DialogContent>

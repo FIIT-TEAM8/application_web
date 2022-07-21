@@ -1,6 +1,7 @@
 export interface APIResult {
   ok?: boolean,
   data?: Data,
+  blobData?: any, // check something for ReadableStream
   status: any
 }
 

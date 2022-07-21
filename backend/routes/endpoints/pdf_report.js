@@ -1,13 +1,22 @@
 const express = require('express')
 const pdfReportdb = require("../../db/pdf_report_db")
-const pdfPrinter = require("pdfmake")
 const DOMPurify = require("isomorphic-dompurify")
 const dataApiTools = require("../../utils/data_api_tools")
-const htmlToPdfmake = require("html-to-pdfmake")
+const htmlToPdf = require("html-pdf-node")
 
 const htmlSanitizeOptions = {
     ALLOWED_TAGS: ["b", "i", "em", "strong", "a", "h1", "h2", "h3", "h4", "h5", "h6", "p", "span"],
     ALLOWED_ATTR: ["href"],
+};
+
+const pdfOptions = { 
+    format: 'A4',
+    margin: {
+        top: '45px',
+        bottom: '45px',
+        left: '65px',
+        right: '65px'
+    }
 };
 
 const router = express.Router()
@@ -54,38 +63,30 @@ router.get('/download', async function (req, res) {
     try {
         const data = await dataApiTools.apiFetch('report', req)
 
-        if (data && 'results' in data) {
-            const docDefinition = {
-                pageSize: "A4",
-                pageOrientation: "portrait",
-                content: []
-            }
-
-            const articles = data.results
-            for (let i = 0; i < articles.length; i++) {
-                if ('html' in articles[i]) {
-                    const sanitizedHTML = sanitize(articles[i].html, htmlSanitizeOptions)
-                    docDefinition.content.push(htmlToPdfmake(sanitizedHTML))
-                }
-            }
-
-            if (docDefinition.content.length !== 0) {
-                res.status(500).json({ok: false, msg: "Unable to sanitize articles for PDF."})
-            }
-            
-            // TODO: maybe change library: https://www.npmjs.com/package/html-pdf-node
-            // TODO: https://github.com/marcbachmann/node-html-pdf/issues/49 (page breaks or merge)
-            const pdfFile = pdfPrinter.createPdf(docDefinition)
-            let foo = 3
-            //res.status(200).json({ok: true, pdf_file: pdf_file})
+        if (!data || !('results' in data)) {
+            return res.status(500).json({ok: false, msg: "Articles wasn't recieved from API server."})
         }
 
-        return res.status(500).json({ok: false, msg: "Articles wasn't recieved from API server."})
+        let htmlString = ''
+        const articles = data.results
+        for (let i = 0; i < articles.length; i++) {
+            if ('html' in articles[i]) {
+                const sanitizedHTML = sanitize(articles[i].html, htmlSanitizeOptions)
+                htmlString += sanitizedHTML.__html
+                htmlString += '<br><div style="page-break-after:always;"></div>' // page break, https://github.com/marcbachmann/node-html-pdf/issues/49 (page breaks or merge)
+            }
+        }
 
+        let file = { content: htmlString };
+        const pdfBuffer = await htmlToPdf.generatePdf(file, pdfOptions).then(pdfBuffer => { return pdfBuffer })
+        
+        res.statusCode = 200
+        res.setHeader('Content-Type', 'application/pdf')
+        res.end(new Buffer.from(pdfBuffer, 'base64'))
     } catch (e) {
         console.log(e);
         console.log('Exception happend while handling: /pdf_report/download')
-        return res.status(500).json({ok: false, msg: "Unable to download PDF report."})
+        return res.status(500).json({ok: false, msg: "Unable to generate PDF report."})
     }
 })
 
