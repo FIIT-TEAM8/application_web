@@ -1,27 +1,29 @@
 // @ts-nocheck
 // Example POST method implementation:
 import Cookies from 'js-cookie';
-const DEV = process.env.NODE_ENV !== 'production';
+import { APIResponse } from './Interfaces';
+const DEV:boolean = process.env.NODE_ENV !== 'production';
 
-let MODE = 'same-origin';
-let CREDENTIALS = 'same-origin';
+let MODE:string = 'same-origin';
+let CREDENTIALS:string = 'same-origin';
 
 if (DEV){
     MODE = 'cors';
     CREDENTIALS = 'include';
 }
 
-export async function apiCall(endpoint = '', method = 'GET', data = null, ignoreAuthError=false) {
-    let baseUrl = '';
-    let baseEndpoint = process.env.PUBLIC_URL;
+export async function apiCall(endpoint: string = '', method: string = 'GET',
+ data: any = null, ignoreAuthError: boolean =false): Promise<APIResponse> {
+    let baseUrl: string = '';
+    let baseEndpoint: string = process.env.PUBLIC_URL;
     // DEV ENVIRONMENT
     if (DEV) {
         baseUrl = `http://localhost:${process.env.REACT_APP_PORT}`;
         // baseEndpoint = ''
     }
 
-    const url = baseUrl + baseEndpoint + endpoint;
-    let response = {};
+    const url: string = baseUrl + baseEndpoint + endpoint;
+    let response: APIResponse = {};
 
     // Default options are marked with *
     const init = {

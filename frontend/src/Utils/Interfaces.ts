@@ -1,7 +1,9 @@
-export interface APIResult {
+export interface APIResponse {
   ok?: boolean,
   data?: Data,
-  blobData?: any, // check something for ReadableStream
+  blobData?: any, // check something for ReadableStream,
+  reportId: number,
+  articlesInReport: Array<ArticleInReport>,
   status: any
 }
 
@@ -10,7 +12,7 @@ interface Data {
 }
 
 export interface Article {
-  id: string,
+  _id: string,
   html: string,
   keywords: Array<string>,
   language: string,
@@ -20,9 +22,23 @@ export interface Article {
   title: string
 }
 
+export interface ArticleInReport {
+  id: string,
+  title: string,
+  searchTerm: string | null,
+  timeAdded: string
+}
+
+// should be refactored...
 export interface User {
+  user: User | undefined, 
+  id: string,
   username: Object,
-  articlesInReport: Array<Article>,
+  articlesInReport: Array<ArticleInReport>,
   reportId: number,
-  removeArcticleReport?(articleId: string): void
+  removeArcticleReport?(articleId: string): void,
+  addArticleReport?(articleInReport: ArticleInReport): void,
+  login?(loginData: any): void,
+  logout?(): void,
+  signup?(signupData: any): void
 }

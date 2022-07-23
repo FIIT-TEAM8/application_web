@@ -1,14 +1,20 @@
 import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 import { apiCall, getCookieToken, refreshToken } from './APIConnector';
+import { ArticleInReport, APIResponse, User } from './Interfaces';
 import { UserContext } from './UserContext';
+import React from 'react';
 
-export default function UserProvider({ children }) {
+interface Props {
+    children: React.ReactNode
+}
+
+const UserProvider: React.FC<Props> = ({ children }) => {
     //const [accessToken, setAccessToken] = useState(localStorage.getItem("access_token"));
     // user = {username: "", }
-    const [user, setUser] = useState(undefined);
-    const [articlesInReport, setArticlesInReport] = useState([]);
-    const [reportId, setReportId] = useState(0);
+    const [user, setUser] = useState<User | undefined>(undefined);
+    const [articlesInReport, setArticlesInReport] = useState<Array<ArticleInReport>>([]);
+    const [reportId, setReportId] = useState<number>(0);
 
     useEffect(() => {
         refresh();
@@ -21,15 +27,21 @@ export default function UserProvider({ children }) {
             return;
         }
         
-        setUser({
+        // TODO: this isn't very good I guess... FIX
+        const loggedUser: User = {
+            user: user,
             username: loginRefToken.username,
             id: loginRefToken.id,
-        });
+            articlesInReport: articlesInReport,
+            reportId: reportId,
+        };
+        
+        setUser(loggedUser);
 
         await refreshToken().then((ok) => {
             if (!ok) {
                 setArticlesInReport([]);
-                setReportId([]);
+                setReportId(0);
                 setUser(undefined);
             }
         });
@@ -37,7 +49,7 @@ export default function UserProvider({ children }) {
 
         // use user id from loginRefToken
         await apiCall(`/api/pdf_report/${loginRefToken.id}?status=In Progress`, 'GET').then(
-            (result) => {
+            (result: APIResponse) => {
                 // TODO: info user, that PDF report wasn't loaded
                 if (result.ok) {
                     console.log('PDF report was succesfully loaded.');
@@ -48,8 +60,9 @@ export default function UserProvider({ children }) {
         );
     };
 
-    const login = async (loginData) => {
-        let isLogged = await apiCall('/api/user/login', 'POST', loginData).then((result) => {
+    // TODO: change from any
+    const login = async (loginData: any) => {
+        let isLogged = await apiCall('/api/user/login', 'POST', loginData).then((result: APIResponse) => {
             if (result.ok) {
                 return true;
             } else {
@@ -68,7 +81,7 @@ export default function UserProvider({ children }) {
 
     const logout = () => {
         apiCall('/api/user/logout', 'POST')
-            .then((result) => {
+            .then((result: APIResponse) => {
                 if (result.ok) {
                     setUser(undefined);
                     setReportId(0);
@@ -80,7 +93,7 @@ export default function UserProvider({ children }) {
         Cookies.remove('__refToken');
     };
 
-    const reportRequest = (newArticlesInReport) => {
+    const reportRequest = (newArticlesInReport: Array<ArticleInReport>) => {
         if (reportId !== 0) {
             // update user's in progress report
             updateReportAPI(newArticlesInReport);
@@ -89,7 +102,7 @@ export default function UserProvider({ children }) {
             apiCall('/api/pdf_report/create', 'POST', {
                 userId: user.id,
                 articlesInReport: newArticlesInReport,
-            }).then((result) => {
+            }).then((result: APIResponse) => {
                 // TODO: info user, that PDF wasn't created
                 if (result.ok) {
                     setReportId(result.reportId);
@@ -99,7 +112,7 @@ export default function UserProvider({ children }) {
         }
     };
 
-    const updateReportAPI = (newArticlesInReport) => {
+    const updateReportAPI = (newArticlesInReport: Array<ArticleInReport>) => {
         apiCall(`/api/pdf_report/update/${reportId}`, 'POST', {
             articlesInReport: newArticlesInReport,
         })
@@ -113,7 +126,7 @@ export default function UserProvider({ children }) {
             .catch((err) => console.log(err));
     };
 
-    const addArticleReport = (article) => {
+    const addArticleReport = (article: ArticleInReport) => {
         setArticlesInReport((prevState) => {
             prevState.push(article);
             reportRequest(prevState);
@@ -121,7 +134,7 @@ export default function UserProvider({ children }) {
         });
     };
 
-    const removeArcticleReport = (articleId) => {
+    const removeArcticleReport = (articleId: string) => {
         setArticlesInReport((prevState) => {
             const articleIndex = prevState.findIndex((article) => {
                 return article.id === articleId;
@@ -137,7 +150,8 @@ export default function UserProvider({ children }) {
         });
     };
 
-    const signup = async (signupData) => {
+    // TODO: change from any
+    const signup = async (signupData: any) => {
         let isSignedup = await apiCall('/api/user/signup', 'POST', signupData).then((result) => {
             if (result.ok) {
                 return true;
@@ -170,4 +184,6 @@ export default function UserProvider({ children }) {
             {children}
         </UserContext.Provider>
     );
-}
+}; 
+
+export default UserProvider;

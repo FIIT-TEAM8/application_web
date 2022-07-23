@@ -1,5 +1,5 @@
 import { Box, Divider, Typography, Link, Stack, Grid } from '@mui/material';
-import ButtonPDF from './ButtonPDF';
+import ButtonPDF from './ReportButton';
 import { useUser } from '../Utils/UserContext';
 import { theme } from '../Style/Theme';
 import { Link as RouterLink } from 'react-router-dom';

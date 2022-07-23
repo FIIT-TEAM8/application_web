@@ -1,47 +1,57 @@
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { Tooltip, Snackbar, Alert } from '@mui/material';
+import { AlertColor, Tooltip } from '@mui/material';
 import { useUser } from '../Utils/UserContext';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import InfoSnackbar from './InfoSnackbar';
+import React from 'react';
 
-export default function ButtonPDF({ articleId, articleTitle }) {
+interface Props {
+    articleId: string,
+    articleTitle: string
+}
+
+const ReportButton: React.FC<Props> = ({ articleId, articleTitle }) => {
     const { articlesInReport, addArticleReport, removeArcticleReport } =
         useUser();
     const [isInReport, setIsInReport] = useState(
         articlesInReport.some((article) => article.id === articleId)
     );
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarText, setSnackbarText] = useState('');
-    const [snackbarSeverity, setSnackbarSeverity] = useState('info');
+    const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('info');
     const buttonSize = 'small';
     const iconSize = 'medium';
 
-    const handleAddArticle = (articleId, articleTitle) => {
-        addArticleReport({
-            id: articleId,
-            searchTerm: searchParams.get('q'),
-            title: articleTitle,
-            timeAdded: new Date().toLocaleString(), // example: Tue, 05 Apr 2022 06:30:57 GMT
-        });
-        setIsInReport(true);
-        openSnackbar('Article was added to report!', 'success');
+    const handleAddArticle = (articleId: string, articleTitle: string) => {
+        if (addArticleReport) {
+            addArticleReport({
+                id: articleId,
+                searchTerm: searchParams.get('q'),
+                title: articleTitle,
+                timeAdded: new Date().toLocaleString(), // example: Tue, 05 Apr 2022 06:30:57 GMT
+            });
+            setIsInReport(true);
+            openSnackbar('Article was added to report!', 'success');
+        }
     };
 
-    const openSnackbar = (text, severity) => {
+    const openSnackbar = (text: string, severity: AlertColor) => {
         setSnackbarOpen(false);
         setSnackbarText(text);
         setSnackbarSeverity(severity);
         setSnackbarOpen(true);
     };
 
-    const handleRemoveArticle = (articleId) => {
-        removeArcticleReport(articleId);
-        setIsInReport(false);
-        openSnackbar('Article was removed from report!', 'success');
+    const handleRemoveArticle = (articleId: string) => {
+        if (removeArcticleReport) {
+            removeArcticleReport(articleId);
+            setIsInReport(false);
+            openSnackbar('Article was removed from report!', 'success');
+        }
     };
 
     const handleSnackbarClose = () => {
@@ -101,4 +111,6 @@ export default function ButtonPDF({ articleId, articleTitle }) {
             )}
         </>
     );
-}
+};
+
+export default ReportButton;

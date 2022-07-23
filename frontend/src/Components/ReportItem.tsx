@@ -15,9 +15,18 @@ import {
 import { useState } from 'react';
 import { theme } from '../Style/Theme';
 import { Link as RouterLink } from 'react-router-dom';
+import { Article, ArticleInReport } from 'Utils/Interfaces';
+import React from 'react';
 
-export default function ReportItem({ article, index, articlesInReport, handleRemoveArticle }) {
-    const [showDialog, setShowDialog] = useState(false);
+interface Props {
+    article: Article,
+    index: number,
+    articlesInReport: Array<ArticleInReport>,
+    handleRemoveArticle(index :number, articleId: string): void
+}
+
+const ReportItem: React.FC<Props> = ({ article, index, articlesInReport, handleRemoveArticle }) => {
+    const [showDialog, setShowDialog] = useState<boolean>(false);
 
     const handleCloseDialog = () => {
         setShowDialog(false);
@@ -110,11 +119,13 @@ export default function ReportItem({ article, index, articlesInReport, handleRem
                     </Stack>
                 </Grid>
                 <Grid item xs={0.5} md={0.4} lg={0.3} textAlign="end">
-                    <IconButton fontSize="small" onClick={handleOpenDialog} sx={{ padding: 0.2 }}>
+                    <IconButton size="small" onClick={handleOpenDialog} sx={{ padding: 0.2 }}>
                         <DeleteIcon fontSize="medium" />
                     </IconButton>
                 </Grid>
             </Grid>
         </>
     );
-}
+};
+
+export default ReportItem;

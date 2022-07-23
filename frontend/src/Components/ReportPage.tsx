@@ -17,9 +17,9 @@ import ReportItem from './ReportItem';
 import InfoSnackbar from './InfoSnackbar';
 import MainHeading from './MainHeading';
 import React from 'react';
-import { APIResult, Article } from 'Utils/Interfaces';
+import { APIResponse, Article, ArticleInReport } from 'Utils/Interfaces';
 
-const ReportPDF: React.FC = () => {
+const ReportPage: React.FC = () => {
     const { width } = useWindowSize();
     const shouldCollapse: boolean = (width && width < 992) ? true : false;
     const { articlesInReport, removeArcticleReport } = useUser();
@@ -36,11 +36,11 @@ const ReportPDF: React.FC = () => {
     };
 
     useEffect(() => {
-        const articlesIds:Array<string> = articlesInReport.map((article: Article) => article.id);
+        const articlesIds:Array<string> = articlesInReport.map((article: ArticleInReport) => article.id);
         if (articlesIds.length <= 0) {
             return;
         }
-        apiCall(`/api/data/report?ids=[${articlesIds.join(', ')}]`, 'GET').then((result: APIResult) => {
+        apiCall(`/api/data/report?ids=[${articlesIds.join(', ')}]`, 'GET').then((result: APIResponse) => {
             if (result.ok && result.data && result.data.results) {
                 setArticlesFromReport([...result.data.results]);
                 setIsLoaded(true);
@@ -81,10 +81,10 @@ const ReportPDF: React.FC = () => {
         // display loading circle
         setIsReportGenerating(true);
 
-        const articlesIds:Array<string> = articlesInReport.map((article: Article) => article.id);
+        const articlesIds:Array<string> = articlesInReport.map((article: ArticleInReport) => article.id);
 
         apiCall(`/api/pdf_report/download?ids=[${articlesIds.join(', ')}]`, 'GET')
-        .then(async (result: APIResult) => {
+        .then(async (result: APIResponse) => {
             if (result.ok) {
                 // https://stackoverflow.com/questions/63942715/how-to-download-a-readablestream-on-the-browser-that-has-been-returned-from-fetc
                 console.log(result.blobData);
@@ -127,7 +127,7 @@ const ReportPDF: React.FC = () => {
                 severity={snackbarSeverity}
                 handleClose={handleSnackbarClose}
             />
-            <Dialog open={isReportGenerating} style={{textAlign: 'center'}}>
+            <Dialog open={isReportGenerating} sx={{textAlign: 'center'}}>
                 <DialogTitle>We are generating PDF from your report...</DialogTitle>
                 <DialogContent>
                     <CircularProgress size={50} thickness={2} color="primary" />
@@ -183,4 +183,4 @@ const ReportPDF: React.FC = () => {
     );
 };
 
-export default ReportPDF;
+export default ReportPage;
