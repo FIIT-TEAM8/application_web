@@ -24,10 +24,10 @@ const ReportPage: React.FC = () => {
     const shouldCollapse: boolean = (width && width < 992) ? true : false;
     const { articlesInReport, removeArcticleReport } = useUser();
     const [articlesFromReport, setArticlesFromReport] = useState<Article[]>([]);
-    const [isLoaded, setIsLoaded] = useState(false);
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [isReportGenerating, setIsReportGenerating] = useState(false);
-    const [snackbarText, setSnackbarText] = useState('');
+    const [isLoaded, setIsLoaded] = useState<boolean>(false);
+    const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+    const [isReportGenerating, setIsReportGenerating] = useState<boolean>(false);
+    const [snackbarText, setSnackbarText] = useState<string>('');
     const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('info');
 
     let searchDivStyle: { margin:string, padding: string } = {
@@ -35,7 +35,7 @@ const ReportPage: React.FC = () => {
         padding: shouldCollapse ? '20px 7%' : '20px 20%',
     };
 
-    useEffect(() => {
+    useEffect((): void => {
         const articlesIds:Array<string> = articlesInReport.map((article: ArticleInReport) => article.id);
         if (articlesIds.length <= 0) {
             return;
@@ -50,7 +50,7 @@ const ReportPage: React.FC = () => {
         });
     }, [articlesInReport]);
 
-    const handleRemoveArticle = (index: number, articleId: string) => {
+    const handleRemoveArticle = (index: number, articleId: string): void => {
         // NOTE: removeArticleReport shouldn't be optional in User interface, but currently it isn't working otherwise...
         if (removeArcticleReport) {
             let currArticlesFromReport = [...articlesFromReport];
@@ -63,17 +63,17 @@ const ReportPage: React.FC = () => {
         }
     };
 
-    const openSnackbar = (text: string, severity: AlertColor) => {
+    const openSnackbar = (text: string, severity: AlertColor): void => {
         setSnackbarText(text);
         setSnackbarSeverity(severity);
         setSnackbarOpen(true);
     };
 
-    const handleSnackbarClose = () => {
+    const handleSnackbarClose = (): void => {
         setSnackbarOpen(false);
     };
 
-    const downloadPDF = () => {
+    const downloadPDF = (): void => {
         if (articlesInReport.length === 0) {
             openSnackbar('Unable to generate PDF, because there are no articles in report.', 'error');
         } 
@@ -85,37 +85,39 @@ const ReportPage: React.FC = () => {
 
         apiCall(`/api/pdf_report/download?ids=[${articlesIds.join(', ')}]`, 'GET')
         .then(async (result: APIResponse) => {
-            if (result.ok) {
+            if (!result.ok) {
+                openSnackbar('Unable to download PDF for created report.', 'error');
+            } else {
                 // https://stackoverflow.com/questions/63942715/how-to-download-a-readablestream-on-the-browser-that-has-been-returned-from-fetc
-                console.log(result.blobData);
                 const blob: Blob = await result.blobData.blob();
-                const newBlob = new Blob([blob]);
+                const newBlob: Blob = new Blob([blob]);
+                const blobUrl: string = window.URL.createObjectURL(newBlob);
 
-                const blobUrl = window.URL.createObjectURL(newBlob);
-
-                const link = document.createElement('a');
+                // creat element for downloading PDF download
+                const link: HTMLAnchorElement = document.createElement('a');
                 link.href = blobUrl;
                 link.setAttribute('download', 'report.pdf');
                 document.body.appendChild(link);
-                link.click();
-
-                if (link.parentNode) {
-                    link.parentNode.removeChild(link);
-                }
                 
-                // TODO: clean url and inform about succesfull download
-                // clean up Url
-                // window.URL.revokeObjectURL(blobUrl);
-            } else {
-                // TODO: inform user about unsuccessfull generation
-                console.log('FAILED');
+                link.click(); // this triggers download
+
+                // remove element, which was only used for download
+                document.body.removeChild(link);
+                
+                // clean url and
+                window.URL.revokeObjectURL(blobUrl);
+
+                // inform about succesfull download
+                openSnackbar('PDF was successfully downloaded.', 'success');
             }
 
+            // close loading cycle
             setIsReportGenerating(false);
         }).catch(err => {
-            // TODO: inform user about unsuccessfull generation
-            console.log(err);
+            // inform user about unsuccesfull download and hide loading cycle
+            openSnackbar('Unable to download PDF for created report.', 'error');
             setIsReportGenerating(false);
+            console.log(err);
         });
     };
 

@@ -28,15 +28,15 @@ interface Props {
 const ReportItem: React.FC<Props> = ({ article, index, articlesInReport, handleRemoveArticle }) => {
     const [showDialog, setShowDialog] = useState<boolean>(false);
 
-    const handleCloseDialog = () => {
+    const handleCloseDialog = (): void => {
         setShowDialog(false);
     };
 
-    const handleOpenDialog = () => {
+    const handleOpenDialog = (): void => {
         setShowDialog(true);
     };
 
-    const handleConfirmRemove = () => {
+    const handleConfirmRemove = (): void => {
         handleRemoveArticle(index, article._id);
         setShowDialog(false);
     };

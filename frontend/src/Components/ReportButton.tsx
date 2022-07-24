@@ -16,17 +16,17 @@ interface Props {
 const ReportButton: React.FC<Props> = ({ articleId, articleTitle }) => {
     const { articlesInReport, addArticleReport, removeArcticleReport } =
         useUser();
-    const [isInReport, setIsInReport] = useState(
+    const [isInReport, setIsInReport] = useState<boolean>(
         articlesInReport.some((article) => article.id === articleId)
     );
     const [searchParams] = useSearchParams();
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [snackbarText, setSnackbarText] = useState('');
+    const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+    const [snackbarText, setSnackbarText] = useState<string>('');
     const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>('info');
     const buttonSize = 'small';
     const iconSize = 'medium';
 
-    const handleAddArticle = (articleId: string, articleTitle: string) => {
+    const handleAddArticle = (articleId: string, articleTitle: string): void => {
         if (addArticleReport) {
             addArticleReport({
                 id: articleId,
@@ -39,14 +39,14 @@ const ReportButton: React.FC<Props> = ({ articleId, articleTitle }) => {
         }
     };
 
-    const openSnackbar = (text: string, severity: AlertColor) => {
+    const openSnackbar = (text: string, severity: AlertColor): void => {
         setSnackbarOpen(false);
         setSnackbarText(text);
         setSnackbarSeverity(severity);
         setSnackbarOpen(true);
     };
 
-    const handleRemoveArticle = (articleId: string) => {
+    const handleRemoveArticle = (articleId: string): void => {
         if (removeArcticleReport) {
             removeArcticleReport(articleId);
             setIsInReport(false);
@@ -54,7 +54,7 @@ const ReportButton: React.FC<Props> = ({ articleId, articleTitle }) => {
         }
     };
 
-    const handleSnackbarClose = () => {
+    const handleSnackbarClose = (): void => {
         setSnackbarOpen(false);
     };
 
