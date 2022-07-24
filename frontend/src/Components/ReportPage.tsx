@@ -43,10 +43,11 @@ const ReportPage: React.FC = () => {
         apiCall(`/api/data/report?ids=[${articlesIds.join(', ')}]`, 'GET').then((result: APIResponse) => {
             if (result.ok && result.data && result.data.results) {
                 setArticlesFromReport([...result.data.results]);
-                setIsLoaded(true);
             } else {
                 openSnackbar('Unable to get articles in report.', 'error');
             }
+
+            setIsLoaded(true);
         });
     }, [articlesInReport]);
 
@@ -73,7 +74,7 @@ const ReportPage: React.FC = () => {
         setSnackbarOpen(false);
     };
 
-    const downloadPDF = (): void => {
+    const downloadPDF = async (): Promise<void> => {
         if (articlesInReport.length === 0) {
             openSnackbar('Unable to generate PDF, because there are no articles in report.', 'error');
         } 
@@ -82,11 +83,14 @@ const ReportPage: React.FC = () => {
         setIsReportGenerating(true);
 
         const articlesIds:Array<string> = articlesInReport.map((article: ArticleInReport) => article.id);
+        const articlesSearchTerms:Array<string | null> = articlesInReport.map((article: ArticleInReport) => article.searchTerm);
 
-        apiCall(`/api/pdf_report/download?ids=[${articlesIds.join(', ')}]`, 'GET')
-        .then(async (result: APIResponse) => {
+        const downloadResult = await apiCall(`/api/pdf_report/download?ids=[${articlesIds.join(', ')}]`, 'POST', {
+            articlesIds: articlesIds,
+            articlesSearchTerms: articlesSearchTerms
+        }).then(async (result: APIResponse) => {
             if (!result.ok) {
-                openSnackbar('Unable to download PDF for created report.', 'error');
+                return false;
             } else {
                 // https://stackoverflow.com/questions/63942715/how-to-download-a-readablestream-on-the-browser-that-has-been-returned-from-fetc
                 const blob: Blob = await result.blobData.blob();
@@ -106,19 +110,21 @@ const ReportPage: React.FC = () => {
                 
                 // clean url and
                 window.URL.revokeObjectURL(blobUrl);
-
-                // inform about succesfull download
-                openSnackbar('PDF was successfully downloaded.', 'success');
+                
+                return true;
             }
-
-            // close loading cycle
-            setIsReportGenerating(false);
         }).catch(err => {
-            // inform user about unsuccesfull download and hide loading cycle
-            openSnackbar('Unable to download PDF for created report.', 'error');
-            setIsReportGenerating(false);
             console.log(err);
+            return false;
         });
+
+        if (downloadResult) {
+            openSnackbar('PDF was successfully downloaded.', 'success');
+        } else {
+            openSnackbar('Unable to download PDF for created report.', 'error');
+        }
+
+        setIsReportGenerating(false);
     };
 
     return (

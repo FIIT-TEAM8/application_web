@@ -50,18 +50,22 @@ const UserProvider: React.FC<Props> = ({ children }) => {
         // use user id from loginRefToken
         await apiCall(`/api/pdf_report/${loginRefToken.id}?status=In Progress`, 'GET').then(
             (result: APIResponse) => {
-                // TODO: info user, that PDF report wasn't loaded
                 if (result.ok) {
                     console.log('PDF report was succesfully loaded.');
                     setReportId(result.reportId);
                     setArticlesInReport(result.articlesInReport);
+                } else {
+                    console.log('Unable to load PDF report');
                 }
             }
-        );
+        ).catch(err => {
+            console.log(err);
+            console.log('Error while loading in progress report');
+        });
     };
 
     // TODO: change from any
-    const login = async (loginData: any) => {
+    const login = async (loginData: any): Promise<boolean> => {
         let isLogged = await apiCall('/api/user/login', 'POST', loginData).then((result: APIResponse) => {
             if (result.ok) {
                 return true;
@@ -79,16 +83,15 @@ const UserProvider: React.FC<Props> = ({ children }) => {
         }
     };
 
-    const logout = () => {
-        apiCall('/api/user/logout', 'POST')
-            .then((result: APIResponse) => {
-                if (result.ok) {
-                    setUser(undefined);
-                    setReportId(0);
-                    setArticlesInReport([]);
-                }
-            })
-            .catch((err) => console.log(err));
+    const logout = (): void => {
+        apiCall('/api/user/logout', 'POST').then((result: APIResponse) => {
+            if (result.ok) {
+                setUser(undefined);
+                setReportId(0);
+                setArticlesInReport([]);
+            }
+        }).catch((err) => console.log(err));
+
         Cookies.remove('__authToken');
         Cookies.remove('__refToken');
     };
@@ -103,30 +106,32 @@ const UserProvider: React.FC<Props> = ({ children }) => {
                 userId: user.id,
                 articlesInReport: newArticlesInReport,
             }).then((result: APIResponse) => {
-                // TODO: info user, that PDF wasn't created
                 if (result.ok) {
                     setReportId(result.reportId);
-                    console.log('PDF successfully created');
+                    console.log('Report successfully initialized');
+                } else {
+                    console.log('Report wasn\'t successfully initialized, because something went wrong during communication with server');
                 }
+            }).catch(err => {
+                console.log(err);
+                console.log('Error during report initialization');
             });
         }
     };
 
-    const updateReportAPI = (newArticlesInReport: Array<ArticleInReport>) => {
+    const updateReportAPI = (newArticlesInReport: Array<ArticleInReport>): void => {
         apiCall(`/api/pdf_report/update/${reportId}`, 'POST', {
             articlesInReport: newArticlesInReport,
-        })
-            .then((result) => {
-                if (result.ok) {
-                    console.log('Updated articles in PDF report');
-                } else {
-                    console.log('Unable to update PDF report.');
-                }
-            })
-            .catch((err) => console.log(err));
+        }).then((result) => {
+            if (result.ok) {
+                console.log('Updated articles in PDF report');
+            } else {
+                console.log('Unable to update PDF report.');
+            }
+        }).catch((err) => console.log(err));
     };
 
-    const addArticleReport = (article: ArticleInReport) => {
+    const addArticleReport = (article: ArticleInReport): void => {
         setArticlesInReport((prevState) => {
             prevState.push(article);
             reportRequest(prevState);
@@ -134,7 +139,7 @@ const UserProvider: React.FC<Props> = ({ children }) => {
         });
     };
 
-    const removeArcticleReport = (articleId: string) => {
+    const removeArcticleReport = (articleId: string): void => {
         setArticlesInReport((prevState) => {
             const articleIndex = prevState.findIndex((article) => {
                 return article.id === articleId;
@@ -151,7 +156,7 @@ const UserProvider: React.FC<Props> = ({ children }) => {
     };
 
     // TODO: change from any
-    const signup = async (signupData: any) => {
+    const signup = async (signupData: any): Promise<boolean> => {
         let isSignedup = await apiCall('/api/user/signup', 'POST', signupData).then((result) => {
             if (result.ok) {
                 return true;
