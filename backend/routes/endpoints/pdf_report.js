@@ -1,4 +1,4 @@
-const express = require('express')
+const express = require("express")
 const pdfReportdb = require("../../db/pdf_report_db")
 const DOMPurify = require("isomorphic-dompurify")
 const dataApiTools = require("../../utils/data_api_tools")
@@ -16,7 +16,8 @@ const pdfOptions = {
         bottom: '45px',
         left: '65px',
         right: '65px'
-    }
+    },
+    printBackground: true
 };
 
 const router = express.Router()
@@ -59,25 +60,58 @@ router.post('/update/:id', async function (req, res) {
     }
 })
 
-router.get('/download', async function (req, res) {
+router.post('/download', async function (req, res) {
     try {
-        const data = await dataApiTools.apiFetch('report', req)
+        if (!('body' in req && 'articlesIds' in req.body && 'articlesSearchTerms' in req.body)) {
+            return res.status(400).json({ok: false, msg: "Wrong request, missing articles ids or search terms."})
+        }
+
+        const articlesIds = req.body.articlesIds
+        const articlesSearchTerms = req.body.articlesSearchTerms
+        const data = await dataApiTools.fetchArticles('report', req, articlesIds)
 
         if (!data || !('results' in data)) {
             return res.status(500).json({ok: false, msg: "Articles wasn't recieved from API server."})
         }
 
-        let htmlString = ''
+        let reportHtml = ''
         const articles = data.results
+        
         for (let i = 0; i < articles.length; i++) {
-            if ('html' in articles[i]) {
-                const sanitizedHTML = sanitize(articles[i].html, htmlSanitizeOptions)
-                htmlString += sanitizedHTML.__html
-                htmlString += '<br><div style="page-break-after:always;"></div>' // page break, https://github.com/marcbachmann/node-html-pdf/issues/49 (page breaks or merge)
+            const article = articles[i]
+
+            if ('html' in article) {
+                let sanitizedHTML = sanitize(articles[i].html, htmlSanitizeOptions).__html
+                htmlLower = sanitizedHTML.toLowerCase()
+
+                const searchTerm = articlesSearchTerms[i]
+                reportHtml += `<h4>Article was found by term: <span style="background-color:yellow;">${searchTerm}</span></h4>`
+
+                // get all starting indexes, where search term was found in article's sanitized html
+                const startIndexes = [...htmlLower.matchAll(searchTerm)].map(result => result.index)
+
+                const searchTermLength = searchTerm.length
+                const totalSpanLength = '<span style="background-color:yellow;"></span>'.length
+                let endOfLastSearchTerm = 0
+
+                for (let j = 0; j < startIndexes.length; j++) {
+                    // shift of startIndex is required, because some searchTerms in sanitizedHtml could be already surrounded by span with background style
+                    const startIndex = startIndexes[j] + j * totalSpanLength
+                    const endIndex = startIndex + searchTermLength
+
+                    const startHtml = sanitizedHTML.slice(0, startIndex)
+                    const searchTermHtml = sanitizedHTML.slice(startIndex, endIndex)
+                    const endHtml = sanitizedHTML.slice(endIndex)
+
+                    sanitizedHTML = startHtml + '<span style="background-color:yellow;">' + searchTermHtml + '</span>' + endHtml
+                }
+
+                reportHtml += sanitizedHTML
+                reportHtml += '<br><div style="page-break-after:always;"></div>' // page break, https://github.com/marcbachmann/node-html-pdf/issues/49 (page breaks or merge)
             }
         }
 
-        let file = { content: htmlString };
+        let file = { content: reportHtml };
         const pdfBuffer = await htmlToPdf.generatePdf(file, pdfOptions).then(pdfBuffer => { return pdfBuffer })
         
         res.statusCode = 200

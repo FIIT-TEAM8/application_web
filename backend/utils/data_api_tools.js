@@ -15,4 +15,14 @@ async function apiFetch(endpoint, req) {
     return await response.json()
 }
 
-module.exports.apiFetch = apiFetch
+async function fetchArticles(endpoint, req, articleIds) {
+    const version = req.query.version || cfg.DATA_API_VERSION
+    const url = `${cfg.DATA_API_HOST}/${version}/${endpoint}?ids=[${articleIds.join(', ')}]`
+    const response = await fetch(url)
+    return await response.json()
+}
+
+module.exports = {
+    apiFetch,
+    fetchArticles
+}
