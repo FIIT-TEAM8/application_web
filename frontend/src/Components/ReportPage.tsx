@@ -85,7 +85,7 @@ const ReportPage: React.FC = () => {
         const articlesIds:Array<string> = articlesInReport.map((article: ArticleInReport) => article.id);
         const articlesSearchTerms:Array<string | null> = articlesInReport.map((article: ArticleInReport) => article.searchTerm);
 
-        const downloadResult = await apiCall(`/api/pdf_report/download?ids=[${articlesIds.join(', ')}]`, 'POST', {
+        const downloadResult = await apiCall(`/api/report/download?ids=[${articlesIds.join(', ')}]`, 'POST', {
             articlesIds: articlesIds,
             articlesSearchTerms: articlesSearchTerms
         }).then(async (result: APIResponse) => {
