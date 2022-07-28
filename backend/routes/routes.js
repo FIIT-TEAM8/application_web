@@ -5,7 +5,7 @@ const router = express.Router();
 const dataRoute = require('./endpoints/data');
 const userRoute = require('./endpoints/user');
 const archiveRoute = require('./endpoints/archive');
-const pdfReport = require('./endpoints/pdf_report');
+const report = require('./endpoints/report');
 const advancedSearch = require('./endpoints/advanced_search');
 
 router.get('/', (req, res) => {
@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
 router.use('/data', dataRoute);
 router.use('/user', userRoute);
 router.use('/archive', archiveRoute);
-router.use('/pdf_report', pdfReport);
+router.use('/report', report);
 router.use('/advanced_search', advancedSearch);
 
 module.exports = router;

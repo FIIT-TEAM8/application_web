@@ -48,7 +48,7 @@ const UserProvider: React.FC<Props> = ({ children }) => {
         console.log('Logged in via refToken');
 
         // use user id from loginRefToken
-        await apiCall(`/api/pdf_report/${loginRefToken.id}?status=In Progress`, 'GET').then(
+        await apiCall(`/api/report/${loginRefToken.id}?status=In Progress`, 'GET').then(
             (result: APIResponse) => {
                 if (result.ok) {
                     console.log('PDF report was succesfully loaded.');
@@ -102,7 +102,7 @@ const UserProvider: React.FC<Props> = ({ children }) => {
             updateReportAPI(newArticlesInReport);
         } else if (user && typeof user.id === 'number') {
             // create new user's 'In progress' report
-            apiCall('/api/pdf_report/create', 'POST', {
+            apiCall('/api/report/create', 'POST', {
                 userId: user.id,
                 articlesInReport: newArticlesInReport,
             }).then((result: APIResponse) => {
@@ -120,7 +120,7 @@ const UserProvider: React.FC<Props> = ({ children }) => {
     };
 
     const updateReportAPI = (newArticlesInReport: Array<ArticleInReport>): void => {
-        apiCall(`/api/pdf_report/update/${reportId}`, 'POST', {
+        apiCall(`/api/report/update/${reportId}`, 'POST', {
             articlesInReport: newArticlesInReport,
         }).then((result) => {
             if (result.ok) {

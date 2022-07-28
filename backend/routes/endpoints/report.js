@@ -1,7 +1,7 @@
 const express = require('express');
 const DOMPurify = require('isomorphic-dompurify');
 const htmlToPdf = require('html-pdf-node');
-const pdfReportdb = require('../../db/pdf_report_db');
+const reportDb = require('../../db/report_db');
 const dataApiTools = require('../../utils/data_api_tools');
 
 const htmlSanitizeOptions = {
@@ -26,41 +26,41 @@ const pdfOptions = {
 
 const router = express.Router();
 
-// node_host /ams/api/pdf_report/create/:user_id
+// node_host /ams/api/report/create/:user_id
 router.post('/create', async (req, res) => {
   try {
     const { userId } = req.body;
     const reportContent = JSON.stringify(req.body.articlesInReport); // convert array to json for db
 
-    const id = await pdfReportdb.insertReport(userId, reportContent);
+    const id = await reportDb.insertReport(userId, reportContent);
     if (!id) {
-      return res.status(400).json({ ok: false, msg: 'Creation of PDF report failed.' });
+      return res.status(400).json({ ok: false, msg: 'Creation of report failed.' });
     }
 
-    return res.status(200).json({ ok: true, reportId: id, msg: 'Creation of PDF report was succesfull.' });
+    return res.status(200).json({ ok: true, reportId: id, msg: 'Creation of report was succesfull.' });
   } catch (e) {
     console.log(e);
-    console.log('Exception happened while handling: /pdf_report/add');
-    return res.status(500).json({ ok: false, msg: 'Unable to create PDF report.' });
+    console.log('Exception happened while handling: /report/add');
+    return res.status(500).json({ ok: false, msg: 'Unable to create report.' });
   }
 });
 
-// node_host /ams/api/pdf_report/update/:id
+// node_host /ams/api/report/update/:id
 router.post('/update/:id', async (req, res) => {
   try {
     const reportId = req.params.id;
     const reportContent = JSON.stringify(req.body.articlesInReport); // convert array to json for db
 
-    const result = await pdfReportdb.updateReport(reportId, reportContent);
+    const result = await reportDb.updateReport(reportId, reportContent);
     if (!result) {
-      return res.status(400).json({ ok: false, msg: 'Something failed during updating PDF report.' });
+      return res.status(400).json({ ok: false, msg: 'Something failed during updating report.' });
     }
 
-    return res.status(200).json({ ok: true, msg: 'PDF report was succesfully updated.' });
+    return res.status(200).json({ ok: true, msg: 'Report was succesfully updated.' });
   } catch (e) {
     console.log(e);
-    console.log('Exception happened while handling: /pdf_report/update/:id');
-    return res.status(500).json({ ok: false, msg: 'Unable to update PDF report.' });
+    console.log('Exception happened while handling: /report/update/:id');
+    return res.status(500).json({ ok: false, msg: 'Unable to update report.' });
   }
 });
 
@@ -123,22 +123,22 @@ router.post('/download', async (req, res) => {
     return res.end(Buffer.from(pdfBuffer, 'base64')); // new Buffer.from()
   } catch (e) {
     console.log(e);
-    console.log('Exception happend while handling: /pdf_report/download');
-    return res.status(500).json({ ok: false, msg: 'Unable to generate PDF report.' });
+    console.log('Exception happend while handling: /report/download');
+    return res.status(500).json({ ok: false, msg: 'Unable to generate report.' });
   }
 });
 
-// node_host /ams/api/pdf_report/:id?status=In Progres
-// get pdf report based on user_id and report status
+// node_host /ams/api/report/:id?status=In Progres
+// get report based on user_id and report status
 router.get('/:user_id', async (req, res) => {
   try {
     const userId = req.params.user_id;
     const reportStatus = ('status' in req.query) ? req.query.status : 'In Progress';
 
     // database will return only first user's report with wanted status
-    const report = await pdfReportdb.getReport(userId, reportStatus);
+    const report = await reportDb.getReport(userId, reportStatus);
     if (!report) {
-      return res.status(400).json({ ok: false, msg: 'Unable to retrieve PDF report.' });
+      return res.status(400).json({ ok: false, msg: 'Unable to retrieve report.' });
     }
 
     return res.status(200).json({
@@ -146,8 +146,8 @@ router.get('/:user_id', async (req, res) => {
     });
   } catch (e) {
     console.log(e);
-    console.log('Exception happened while handling: /pdf_report/:id');
-    return res.status(500).json({ ok: false, msg: 'Unable to retrieve PDF report.' });
+    console.log('Exception happened while handling: /report/:id');
+    return res.status(500).json({ ok: false, msg: 'Unable to retrieve report.' });
   }
 });
 

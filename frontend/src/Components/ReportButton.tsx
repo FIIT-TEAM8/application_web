@@ -58,7 +58,7 @@ const ReportButton: React.FC<Props> = ({ articleId, articleTitle }) => {
         setSnackbarOpen(false);
     };
 
-    // if user doesn't have this article in PDF report, allow him to add it
+    // if user doesn't have this article in report, allow him to add it
     // otherwise allow him to remove article from report
     return (
         <>
