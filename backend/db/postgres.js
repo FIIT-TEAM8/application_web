@@ -1,8 +1,6 @@
-const pg = require('pg')
-const { db_cfg } = require('../config')
-const Moment = require('moment')
-const { request } = require('express')
-const { errLog, infoLog } = require('../utils/logging')
+const pg = require('pg');
+const { dbCfg } = require('../config');
+const { errLog, infoLog } = require('../utils/logging');
 
 /*  Use for transactions:
 
@@ -39,74 +37,67 @@ await db.query(query)
 
 */
 
-
 // ================== Node postgres date fix - start
 // https://github.com/brianc/node-postgres/issues/818
 
-
-const parseDate = function (value) {
-    return value === null ? null : Moment(value)
-}
-
-const types = pg.types
-const DATATYPE_DATE =  1082
-types.setTypeParser(DATATYPE_DATE, function (value) {
-    return value
-})
+const { types } = pg;
+const DATATYPE_DATE = 1082;
+types.setTypeParser(DATATYPE_DATE, (value) => value);
 
 // ================== Node postgres date fix - end
 
-let pool = null
+let pool = null;
 
-createPool = async () => {
-    infoLog("Connecting to a PostgreSQL database.")
-    let connectionTries = 30
-    while (connectionTries) {
-        infoLog(`Tries left: ${connectionTries}`)
-        try {
-            pool = new pg.Pool({
-                user: db_cfg.POSTGRES_USER,
-                host: db_cfg.POSTGRES_HOST,
-                database: db_cfg.POSTGRES_DB,
-                password: db_cfg.POSTGRES_PASSWORD,
-                port: db_cfg.POSTGRES_PORT,
-            })
-        } catch (err) {
-            // errLog(err)
-            errLog(err)
-        }
-        if (pool) {
-            break
-        } else {
-            // wait 5 seconds
-            await new Promise(res => setTimeout(res, 5000)).catch(e => {})
-            connectionTries -= 1
-        }
-        
+const createPool = async () => {
+  infoLog('Connecting to a PostgreSQL database.');
+  let connectionTries = 30;
+  while (connectionTries) {
+    infoLog(`Tries left: ${connectionTries}`);
+    try {
+      pool = new pg.Pool({
+        user: dbCfg.POSTGRES_USER,
+        host: dbCfg.POSTGRES_HOST,
+        database: dbCfg.POSTGRES_DB,
+        password: dbCfg.POSTGRES_PASSWORD,
+        port: dbCfg.POSTGRES_PORT,
+      });
+    } catch (err) {
+      // errLog(err)
+      errLog(err);
     }
-    infoLog("Moving on.")
-}
+    if (pool) {
+      break;
+    } else {
+      // wait 5 seconds
+      // eslint-disable-next-line no-await-in-loop, no-promise-executor-return
+      await new Promise((res) => setTimeout(res, 5000)).catch(() => {});
+      connectionTries -= 1;
+    }
+  }
+  infoLog('Moving on.');
+};
 
 const getPool = async () => {
-    if (pool) {
-        return pool
-    } else {
-        await createPool()
-        return pool
-    }
-}
+  if (pool) {
+    return pool;
+  }
+  await createPool();
+  return pool;
+};
 
 module.exports = {
 
-    getPool: getPool,
+  getPool,
 
-    query: async (args) => {
-        const connection = await getPool()
-        return await connection.query(args)
-    },
+  query: async (args) => {
+    const connection = await getPool();
+    const result = await connection.query(args);
+    return result;
+  },
 
-    connect: async () => {
-        const connection = await getPool()
-        return await connection.connect()
-    },
-}
+  connect: async () => {
+    const connection = await getPool();
+    const result = await connection.connect();
+    return result;
+  },
+};
