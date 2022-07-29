@@ -1,12 +1,12 @@
-const jwt = require('jsonwebtoken');
-const { debug } = require('../utils/logging');
-const { getUser } = require('../db/user_db');
-const { checkRefreshToken } = require('../db/token_db');
-const { cfg } = require('../config');
+const jwt = require("jsonwebtoken");
+const { debug } = require("../utils/logging");
+const { getUser } = require("../db/user_db");
+const { checkRefreshToken } = require("../db/token_db");
+const { cfg } = require("../config");
 
 // https://www.youtube.com/watch?v=mbsmsi7l3r4&ab_channel=WebDevSimplified auth
 function generateAccessToken(data) {
-  return jwt.sign(data, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1m' });
+  return jwt.sign(data, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1m" });
 }
 
 async function refreshToken(req, res, next) {
@@ -26,9 +26,9 @@ async function refreshToken(req, res, next) {
 
     const accessToken = generateAccessToken({ username: user.username, id: user.id });
     // @ts-ignore
-    res.cookie('__authToken', accessToken, { maxAge: cfg.AUTH_COOKIE_AGE, httpOnly: true, secure: cfg.IS_HTTPS });
+    res.cookie("__authToken", accessToken, { maxAge: cfg.AUTH_COOKIE_AGE, httpOnly: true, secure: cfg.IS_HTTPS });
     // @ts-ignore
-    res.cookie('__refToken', refToken, { maxAge: refreshTokenMaxAge * 1000, httpOnly: false, secure: cfg.IS_HTTPS });
+    res.cookie("__refToken", refToken, { maxAge: refreshTokenMaxAge * 1000, httpOnly: false, secure: cfg.IS_HTTPS });
 
     debug(`Authenticated: ${user.username}`);
     const dbuser = await getUser(user.username);

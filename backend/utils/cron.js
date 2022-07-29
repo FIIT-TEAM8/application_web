@@ -1,11 +1,11 @@
-const cron = require('node-cron');
-const { clearOldRefreshTokens } = require('../db/token_db');
+const cron = require("node-cron");
+const { clearOldRefreshTokens } = require("../db/token_db");
 
 const setup = () => {
   // Runs every minute
-  cron.schedule('* * * * *', () => {
+  cron.schedule("* * * * *", () => {
     clearOldRefreshTokens();
-    console.log('Token cleansing performed.');
+    console.log("Token cleansing performed.");
   });
 };
 

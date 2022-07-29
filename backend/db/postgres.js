@@ -1,6 +1,6 @@
-const pg = require('pg');
-const { dbCfg } = require('../config');
-const { errLog, infoLog } = require('../utils/logging');
+const pg = require("pg");
+const { dbCfg } = require("../config");
+const { errLog, infoLog } = require("../utils/logging");
 
 /*  Use for transactions:
 
@@ -49,7 +49,7 @@ types.setTypeParser(DATATYPE_DATE, (value) => value);
 let pool = null;
 
 const createPool = async () => {
-  infoLog('Connecting to a PostgreSQL database.');
+  infoLog("Connecting to a PostgreSQL database.");
   let connectionTries = 30;
   while (connectionTries) {
     infoLog(`Tries left: ${connectionTries}`);
@@ -74,7 +74,7 @@ const createPool = async () => {
       connectionTries -= 1;
     }
   }
-  infoLog('Moving on.');
+  infoLog("Moving on.");
 };
 
 const getPool = async () => {

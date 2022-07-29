@@ -1,11 +1,11 @@
-const { format } = require('date-fns');
+const { format } = require("date-fns");
 
 function getCurrentDateTimeString() {
-  return format(new Date(), 'yyyy-dd-MM HH:mm:ss');
+  return format(new Date(), "yyyy-dd-MM HH:mm:ss");
 }
 
 function debug(output) {
-  const DEBUG = process.env.NODE_ENV !== 'production';
+  const DEBUG = process.env.NODE_ENV !== "production";
   const time = getCurrentDateTimeString();
   if (DEBUG) {
     console.log(`${time} DEBUG: ${output}`);
@@ -20,7 +20,7 @@ function getErrorInfoString(error) {
   if (error.message || error.name) {
     return `ERROR OCCURRED\n\tname: ${error.name} message: ${error.message} at: ${error.at}`;
   }
-  return 'UNKNOWN ERROR OCCURRED';
+  return "UNKNOWN ERROR OCCURRED";
 }
 
 function infoLog(output) {
