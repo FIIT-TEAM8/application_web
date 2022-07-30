@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { apiCall, getCookieToken, refreshToken } from "./APIConnector";
 import { ArticleInReport, APIResponse, User } from "./Interfaces";
 import { UserContext } from "./UserContext";
@@ -17,7 +17,7 @@ export default function UserProvider({ children }: Props) {
   >([]);
   const [reportId, setReportId] = useState<number>(0);
 
-  const refresh = useCallback(async () => {
+  const refresh = async () => {
     const loginRefToken = getCookieToken("__refToken");
     if (!loginRefToken) {
       setUser(undefined);
@@ -59,11 +59,11 @@ export default function UserProvider({ children }: Props) {
         console.log(err);
         console.log("Error while loading in progress report");
       });
-  }, [articlesInReport, reportId, user]);
+  };
 
   useEffect(() => {
     refresh();
-  }, [refresh]);
+  }, []);
 
   // TODO: change from any
   const login = async (loginData: any): Promise<boolean> => {
