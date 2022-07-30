@@ -31,7 +31,10 @@ export default function ReportButton({ articleId, articleTitle }: Props) {
     setSnackbarOpen(true);
   };
 
-  const handleAddArticle = (selectedArticleId: string, selectedArticleTitle: string): void => {
+  const handleAddArticle = (
+    selectedArticleId: string,
+    selectedArticleTitle: string
+  ): void => {
     if (addArticleReport) {
       addArticleReport({
         id: selectedArticleId,

@@ -9,7 +9,10 @@ interface Props {
 }
 
 export default function InfoSnackbar({
-  text, open, severity, handleClose
+  text,
+  open,
+  severity,
+  handleClose,
 }: Props) {
   return (
     <Snackbar

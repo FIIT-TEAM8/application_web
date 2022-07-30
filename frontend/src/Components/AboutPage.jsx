@@ -1,6 +1,4 @@
-import {
-  Typography, Grid, Link
-} from "@mui/material";
+import { Typography, Grid, Link } from "@mui/material";
 import React from "react";
 import useWindowSize from "../Utils/Screen";
 import MainHeading from "./MainHeading";
