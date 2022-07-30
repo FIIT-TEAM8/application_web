@@ -90,6 +90,7 @@ router.post("/download", async (req, res) => {
 
         const searchTerm = articlesSearchTerms[i];
         reportHtml += `<h4>Article was found by term: <span style="background-color:yellow;">${searchTerm}</span></h4>`;
+        reportHtml += `<h5>Source: <a href="${article.link}">${article.link}</a></h5>`;
 
         // get all starting indexes, where search term was found in article's sanitized html
         const startIndexes = [...htmlLower.matchAll(searchTerm)].map((result) => result.index);
