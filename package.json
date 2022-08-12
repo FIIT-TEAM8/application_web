@@ -7,6 +7,7 @@
     "postgres_up": "cd dev && docker-compose pull && docker-compose up -d",
     "postgres_up_regular": "cd dev && docker-compose pull && docker-compose up",
     "postgres_down": "cd dev && docker-compose down -v",
+    "test": "cd frontend && npm run test",
     "dev_frontend": "cd frontend && npm install && npm start",
     "dev_backend": "cd backend && npm install && npm run dev",
     "dev": "npm install && export NODE_ENV=development && concurrently -t \"yyyy-MM-dd HH:mm:ss\" -p \"{time} [{name}]\" -n \"react,server\" \"npm run dev_frontend\" \"npm run dev_backend\" ",
