@@ -3,7 +3,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
-import ButtonPDF from "./ReportButton";
+import ReportButton from "./ReportButton";
 import { useUser } from "../Utils/UserContext";
 import theme from "../Style/Theme";
 
@@ -82,7 +82,7 @@ export default function ResultItem({ item }) {
       {user && (
         <Grid item xs={0.5} md={0.4} lg={0.3} textAlign="end">
           <Stack>
-            <ButtonPDF articleId={item._id} articleTitle={item.title} />
+            <ReportButton articleId={item._id} articleTitle={item.title} />
           </Stack>
         </Grid>
       )}

@@ -24,6 +24,7 @@
     "url": "https://github.com/FIIT-TEAM8/node_server/issues"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
     "concurrently": "^6.3.0"
   }
 }
