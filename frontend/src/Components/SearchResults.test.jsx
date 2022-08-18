@@ -1,8 +1,6 @@
 import { act, render, screen } from "@testing-library/react";
 import React from "react";
-import {
-  BrowserRouter, MemoryRouter
-} from "react-router-dom";
+import { MemoryRouter } from "react-router-dom";
 import { apiCall } from "../Utils/APIConnector";
 import SearchResults from "./SearchResults";
 
@@ -49,10 +47,9 @@ describe("<SearchResults />", () => {
 
     // await is actually required
     await act(async () => render(
-      // eslint-disable-next-line dot-notation
-      <BrowserRouter basename={process.env["PUBLIC_URL"]}>
+      <MemoryRouter>
         <SearchResults />
-      </BrowserRouter>
+      </MemoryRouter>
     ));
 
     expect(screen.getByText(`${totalResults} results found.`)).toBeInTheDocument();

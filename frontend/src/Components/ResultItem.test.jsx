@@ -2,7 +2,7 @@ import React from "react";
 import {
   render, cleanup, screen
 } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router-dom";
 import { useUser } from "../Utils/UserContext";
 import ResultItem from "./ResultItem";
 
@@ -29,9 +29,9 @@ describe("<ResultItem />", () => {
 
     render(
       // eslint-disable-next-line dot-notation
-      <BrowserRouter basename={process.env["PUBLIC_URL"]}>
+      <MemoryRouter>
         <ResultItem item={mockedArticle} />
-      </BrowserRouter>
+      </MemoryRouter>
     );
 
     const titleLink = screen.getByRole("link", { name: mockedArticle.title });
@@ -59,10 +59,9 @@ describe("<ResultItem />", () => {
     }));
 
     render(
-      // eslint-disable-next-line dot-notation
-      <BrowserRouter basename={process.env["PUBLIC_URL"]}>
+      <MemoryRouter>
         <ResultItem item={mockedArticle} />
-      </BrowserRouter>
+      </MemoryRouter>
     );
 
     const titleLink = screen.getByRole("link", { name: mockedArticle.title });
