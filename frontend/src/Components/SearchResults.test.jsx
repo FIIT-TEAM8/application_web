@@ -1,7 +1,7 @@
 import { act, render, screen } from "@testing-library/react";
 import React from "react";
 import {
-  BrowserRouter, Routes, Route, Navigate
+  BrowserRouter, MemoryRouter
 } from "react-router-dom";
 import { apiCall } from "../Utils/APIConnector";
 import SearchResults from "./SearchResults";
@@ -93,17 +93,9 @@ describe("<SearchResults />", () => {
 
     // await is actually required
     await act(async () => render(
-      // in this case it was easier to use Routes
-      // instead of mocking useSeachrParams to get the value of page query parameter,
-      // which is required in MUI Paginaton rendering
-      // eslint-disable-next-line dot-notation
-      <BrowserRouter basename={process.env["PUBLIC_URL"]}>
-        <Routes>
-          <Route path="" element={<Navigate to="/search/results?q=test&page=1" />} />
-          <Route path="/search/results?q=test&page=1" element={<SearchResults />} />
-        </Routes>
+      <MemoryRouter initialEntries={["/search/results?q=test&page=1"]}>
         <SearchResults />
-      </BrowserRouter>
+      </MemoryRouter>
     ));
 
     expect(screen.getByText(`${totalResults} results found.`)).toBeInTheDocument();
