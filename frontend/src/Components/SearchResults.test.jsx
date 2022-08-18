@@ -68,7 +68,6 @@ describe("<SearchResults />", () => {
     const totalResults = 12;
     const totalPages = 2;
     const maxResultsForPage = 10;
-    const activePageIndex = 1;
 
     const mockedData = {
       results: [],
