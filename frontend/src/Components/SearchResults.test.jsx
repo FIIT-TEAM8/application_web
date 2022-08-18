@@ -117,26 +117,5 @@ describe("<SearchResults />", () => {
 
     const paginationContainer = screen.getByRole("navigation", { name: "pagination navigation" });
     expect(paginationContainer).toBeInTheDocument();
-
-    const paginationButtons = screen.getAllByRole("button", { name: /page/i });
-    const prevPageButton = paginationButtons[0];
-    expect(prevPageButton).toBeInTheDocument();
-    expect(prevPageButton).toHaveAttribute("aria-label", "Go to previous page");
-
-    const nextPageButton = paginationButtons[paginationButtons.length - 1];
-    expect(nextPageButton).toBeInTheDocument();
-    expect(nextPageButton).toHaveAttribute("aria-label", "Go to next page");
-
-    const length = paginationButtons.length - 1; // ommit next page button
-    for (let i = 1; i < length; i += 1) {
-      const currPaginationButton = paginationButtons[i];
-      expect(currPaginationButton).toBeInTheDocument();
-      // index of active page has to be equal to page query parameter in Route
-      if (i === activePageIndex) {
-        expect(currPaginationButton).toHaveAttribute("aria-label", `page ${i}`);
-      } else {
-        expect(currPaginationButton).toHaveAttribute("aria-label", `Go to page ${i}`);
-      }
-    }
   });
 });
