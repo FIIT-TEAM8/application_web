@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        // TODO: figure out how to attach to running backend and frontend
+        {
+            "type": "node", 
+            "request": "attach",
+            "name": "Attach to backend",
+            "restart": true,
+            "port": 8080
+        },
+        {
+            "name": "Launch via NPM",
+            "request": "launch",
+            "runtimeArgs": [
+                "run-script",
+                "dev"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+    ]
+}
