@@ -1,4 +1,4 @@
-FROM node:14-alpine3.12
+FROM node:18.8.0-buster
 
 WORKDIR /myApp
 
@@ -7,6 +7,10 @@ COPY package*.json ./
 COPY ./ ./
 
 EXPOSE 8080
+
+RUN apt-get update
+
+RUN apt-get install chromium -y
 
 RUN npm install
 
