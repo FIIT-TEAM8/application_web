@@ -1,10 +1,6 @@
-FROM node:18.8.0-buster
+FROM fiitteam8/node_with_chromium:1.0.0
 
 WORKDIR /myApp
-
-RUN apt-get update
-
-RUN apt-get install chromium -y
 
 COPY package*.json ./
 
