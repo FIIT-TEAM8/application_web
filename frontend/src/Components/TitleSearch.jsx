@@ -308,7 +308,7 @@ export default function TitleSearch() {
           direction="row"
           spacing={1}
         >
-          {numSelectedFilters && (
+          {numSelectedFilters !== 0 && (
             <ButtonBase onClick={() => setAdvancedSearchOpen(true)}>
               <Stack direction="row" spacing={0.3}>
                 <Box
