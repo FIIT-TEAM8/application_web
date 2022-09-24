@@ -30,15 +30,18 @@ export async function apiCall(
   data: any = null,
   ignoreAuthError = false
 ): Promise<APIResponse> {
-  let baseUrl = "";
-  const baseEndpoint: string = process.env.PUBLIC_URL;
+  const baseUrl = process.env.REACT_APP_NODE_SERVER_URL;
+  // const baseEndpoint: string = process.env.PUBLIC_URL;
   // DEV ENVIRONMENT
-  if (DEV) {
-    baseUrl = `http://localhost:${process.env.REACT_APP_PORT}`;
-    // baseEndpoint = ''
-  }
+  // if (DEV) {
+  //   baseUrl = `http://localhost:${process.env.REACT_APP_PORT}`;
+  //   // baseEndpoint = ''
+  // }
+  const url: string = baseUrl + endpoint;
 
-  const url: string = baseUrl + baseEndpoint + endpoint;
+  console.log(`BASE URL: ${baseUrl}, TOTAL URL: ${url}`);
+
+  // const url: string = baseUrl + baseEndpoint + endpoint;
   let response: APIResponse = {};
 
   // Default options are marked with *

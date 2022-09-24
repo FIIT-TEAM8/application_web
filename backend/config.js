@@ -19,7 +19,7 @@ const dbCfg = {
 
 // Basic config (all variables are recommended to be left at default)
 const cfg = {
-  APP_PORT: process.env.REACT_APP_PORT || 8080,
+  APP_PORT: process.env.APP_PORT || 8080,
   IS_HTTPS: process.env.IS_HTTPS || true,
   COOKIE_AGE: process.env.COOKIE_AGE || 1000 * 60 * 60 * 24 * 30, // 30 days,
   AUTH_COOKIE_AGE: process.env.AUTH_COOKIE_AGE || 1000 * 60 * 2, // 2 MINUTES,
@@ -29,11 +29,12 @@ const cfg = {
   USE_SERVER_PUBLIC_URL: process.env.USE_SERVER_PUBLIC_URL || false,
 };
 
-if (cfg.USE_SERVER_PUBLIC_URL === "true" || cfg.USE_SERVER_PUBLIC_URL === true) {
-  cfg.PUBLIC_URL = process.env.PUBLIC_URL || "/ams";
-} else {
-  cfg.PUBLIC_URL = "";
-}
+// if (cfg.USE_SERVER_PUBLIC_URL === "true" || cfg.USE_SERVER_PUBLIC_URL === true) {
+//   cfg.PUBLIC_URL = process.env.PUBLIC_URL || "/ams";
+// } else {
+//   cfg.PUBLIC_URL = "";
+// }
+cfg.PUBLIC_URL = "";
 
 // Modified config for development/test (not production)
 if (process.env.NODE_ENV !== "production") {
