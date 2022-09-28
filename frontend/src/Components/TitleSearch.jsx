@@ -264,7 +264,7 @@ export default function TitleSearch() {
       <form onSubmit={onSubmit}>
         <Link
           to="/search"
-          onClick={onAdvancedSearchHide}
+          onClick={onAdvancedSearchCancel}
           style={{ textDecoration: "none" }}
         >
           {/* <Typography variant="h1" color="primary">
