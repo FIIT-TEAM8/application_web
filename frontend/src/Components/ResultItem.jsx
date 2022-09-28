@@ -31,7 +31,7 @@ export default function ResultItem({ item }) {
             )}
             spacing={2}
           >
-            <Box sx={{ width: 80 }}>
+            <Box>
               <Typography noWrap color="secondary">
                 {item.published.slice(5, -13)}
               </Typography>

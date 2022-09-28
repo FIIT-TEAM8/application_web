@@ -80,7 +80,7 @@ export default function ReportItem({
               )}
               spacing={2}
             >
-              <Box sx={{ width: 80 }}>
+              <Box>
                 <Typography noWrap color="secondary">
                   {article.published.slice(5, -13)}
                 </Typography>
