@@ -38,7 +38,15 @@ export default function TitleSearch() {
 
   const searchDivStyle = {
     margin: "auto",
-    padding: shouldCollapse ? "200px 7%" : "200px 20%",
+    padding: shouldCollapse ? "100px 7%" : "100px 20%",
+  };
+
+  const logoStyle = {
+    margin: "auto",
+    marginBottom: "20px",
+    display: "block",
+    width: "30%",
+    height: "auto"
   };
 
   if (showingResults) {
@@ -259,9 +267,10 @@ export default function TitleSearch() {
           onClick={onAdvancedSearchHide}
           style={{ textDecoration: "none" }}
         >
-          <Typography variant="h1" color="primary">
+          {/* <Typography variant="h1" color="primary">
             ams
-          </Typography>
+          </Typography> */}
+          <img style={logoStyle} src="./adversea_logo.svg" alt="adversea" />
         </Link>
         <TextField
           id="outlined-search"

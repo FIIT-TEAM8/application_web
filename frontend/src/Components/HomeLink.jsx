@@ -6,7 +6,7 @@ export default function HomeLink({ variant = "h1" }) {
   return (
     <Link to="/search" style={{ textDecoration: "none" }}>
       <Typography variant={variant} color="primary" padding=".5rem">
-        ams
+        adversea
       </Typography>
     </Link>
   );

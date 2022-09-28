@@ -37,6 +37,7 @@
         "react/prop-types": "off", // remove, when everything is in typescript
         "no-underscore-dangle": "off",
         "comma-dangle": "off",
+        "linebreak-style": 0,
         "import/extensions": [
             "error",
             "ignorePackages",
