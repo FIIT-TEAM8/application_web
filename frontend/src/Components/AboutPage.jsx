@@ -22,14 +22,14 @@ export default function AboutPage() {
           <Grid container spacing={1} direction="column">
             <Grid item>
               <Typography variant="h2" color="primary">
-                what is ams?
+                what is adversea?
               </Typography>
             </Grid>
             <Grid item>
               <Typography color="secondary" fontSize="1rem">
-                ams stands for Adverse Media Screenig. A portal designed to
+                adverse media screening portal designed to
                 search for natural and legal persons with an unfavourable
-                reputation. The key impulse behind this project is to provide a
+                reputation. the key impulse behind this project is to provide a
                 solution for companies where the integrity of their potential
                 employees or partners is a key to reliable and safe operation.
               </Typography>
@@ -45,7 +45,7 @@ export default function AboutPage() {
             </Grid>
             <Grid item>
               <Typography color="secondary" fontSize="1rem">
-                The source of information is available international online
+                the source of information is available international online
                 media.
               </Typography>
             </Grid>
@@ -62,11 +62,11 @@ export default function AboutPage() {
               <Grid container spacing={1} direction="column">
                 <Grid item>
                   <Typography color="secondary" fontSize="1rem">
-                    The current state of the page represents only the prototype.
+                    the current state of the page represents only the prototype.
                     Therefore, we do not require any account confirmation or
-                    personal information during registration. We work every day
+                    personal information during registration. we work every day
                     to improve ams so we can deliver the highest quality
-                    possible. Stay tuned to be the first to experience updated
+                    possible. stay tuned to be the first to experience updated
                     ams.
                   </Typography>
                 </Grid>
@@ -77,7 +77,7 @@ export default function AboutPage() {
                 </Grid>
                 <Grid item>
                   <Typography color="secondary" fontSize="1rem">
-                    Simply enter the name in the search field to find the person
+                    simply enter the name in the search field to find the person
                     you want.
                   </Typography>
                 </Grid>
@@ -88,10 +88,10 @@ export default function AboutPage() {
                 </Grid>
                 <Grid item>
                   <Typography color="secondary" fontSize="1rem">
-                    We only show articles that potentially associate with
-                    suspicious activity or commited crimes. You can use advanced
+                    we only show articles that potentially associate with
+                    suspicious activity or commited crimes. you can use advanced
                     search to define which suspicious activities or commited
-                    crimes you want to search (keywords). Advanced search only
+                    crimes you want to search (keywords). advanced search only
                     provides keyword categories, whereas showed articles will
                     contain specific keywords from one or more categories.
                   </Typography>
@@ -103,7 +103,7 @@ export default function AboutPage() {
                 </Grid>
                 <Grid item>
                   <Typography color="secondary" fontSize="1rem">
-                    We cover whole Europe and are slowly growing further. You
+                    we cover whole Europe and are slowly growing further. you
                     can specify the region in which the article was published in
                     the advanced search.
                   </Typography>
@@ -115,8 +115,8 @@ export default function AboutPage() {
                 </Grid>
                 <Grid item>
                   <Typography color="secondary" fontSize="1rem">
-                    We provide view of articles from our archive based on the
-                    article URL. This feature is useful in case the article is
+                    we provide view of articles from our archive based on the
+                    article URL. this feature is useful in case the article is
                     deleted in the original source.
                   </Typography>
                 </Grid>
@@ -127,12 +127,12 @@ export default function AboutPage() {
                 </Grid>
                 <Grid item>
                   <Typography color="secondary" fontSize="1rem">
-                    We offer registered users the feature of storing important
-                    articles, this feature is called pdf report. User can
-                    generate a pdf report from stored articles. Simply add
+                    we offer registered users the feature of storing important
+                    articles, this feature is called pdf report. user can
+                    generate a pdf report from stored articles. simply add
                     interesting article to pdf report with small button next to
-                    article title. You can combine articles from multiple
-                    searches. After the pdf report is done, click on download in
+                    article title. you can combine articles from multiple
+                    searches. after the pdf report is done, click on download in
                     the pdf report section and you are done!
                   </Typography>
                 </Grid>
@@ -149,7 +149,7 @@ export default function AboutPage() {
             </Grid>
             <Grid item>
               <Typography color="secondary" fontSize="1rem">
-                We provide direct access to articles via API for demanding
+                we provide direct access to articles via API for demanding
                 users. Visit the
                 {" "}
                 <Link
@@ -174,7 +174,7 @@ export default function AboutPage() {
             </Grid>
             <Grid item>
               <Typography color="secondary" fontSize="1rem">
-                If you have something on your mind or just want to talk, contact
+                if you have something on your mind or just want to talk, contact
                 us on
                 {" "}
                 <Link
