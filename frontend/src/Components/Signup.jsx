@@ -6,16 +6,14 @@ import {
   TextField,
   Stack,
   IconButton,
-  InputAdornment,
+  InputAdornment
 } from "@mui/material";
 import { VisibilityOutlined, VisibilityOffOutlined } from "@mui/icons-material";
 import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
-import {
-  initialSignupValues,
-  signupValidationSchema,
-} from "../Utils/AccountSchemas";
+import { initialSignupValues, signupValidationSchema } from "../Utils/AccountSchemas";
 import { useUser } from "../Utils/UserContext";
+import HomeLink from "./HomeLink";
 
 export default function Signup({ isOpen, onClose, onLoginOpen }) {
   // diplayed password means showing the plain text of entered string
@@ -41,7 +39,7 @@ export default function Signup({ isOpen, onClose, onLoginOpen }) {
       } else {
         setTakenUsername(true);
       }
-    },
+    }
   });
 
   // method to handle click on the visibility icon
@@ -78,7 +76,7 @@ export default function Signup({ isOpen, onClose, onLoginOpen }) {
       <DialogContent sx={{ m: "auto", width: 250 }}>
         <form onSubmit={formikLogin.handleSubmit}>
           <Stack sx={{ mb: 1 }} spacing={1}>
-            <Typography color="primary">ams</Typography>
+            <HomeLink variant="p" />
             <Typography variant="h2">Sign up</Typography>
           </Stack>
           <Stack spacing={3} sx={{ mb: 2 }}>
@@ -89,13 +87,8 @@ export default function Signup({ isOpen, onClose, onLoginOpen }) {
               label="Username"
               value={formikLogin.values.username}
               onChange={onFieldChange}
-              error={
-                formikLogin.touched.username
-                && Boolean(formikLogin.errors.username)
-              }
-              helperText={
-                formikLogin.touched.username && formikLogin.errors.username
-              }
+              error={formikLogin.touched.username && Boolean(formikLogin.errors.username)}
+              helperText={formikLogin.touched.username && formikLogin.errors.username}
               margin="dense"
               variant="standard"
               color="secondary"
@@ -108,13 +101,8 @@ export default function Signup({ isOpen, onClose, onLoginOpen }) {
               type={passwordType}
               value={formikLogin.values.password}
               onChange={onFieldChange}
-              error={
-                formikLogin.touched.password
-                && Boolean(formikLogin.errors.password)
-              }
-              helperText={
-                formikLogin.touched.password && formikLogin.errors.password
-              }
+              error={formikLogin.touched.password && Boolean(formikLogin.errors.password)}
+              helperText={formikLogin.touched.password && formikLogin.errors.password}
               margin="dense"
               variant="standard"
               color="secondary"
@@ -129,34 +117,20 @@ export default function Signup({ isOpen, onClose, onLoginOpen }) {
                       )}
                     </IconButton>
                   </InputAdornment>
-                ),
+                )
               }}
             />
 
-            {takenUsername && (
-              <Typography color="error">
-                The username already exists.
-              </Typography>
-            )}
+            {takenUsername && <Typography color="error">The username already exists.</Typography>}
 
             <Stack spacing={2}>
-              <Button
-                color="primary"
-                variant="contained"
-                fullWidth
-                type="submit"
-              >
+              <Button color="primary" variant="contained" fullWidth type="submit">
                 Sign up
               </Button>
               <Typography variant="caption" align="center" color="secondary">
                 OR
               </Typography>
-              <Button
-                color="primary"
-                variant="outlined"
-                fullWidth
-                onClick={onLoginOpen}
-              >
+              <Button color="primary" variant="outlined" fullWidth onClick={onLoginOpen}>
                 Log in
               </Button>
             </Stack>
