@@ -13,7 +13,7 @@ const dbCfg = {
   POSTGRES_USER: process.env.POSTGRES_USER || "postgres",
   POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD || "postgres",
   POSTGRES_DB: process.env.POSTGRES_DB || "ams",
-  POSTGRES_HOST: process.env.POSTGRES_HOST || "postgres_db",
+  POSTGRES_HOST: process.env.POSTGRES_HOST || "localhost",
   POSTGRES_PORT: process.env.POSTGRES_PORT || 5432,
 };
 

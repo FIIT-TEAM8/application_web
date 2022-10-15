@@ -2,6 +2,7 @@
 // Example POST method implementation:
 import Cookies from "js-cookie";
 import { APIResponse } from "./Interfaces";
+import config from "../config";
 
 const DEV: boolean = process.env.NODE_ENV !== "production";
 
@@ -30,7 +31,7 @@ export async function apiCall(
   data: any = null,
   ignoreAuthError = false
 ): Promise<APIResponse> {
-  const baseUrl = process.env.REACT_APP_NODE_SERVER_URL;
+  const baseUrl = config.REACT_APP_NODE_SERVER_URL;
   // const baseEndpoint: string = process.env.PUBLIC_URL;
   // DEV ENVIRONMENT
   // if (DEV) {
