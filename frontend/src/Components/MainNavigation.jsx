@@ -2,6 +2,7 @@
 import React from "react";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
+import Box from "@mui/material/Box";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -10,10 +11,7 @@ import { useTheme } from "@mui/material/styles";
 import { SwipeableDrawer } from "@mui/material";
 import MainBar from "./MainBar";
 import {
-  DesktopDrawer,
-  AppBar,
-  DrawerHeader,
-  drawerWidth,
+  DesktopDrawer, AppBar, DrawerHeader, drawerWidth
 } from "../Style/NavStyledComponents";
 import HomeLink from "./HomeLink";
 import useWindowSize from "../Utils/Screen";
@@ -36,7 +34,7 @@ export function Topbar({ open, handleDrawerToggle }) {
           edge="start"
           sx={{
             marginRight: 5,
-            ...(!isMobile && open && { display: "none" }),
+            ...(!isMobile && open && { display: "none" })
           }}
         >
           <MenuIcon />
@@ -50,10 +48,7 @@ export function Topbar({ open, handleDrawerToggle }) {
 }
 
 export function Sidebar({
-  children,
-  open,
-  handleDrawerClose,
-  handleDrawerOpen,
+  children, open, handleDrawerClose, handleDrawerOpen
 }) {
   const theme = useTheme();
   const { width } = useWindowSize();
@@ -77,18 +72,15 @@ export function Sidebar({
       hysterisis={0.25}
       swipeAreaWidth={40}
       ModalProps={{
-        keepMounted: true,
+        keepMounted: true
       }}
     >
       <DrawerHeader style={{ minWidth: `${drawerWidth}px` }}>
-        <HomeLink variant="h4" />
-
+        <Box sx={{ pl: 1.5 }}>
+          <HomeLink variant="h4" />
+        </Box>
         <IconButton onClick={handleDrawerClose} style={{ marginLeft: "auto" }}>
-          {theme.direction === "rtl" ? (
-            <ChevronRightIcon />
-          ) : (
-            <ChevronLeftIcon />
-          )}
+          {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
         </IconButton>
       </DrawerHeader>
       <Divider />

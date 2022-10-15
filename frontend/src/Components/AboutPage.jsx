@@ -9,29 +9,28 @@ export default function AboutPage() {
 
   const searchDivStyle = {
     margin: "auto",
-    padding: shouldCollapse ? "20px 7%" : "20px 20%",
+    padding: shouldCollapse ? "20px 7%" : "20px 20%"
   };
 
   return (
     <Grid container style={searchDivStyle}>
       <Grid item>
-        <MainHeading text="about ams" />
+        <MainHeading text="about adversea" />
       </Grid>
       <Grid container spacing={2} mt={0.5} direction="column">
         <Grid item>
           <Grid container spacing={1} direction="column">
             <Grid item>
               <Typography variant="h2" color="primary">
-                what is ams?
+                what is adversea?
               </Typography>
             </Grid>
             <Grid item>
               <Typography color="secondary" fontSize="1rem">
-                ams stands for Adverse Media Screenig. A portal designed to
-                search for natural and legal persons with an unfavourable
-                reputation. The key impulse behind this project is to provide a
-                solution for companies where the integrity of their potential
-                employees or partners is a key to reliable and safe operation.
+                adverse media screening portal designed to search for natural and legal persons with
+                an unfavourable reputation. the key impulse behind this project is to provide a
+                solution for companies where the integrity of their potential employees or partners
+                is a key to reliable and safe operation.
               </Typography>
             </Grid>
           </Grid>
@@ -45,8 +44,7 @@ export default function AboutPage() {
             </Grid>
             <Grid item>
               <Typography color="secondary" fontSize="1rem">
-                The source of information is available international online
-                media.
+                available international online media.
               </Typography>
             </Grid>
           </Grid>
@@ -62,12 +60,9 @@ export default function AboutPage() {
               <Grid container spacing={1} direction="column">
                 <Grid item>
                   <Typography color="secondary" fontSize="1rem">
-                    The current state of the page represents only the prototype.
-                    Therefore, we do not require any account confirmation or
-                    personal information during registration. We work every day
-                    to improve ams so we can deliver the highest quality
-                    possible. Stay tuned to be the first to experience updated
-                    ams.
+                    the current state of the page represents the prototype. we work every day to
+                    improve the portal so we can deliver the highest quality possible. stay tuned to
+                    be the first to experience updated adversea.
                   </Typography>
                 </Grid>
                 <Grid item>
@@ -77,8 +72,7 @@ export default function AboutPage() {
                 </Grid>
                 <Grid item>
                   <Typography color="secondary" fontSize="1rem">
-                    Simply enter the name in the search field to find the person
-                    you want.
+                    simply enter the name in the search field to find the person you want.
                   </Typography>
                 </Grid>
                 <Grid item>
@@ -88,12 +82,11 @@ export default function AboutPage() {
                 </Grid>
                 <Grid item>
                   <Typography color="secondary" fontSize="1rem">
-                    We only show articles that potentially associate with
-                    suspicious activity or commited crimes. You can use advanced
-                    search to define which suspicious activities or commited
-                    crimes you want to search (keywords). Advanced search only
-                    provides keyword categories, whereas showed articles will
-                    contain specific keywords from one or more categories.
+                    we only show articles that potentially associate with suspicious activity or
+                    commited crimes. you can use advanced search to define which suspicious
+                    activities or commited crimes you want to search (keywords). advanced search
+                    only provides keyword categories, whereas showed articles will contain specific
+                    keywords from one or more categories.
                   </Typography>
                 </Grid>
                 <Grid item>
@@ -103,9 +96,8 @@ export default function AboutPage() {
                 </Grid>
                 <Grid item>
                   <Typography color="secondary" fontSize="1rem">
-                    We cover whole Europe and are slowly growing further. You
-                    can specify the region in which the article was published in
-                    the advanced search.
+                    the prototype covers whole Europe and is slowly growing further. you can specify
+                    the region in which the article was published in the advanced search.
                   </Typography>
                 </Grid>
                 <Grid item>
@@ -115,9 +107,8 @@ export default function AboutPage() {
                 </Grid>
                 <Grid item>
                   <Typography color="secondary" fontSize="1rem">
-                    We provide view of articles from our archive based on the
-                    article URL. This feature is useful in case the article is
-                    deleted in the original source.
+                    saving article content allows us to provide it on the archive page. this feature
+                    is useful in case the article is deleted in the original source.
                   </Typography>
                 </Grid>
                 <Grid item>
@@ -127,13 +118,10 @@ export default function AboutPage() {
                 </Grid>
                 <Grid item>
                   <Typography color="secondary" fontSize="1rem">
-                    We offer registered users the feature of storing important
-                    articles, this feature is called pdf report. User can
-                    generate a pdf report from stored articles. Simply add
-                    interesting article to pdf report with small button next to
-                    article title. You can combine articles from multiple
-                    searches. After the pdf report is done, click on download in
-                    the pdf report section and you are done!
+                    registered users are privileged to store articles into pdf report. simply add
+                    interesting article to pdf report with a small button next to the article title.
+                    combine articles from multiple searches. after the report is done, click on
+                    download in the pdf report section and you are done!
                   </Typography>
                 </Grid>
               </Grid>
@@ -149,8 +137,7 @@ export default function AboutPage() {
             </Grid>
             <Grid item>
               <Typography color="secondary" fontSize="1rem">
-                We provide direct access to articles via API for demanding
-                users. Visit the
+                direct access to articles is provided by API. visit the
                 {" "}
                 <Link
                   href="https://app.swaggerhub.com/apis-docs/AMS89/AMS/1.0.0"
@@ -174,15 +161,10 @@ export default function AboutPage() {
             </Grid>
             <Grid item>
               <Typography color="secondary" fontSize="1rem">
-                If you have something on your mind or just want to talk, contact
-                us on
+                if you have something on your mind or just want to talk, contact us on
                 {" "}
-                <Link
-                  href="mailto:tim8.fiit.stuba@gmail.com"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  tim8.fiit.stuba@gmail.com
+                <Link href="mailto:info.adversea@gmail.com" target="_blank" rel="noopener">
+                  info.adversea@gmail.com
                 </Link>
                 .
               </Typography>
