@@ -10,8 +10,9 @@ import { useSearchParams } from "react-router-dom";
 import { apiCall } from "../Utils/APIConnector";
 import ResultItem from "./ResultItem";
 
-export default function SearchResults() {
+export default function SearchResults({ isShowingResults }) {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [showingResults, setShowingResults] = useState(false);
   const [actResults, setActResults] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalResults, setTotalResults] = useState(0);
@@ -19,6 +20,12 @@ export default function SearchResults() {
   const [lastSearched, setLastSearched] = useState("");
 
   useEffect(() => {
+    setShowingResults(isShowingResults);
+  }, [isShowingResults]);
+
+  useEffect(() => {
+    // po zmene search params: but sa nezobrazi nic, alebo sa zobrazia povodne vysledky alebo nove
+
     setIsLoaded(false);
 
     const q = searchParams.get("q");
@@ -37,7 +44,7 @@ export default function SearchResults() {
         }
       }
     );
-  }, [searchParams]);
+  }, [showingResults]);
 
   const handlePageChange = (event, value) => {
     window.scroll({ top: 0, left: 0, behavior: "smooth" });

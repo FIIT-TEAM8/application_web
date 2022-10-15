@@ -51,7 +51,7 @@ export default function ReportPage() {
     }
     apiCall(`/api/data/report?ids=[${articlesIds.join(", ")}]`, "GET").then(
       (result: APIResponse) => {
-        if (result.ok && result.data && result.data.results) {
+        if (result.ok && result.data && typeof result.data.results !== "string") {
           setArticlesFromReport([...result.data.results]);
         } else {
           openSnackbar("Unable to get articles in report.", "error");
