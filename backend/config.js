@@ -26,7 +26,7 @@ const cfg = {
   BUILD_PATH: process.env.BUILD_PATH || "../frontend/build",
   DATA_API_HOST: process.env.DATA_API_HOST || "http://flask_server:5000",
   DATA_API_VERSION: process.env.DATA_API_VERSION || "v3",
-  USE_SERVER_PUBLIC_URL: process.env.USE_SERVER_PUBLIC_URL || false,
+  // USE_SERVER_PUBLIC_URL: process.env.USE_SERVER_PUBLIC_URL || false,
 };
 
 // if (cfg.USE_SERVER_PUBLIC_URL === "true" || cfg.USE_SERVER_PUBLIC_URL === true) {
@@ -34,7 +34,7 @@ const cfg = {
 // } else {
 //   cfg.PUBLIC_URL = "";
 // }
-cfg.PUBLIC_URL = "";
+// cfg.PUBLIC_URL = "";
 
 // Modified config for development/test (not production)
 if (process.env.NODE_ENV !== "production") {

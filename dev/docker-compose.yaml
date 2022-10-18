@@ -10,21 +10,25 @@ services:
     ports:
       - 5432:5432
 
-  node_server:
-    build: 
-      context: ../backend/.
-    container_name: node_server
-    env_file:
-      - ../backend/.env
-    ports:
-      - 8080:8080
+  # node_server:
+  #   build: 
+  #     context: ../backend/.
+  #   container_name: node_server
+  #   env_file:
+  #     - ../backend/.env
+  #   ports:
+  #     - 8080:8080
+
+  # nginx:
+  #   image: nginx
+  #   container_name: nginx
     
   react_frontend:
     build: 
       context: ../frontend/.
     container_name: react_frontend
     env_file:
-      - ../frontend/.env
+      - frontend.env
     ports:
       - 3000:80
 

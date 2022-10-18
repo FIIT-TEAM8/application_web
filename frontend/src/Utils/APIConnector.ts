@@ -32,15 +32,7 @@ export async function apiCall(
   ignoreAuthError = false
 ): Promise<APIResponse> {
   const baseUrl = config.REACT_APP_NODE_SERVER_URL;
-  // const baseEndpoint: string = process.env.PUBLIC_URL;
-  // DEV ENVIRONMENT
-  // if (DEV) {
-  //   baseUrl = `http://localhost:${process.env.REACT_APP_PORT}`;
-  //   // baseEndpoint = ''
-  // }
   const url: string = baseUrl + endpoint;
-
-  console.log(`BASE URL: ${baseUrl}, TOTAL URL: ${url}`);
 
   // const url: string = baseUrl + baseEndpoint + endpoint;
   let response: APIResponse = {};

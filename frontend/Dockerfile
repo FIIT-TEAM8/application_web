@@ -10,19 +10,15 @@ COPY . .
 
 ENV REACT_APP_PRODUCTION production
 
-RUN export REACT_APP_PRODUCTION=production
-
-RUN echo $REACT_APP_PRODUCTION
-
 RUN npm run build
 
 #### NGINX FOR Single Page Application ####
 FROM steebchen/nginx-spa
 
-ENV PRODUCTION production
-
 COPY --from=build /app/build /app
 
 EXPOSE 80
 
-CMD ["nginx"]
+ENTRYPOINT \
+  sed -e "s|\\\${{REACT_APP_NODE_SERVER_URL}}\\\$|$REACT_APP_NODE_SERVER_URL|g" -i /app/static/js/main.* && \
+  nginx
