@@ -8,7 +8,7 @@ import {
 import HomeIcon from "@mui/icons-material/Home";
 import ArticleIcon from "@mui/icons-material/Article";
 import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
-import InfoIcon from "@mui/icons-material/Info";
+// import InfoIcon from "@mui/icons-material/Info";
 import { Link } from "react-router-dom";
 import { useUser } from "../Utils/UserContext";
 
@@ -60,7 +60,7 @@ export default function SidebarItems({ open }) {
           href="/pdf_report"
         />
       )}
-      <SidebarItem open={open} text="about" icon={<InfoIcon />} href="/about" />
+      {/* <SidebarItem open={open} text="about" icon={<InfoIcon />} href="/about" /> */}
     </List>
   );
 }
