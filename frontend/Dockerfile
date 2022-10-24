@@ -8,7 +8,7 @@ RUN npm install
 
 COPY . .
 
-ENV REACT_APP_PRODUCTION production
+ENV NODE_ENV=production
 
 RUN npm run build
 
@@ -17,8 +17,16 @@ FROM steebchen/nginx-spa
 
 COPY --from=build /app/build /app
 
+WORKDIR /app
+
+COPY ./env.sh .
+COPY .env .
+
+# Add bash
+RUN apk add --no-cache bash
+
+RUN chmod +x env.sh
+
 EXPOSE 80
 
-ENTRYPOINT \
-  sed -e "s|\\\${{REACT_APP_NODE_SERVER_URL}}\\\$|$REACT_APP_NODE_SERVER_URL|g" -i /app/static/js/main.* && \
-  nginx
+CMD ["/bin/bash", "-c", "/app/env.sh && nginx"]

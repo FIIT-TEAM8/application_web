@@ -85,6 +85,7 @@ export async function apiCall(
   try {
     if (response) {
       const contentType = response.headers.get("content-type"); // ADD content type to each response???
+      console.log(response);
 
       if (contentType === "application/pdf") {
         result.ok = true;
