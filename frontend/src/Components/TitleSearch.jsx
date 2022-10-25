@@ -74,6 +74,7 @@ export default function TitleSearch() {
 
     setShowingResults(true);
     setSearchParams(searchParams);
+    setAdvancedSearchOpen(false);
     navigate(`results?${searchParams.toString()}`);
   };
 
@@ -130,8 +131,9 @@ export default function TitleSearch() {
       </form>
 
       <AdvancedSearchHandler
+        open={advancedSearchOpen}
         onFilterSelect={updateNumSelectedFilters}
-        onApply={submitSearchParams}
+        apply={submitSearchParams}
       />
 
       {!advancedSearchOpen && (

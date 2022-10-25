@@ -24,12 +24,13 @@ const emptyFilters: AdvSearchItems = {
 };
 
 type Props = {
+  open: boolean,
   // eslint-disable-next-line no-unused-vars
   onFilterSelect: (numSelectedFilters: number) => void,
-  onApply: () => void,
+  apply: () => void,
 };
 
-export default function AdvancedSearchHandler({ onFilterSelect, onApply }: Props) {
+export default function AdvancedSearchHandler({ open, onFilterSelect, apply }: Props) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false);
@@ -54,6 +55,10 @@ export default function AdvancedSearchHandler({ onFilterSelect, onApply }: Props
 
     setAllYears(getYears(2016, new Date().getFullYear()));
   }, []);
+
+  useEffect(() => {
+    setAdvancedSearchOpen(open);
+  }, [open]);
 
   useEffect(() => {
     const from = searchParams.get("from");
@@ -137,12 +142,12 @@ export default function AdvancedSearchHandler({ onFilterSelect, onApply }: Props
     setSelectedFilters({ ...selectedFilters, keywords: selectedKeywords });
   };
 
-  const onAdvancedSearchHide = () => {
+  const onHide = () => {
     setAdvancedSearchOpen(false);
     window.scroll({ top: 0, left: 0, behavior: "smooth" });
   };
 
-  const onAdvancedSearchClear = () => {
+  const onClear = () => {
     const defaultYearFrom = allYears[0];
     const defaultYearTo = allYears[allYears.length - 1];
 
@@ -159,8 +164,8 @@ export default function AdvancedSearchHandler({ onFilterSelect, onApply }: Props
     });
   };
 
-  const onAdvancedSearchApply = () => {
-    onAdvancedSearchHide();
+  const onApply = () => {
+    onHide();
 
     const filters = Object.keys(selectedFilters);
 
@@ -186,10 +191,10 @@ export default function AdvancedSearchHandler({ onFilterSelect, onApply }: Props
     }
 
     setSearchParams(searchParams);
-    onApply();
+    apply();
   };
 
-  const onAdvancedSearchCancel = () => {
+  const onCancel = () => {
     const filters = Object.keys(selectedFilters);
 
     filters.forEach((filterName) => {
@@ -198,8 +203,7 @@ export default function AdvancedSearchHandler({ onFilterSelect, onApply }: Props
 
     setSearchParams(searchParams);
 
-    onAdvancedSearchClear();
-    onAdvancedSearchHide();
+    onClear();
     onApply();
   };
 
@@ -214,10 +218,10 @@ export default function AdvancedSearchHandler({ onFilterSelect, onApply }: Props
         onYearToSelect={onYearToSelect}
         onRegionSelect={onRegionSelect}
         onKeywordSelect={onKeywordSelect}
-        onHide={onAdvancedSearchHide}
-        onClear={onAdvancedSearchClear}
-        onApply={onAdvancedSearchApply}
-        onCancel={onAdvancedSearchCancel}
+        onHide={onHide}
+        onClear={onClear}
+        onApply={onApply}
+        onCancel={onCancel}
       />
     </Collapse>
   );
