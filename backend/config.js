@@ -29,13 +29,6 @@ const cfg = {
   // USE_SERVER_PUBLIC_URL: process.env.USE_SERVER_PUBLIC_URL || false,
 };
 
-// if (cfg.USE_SERVER_PUBLIC_URL === "true" || cfg.USE_SERVER_PUBLIC_URL === true) {
-//   cfg.PUBLIC_URL = process.env.PUBLIC_URL || "/ams";
-// } else {
-//   cfg.PUBLIC_URL = "";
-// }
-// cfg.PUBLIC_URL = "";
-
 // Modified config for development/test (not production)
 if (process.env.NODE_ENV !== "production") {
   cfg.DATA_API_HOST = process.env.DEV_DATA_API_HOST || "https://localhost:5000/api";
